@@ -3,6 +3,7 @@ pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interfaces/IAgreement.sol";
 
 contract Elastic is Ownable {
     struct NFTData {
