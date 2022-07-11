@@ -19,7 +19,7 @@ contract Elastic is Ownable {
         uint256 tokenId;
         uint256 collateral;
         uint256 ratePerDay;
-        bool automaticApptoval;
+        bool automaticApproval;
         bool rented;
         bytes32[] benefits;
     }
@@ -147,7 +147,7 @@ contract Elastic is Ownable {
         Proposal memory proposal = Proposal(
             msg.sender,
             _itemId,
-            itemList[_itemId].automaticApptoval
+            itemList[_itemId].automaticApproval
                 ? ProposalStatus.ACCEPTED
                 : ProposalStatus.PROPOSED,
             _daysToRent,
