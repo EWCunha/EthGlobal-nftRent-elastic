@@ -2,6 +2,11 @@ import React from 'react'
 import { Box, Button, Typography, Card, Grid, TextField } from '@mui/material'
 
 const Rent = () => {
+
+const rentNFT = ()=>{
+  alert('Placeholder message-Sign off on tranaction with MetaMask to have NFT sent')
+}
+
   return (
     <Grid container item spacing = { 2 }>
 
@@ -53,6 +58,7 @@ const Rent = () => {
       </Box>
       <Button variant="contained"
                 color="warning"
+                onClick={rentNFT}
       >
         RENT NFT
       </Button>
