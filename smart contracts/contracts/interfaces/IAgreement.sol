@@ -34,7 +34,12 @@ interface IAgreement {
 
     function acceptUpdatedAgreementData() external;
 
+    function readUpdatedAgreement()
+        external
+        view
+        returns (NewAgreementData memory);
+
     function returnNFT() external;
 
-    function takeCollateral() external;
+    function withdrawCollateral() external;
 }

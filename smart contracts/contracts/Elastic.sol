@@ -51,11 +51,19 @@ contract Elastic is Ownable {
     event NFTListed(
         address indexed owner,
         uint256 indexed itemId,
+        bytes32 indexed benefits,
         uint256 collateral,
         uint256 price
     );
     event NFTUnlisted(address indexed owner, uint256 indexed itemId);
-    event NFTRented(address indexed tenant, address indexed item);
+    event NFTRented(
+        address indexed owner,
+        address indexed tenant,
+        address indexed agreement,
+        address itemAddress,
+        uint256 itemId,
+        uint256 proposalId
+    );
     event NewProposal(
         address indexed tenant,
         uint256 indexed itemId,
@@ -103,7 +111,13 @@ contract Elastic is Ownable {
         unchecked {
             nextItemId++;
         }
-        emit NFTListed(msg.sender, nextItemId--, _collateral, _price);
+        emit NFTListed(
+            msg.sender,
+            nextItemId--,
+            _benefits,
+            _collateral,
+            _price
+        );
     }
 
     /**
@@ -151,7 +165,7 @@ contract Elastic is Ownable {
         );
 
         proposals[nextProposalId] = proposal;
-        itemProposals[_itemId].push(proposal);
+        itemProposals[_itemId][nextProposalId] = proposal;
         unchecked {
             nextProposalId++;
         }
@@ -219,6 +233,13 @@ contract Elastic is Ownable {
         address _nft = items[itemId].nftAddress;
         IERC721(_nft).transferFrom(address(this), msg.sender, item.tokenId);
 
-        emit NFTRented(msg.sender, _nft);
+        emit NFTRented(
+            item.owner,
+            msg.sender,
+            address(agreement),
+            _nft,
+            itemId,
+            _proposalId
+        );
     }
 }
