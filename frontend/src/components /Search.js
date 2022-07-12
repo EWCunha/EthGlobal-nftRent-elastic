@@ -6,14 +6,11 @@ import { useSelector, useDispatch } from 'react-redux'
 
 const Search = () => {
 
-  const dispatch = useDispatch()
   const benefits = useSelector((state) => state.benefits)
-
+  const state = useSelector(state=>state)
   useEffect(() => {
-    benefits.map((des) => {
-      console.log(des)
-    })
-  },[benefits])
+      console.log(state) 
+  },[])
 
   const SearchResults = () => {
     return(
