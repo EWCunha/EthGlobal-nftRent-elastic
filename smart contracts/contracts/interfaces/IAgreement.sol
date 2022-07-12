@@ -1,36 +1,40 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.15;
 
-/** 
-Some appreciation about the way the agreement would present itself . 
-idea would be to mint a ERC721 token that would represent the agreement between tenant and lessor
-*/
 interface IAgreement {
     struct AgreementData {
-        address tenant;
-        address lessor;
-        address _nft;
-        uint256 burnableAt;
-        uint256 amount;
+        address owner;
+        address borrower;
+        uint256 collateral;
+        uint256 rentDays;
+        uint256 tokenId;
+        address nftAddress;
+        uint256 proposalId;
+        uint256 price;
+        uint256 startTime;
     }
 
-    function agreementData(uint256 agreementId)
-        external
-        view
-        returns (AgreementData memory);
+    struct NewAgreementData {
+        uint256 collateral;
+        uint256 rentDays;
+        uint256 price;
+        bool ownerAccepted;
+        bool borrowerAccepted;
+    }
 
-    function agreementByAddress(address _part)
-        external
-        view
-        returns (uint256[] memory);
+    function readPayment() external view returns (uint256);
 
-    function mint(
-        address tenant,
-        address lessor,
-        address _nft,
-        uint256 burnableAt,
-        uint256 amount
-    ) external returns (uint256);
+    function readAgreementData() external view returns (AgreementData memory);
 
-    function burn(uint256 agreementId) external;
+    function updateAgreementData(
+        uint256 _collateral,
+        uint256 _rentDays,
+        uint256 _price
+    ) external;
+
+    function acceptUpdatedAgreementData() external;
+
+    function returnNFT() external;
+
+    function takeCollateral() external;
 }
