@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
 import {
   AppBar,
@@ -9,31 +9,9 @@ import {
   IconButton
 } from '@mui/material'
 
-import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
-    navlinks: {
-      marginLeft: theme.spacing(1),
-      display: "flex",
-    },
-    logo: {
-      flexGrow: "1",
-      cursor: "pointer",
-    },
-    link: {
-      textDecoration: "none",
-      color: "white",
-      fontSize: "20px",
-      marginLeft: theme.spacing(5),
-      "&:hover": {
-        color: "yellow",
-        borderBottom: "1px solid white",
-      },
-    },
-  }));
 
 const Header = () => {
-const classes = useStyles();
 
   return (
     <>
@@ -41,20 +19,20 @@ const classes = useStyles();
  <CssBaseline />
  <Toolbar>
    <IconButton href="/">
-   <Typography variant="h4" className={classes.logo} color="white">
+   <Typography variant="h4" color="white">
      Elastic 
    </Typography>
    </IconButton>
  
  
-     <div className={classes.navlinks} >
-       <Link to="/" className={classes.link}>
+     <div>
+       <Link to="/">
          Home
        </Link>
-       <Link to="/List" className={classes.link} >
+       <Link to="/List">
          List
        </Link> 
-       <Link to="/Search" className={classes.link}>
+       <Link to="/Search">
          Search
        </Link>
       
