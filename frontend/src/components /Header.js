@@ -22,7 +22,9 @@ const Header = () => {
       <AppBar position="static" sx={{marginBottom:2}}>
         <CssBaseline />
         <Toolbar>
-          <IconButton href="/">
+          <IconButton component={Link}
+          to="/"
+          >
             <Typography variant="h4" color="white">
               Elastic 
             </Typography>
