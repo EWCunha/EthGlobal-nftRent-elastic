@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {Button} from "@mui/material"
 import { ethers } from 'ethers'
 import { useDispatch } from 'react-redux'
+import contractJSON from "../contract_info/contractABI.json"
 
 const Web3Connect = () => {
+
+    const ABI = contractJSON.abi
+    const ADDRESS = contractJSON.address
+
 const dispatch = useDispatch()
 
 const [connButtonText, setConnButtonText] = useState('Connect Wallet');
@@ -68,6 +73,9 @@ const updateEthers = async () => {
     let tempSigner = await tempProvider.getSigner();
     setSigner(tempSigner);
     dispatch({type:"SET_SIGNER",payload:tempSigner})
+    
+    let tempContract = await new ethers.Contract(ADDRESS, ABI, tempSigner)
+    dispatch({ type:"SET_CONTRACT", payload:tempContract })
 
 }
 
