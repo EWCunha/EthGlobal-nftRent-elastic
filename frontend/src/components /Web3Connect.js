@@ -9,40 +9,40 @@ const Web3Connect = () => {
     const ABI = contractJSON.abi
     const ADDRESS = contractJSON.address
 
-const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
-const [connButtonText, setConnButtonText] = useState('Connect Wallet');
-const [accountchanging, setAccountChanging] = useState(false)
-const [errorMessage, setErrorMessage] = useState(null);
-const [connectButtonColor, setConnectButtonColor] = useState("secondary")
+    const [connButtonText, setConnButtonText] = useState('Connect Wallet');
+    const [accountchanging, setAccountChanging] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [connectButtonColor, setConnectButtonColor] = useState("secondary")
 
-const [defaultAccount, setDefaultAccount] = useState(null)
-const [provider, setProvider] = useState(null)
-const [signer, setSigner] = useState(null)
-const [walletBalance, setWalletBalance] = useState(null)
+    const [defaultAccount, setDefaultAccount] = useState(null)
+    const [provider, setProvider] = useState(null)
+    const [signer, setSigner] = useState(null)
+    const [walletBalance, setWalletBalance] = useState(null)
 
-const connectWalletHandler = () => {
-    if (window.ethereum && window.ethereum.isMetaMask) {
-        console.log("CONNECTING TO WALLET")
-        window.ethereum.request({ method: 'eth_requestAccounts' })
-            .then(result => {
+    const connectWalletHandler = () => {
+        if (window.ethereum && window.ethereum.isMetaMask) {
+            console.log("CONNECTING TO WALLET")
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+                .then(result => {
 
-                accountChangedHandler(result[0]);
-                setConnButtonText('Wallet Connected');
-                setConnectButtonColor("success")
+                    accountChangedHandler(result[0]);
+                    setConnButtonText('Wallet Connected');
+                    setConnectButtonColor("success")
 
 
 
-            })
-            .catch(error => {
-                setErrorMessage(error.message);
+                })
+                .catch(error => {
+                    setErrorMessage(error.message);
 
-            });
+                });
 
-    } else {
-        console.log('Need to install MetaMask');
-        setErrorMessage('Please install MetaMask browser extension to interact');
-    }
+        } else {
+            console.log('Need to install MetaMask');
+            setErrorMessage('Please install MetaMask browser extension to interact');
+        }
 }
 
 const accountChangedHandler = (newAccount) => {
