@@ -8,8 +8,12 @@ import {
   Toolbar,
   CssBaseline,
   Typography,
-  IconButton
+  IconButton,
+  Box,
+  Button,
 } from '@mui/material'
+import { flexbox } from '@mui/system'
+import { green } from '@mui/material/colors'
 
 
 
@@ -19,36 +23,62 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{marginBottom:2}}>
+      <AppBar position="static" sx={{ marginBottom:2, }}>
         <CssBaseline />
         <Toolbar>
-          <IconButton href="/">
+          <IconButton component={Link}
+          to="/"
+          >
             <Typography variant="h4" color="white">
               Elastic 
             </Typography>
           </IconButton> 
  
-          <div>
-            <Link to="/">
-              Home
-            </Link>
-            <Link to="/List">
-              List
-            </Link> 
-            <Link to="/Search">
-              Search
-            </Link>
+          <Box 
+            sx={{
+              width: "50%",
+              mx: "auto",
+              bgcolor: "none",
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center"
+            }}>
+            <Button component={Link}
+            to="/"
+            >
+              <Typography sx={{ color: "white" }}>
+                Home
+              </Typography>
+            </Button>
+            <Button component={Link}
+            to="/List"
+            >
+              <Typography sx={{ color: "white" }}>
+                List
+              </Typography>
+            </Button> 
+            <Button component={Link}
+            to="/Search"
+            >
+              <Typography sx={{ color: "white" }}>
+                Search
+              </Typography>
+            </Button>
 
             {
               defaultAccount ? 
-              <Link to="/Dashboard">
-                Dashboard
-              </Link> : null
+              <Button component={Link}
+              to="/Dashboard"
+              >
+                <Typography sx={{ color: "white" }}>
+                  Dashboard
+                </Typography>
+              </Button> : null
             }
-      
-            <Web3Connect/>
-          </div>      
- 
+          </Box>
+          
+          <Web3Connect/>
+               
         </Toolbar>
       </AppBar>
     </>
