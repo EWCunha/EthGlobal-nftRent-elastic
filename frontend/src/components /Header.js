@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Web3Connect from './Web3Connect'
 
 import {
   AppBar,
@@ -36,7 +37,7 @@ const Header = () => {
          Search
        </Link>
       
-          
+      <Web3Connect/>
      </div>      
  </Toolbar>
 </AppBar>
