@@ -47,6 +47,7 @@ contract Elastic is Ownable {
     error AlreadyRented();
     error InvalidId();
     error NotAcceptedProposal();
+    error LowAmount();
 
     event NFTListed(
         address indexed owner,
@@ -153,6 +154,9 @@ contract Elastic is Ownable {
         if (_itemId == 0 || _itemId >= nextItemId) {
             revert InvalidId();
         }
+        if (msg.sender == items[_itemId].owner) {
+            revert AccessDenied();
+        }
 
         Proposal memory proposal = Proposal(
             msg.sender,
@@ -182,8 +186,13 @@ contract Elastic is Ownable {
         public
     {
         uint256 itemId = proposals[_proposalId].itemId;
+        address agreementContract = proposals[_proposalId].agreementAddress;
 
-        if (msg.sender != items[itemId].owner && msg.sender != address(this)) {
+        if (
+            msg.sender != items[itemId].owner &&
+            msg.sender != address(this) &&
+            msg.sender != agreementContract
+        ) {
             revert AccessDenied();
         }
         if (_proposalId == 0 || _proposalId >= nextProposalId) {
@@ -202,6 +211,7 @@ contract Elastic is Ownable {
     */
     function rent(uint256 _proposalId) external payable {
         uint256 itemId = proposals[_proposalId].itemId;
+        address proposalCreator = proposals[_proposalId].tenant;
         NFTData storage item = items[itemId];
 
         if (item.rented) {
@@ -209,6 +219,12 @@ contract Elastic is Ownable {
         }
         if (proposals[_proposalId].status != ProposalStatus.ACCEPTED) {
             revert NotAcceptedProposal();
+        }
+        if (msg.sender != proposalCreator) {
+            revert AccessDenied();
+        }
+        if (msg.value >= item.collateral) {
+            revert LowAmount();
         }
 
         Proposal storage proposal = proposals[_proposalId];

@@ -217,6 +217,13 @@ contract Agreement is IAgreement {
     @notice _burnAgreement internal function to burn this smart contract after its end
     */
     function _burnAgreement() internal {
+        (bool success, ) = elasticAddress.call(
+            abi.encodeWithSignature(
+                "changeProposalStatus(uint256,ProposalStatus)",
+                agreement.proposalId,
+                4
+            )
+        );
         selfdestruct(elasticAddress);
     }
 
