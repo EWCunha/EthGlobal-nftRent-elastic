@@ -7,6 +7,8 @@ const List = () => {
   const [benefits, setBenefits] = useState(null);
   const [rentPerDay, setRentPerDay] = useState(null);
   const [collateralDeposit, setCollateralDeposit] = useState(null);
+  const [nFTAddress, setNFTAddress] = useState(null);
+  const [tokenId, setTokenId] = useState(null);
 
   useEffect (() => {
     if (benefits){
@@ -26,6 +28,18 @@ const List = () => {
     }
   },[collateralDeposit])
 
+  useEffect (() => {
+    if (nFTAddress){
+      console.log(nFTAddress);
+    }
+  },[nFTAddress])
+
+  useEffect (() => {
+    if (tokenId){
+      console.log(tokenId);
+    }
+  },[tokenId])
+
   const dispatch = useDispatch()
 
   const listNFT= () => {
@@ -43,7 +57,7 @@ const List = () => {
       </Grid>
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
-        <TextField label="details benefits"
+        <TextField label="Details benefits"
         variant="outlined"
         onChange={(e) => setBenefits(e.target.value)}        
         >
@@ -51,7 +65,7 @@ const List = () => {
       </Grid>
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
-        <TextField label="rent per day"
+        <TextField label="Rent per day"
         variant="outlined"
         onChange={(e) => setRentPerDay(e.target.value)}         
         >
@@ -59,9 +73,25 @@ const List = () => {
       </Grid>
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
-        <TextField label="collateral deposit"
+        <TextField label="Collateral deposit"
         variant="outlined"
         onChange={(e) => setCollateralDeposit(e.target.value)}         
+        >
+        </TextField>
+      </Grid>
+
+      <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <TextField label="NFT address"
+        variant="outlined"
+        onChange={(e) => setNFTAddress(e.target.value)}        
+        >
+        </TextField>
+      </Grid>
+
+      <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <TextField label="Token id"
+        variant="outlined"
+        onChange={(e) => setTokenId(e.target.value)}        
         >
         </TextField>
       </Grid>
