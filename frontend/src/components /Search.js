@@ -16,11 +16,11 @@ const Search = () => {
     return(
         benefits.map((des) => {
           return (
+
             <Grid container columnSpacing = { { xs:4, sm:4, md:4 } }>        
-              <Grid item xs={ 4 } sm={ 4 } md={ 4 }>
             
+              <Grid item xs={ 4 } sm={ 4 } md={ 4 }>
                     <img width='50%' height='50%' src={MockNFT}/>
-              
               </Grid>
 
               <Grid item xs={ 4 } sm={ 4 } md={ 4 }>
@@ -28,15 +28,15 @@ const Search = () => {
               </Grid>
               
               <Grid item xs={ 4 } sm={ 4 } md={ 4 }>
-              <Link to='/Rent'>
-                <Button variant="contained"
-                      color="success"
-                >
-                  Rent
-                </Button>
+                <Link to='/Rent'>
+                  <Button variant="contained"
+                  color="success"
+                  >
+                    Rent
+                  </Button>
                 </Link>
-            
               </Grid>
+              
             </Grid>
           )
         }

@@ -104,12 +104,12 @@ useEffect(() => {
 
 return (
     <>
-    <Button 
-        onClick={connectWalletHandler} 
-        color={connectButtonColor} 
-        variant="contained" 
-        sx={{ margin: 2 }}>{connButtonText}
-    </Button>
+        <Button 
+            onClick={connectWalletHandler} 
+            color={connectButtonColor} 
+            variant="contained" 
+            sx={{ margin: 2 }}>{connButtonText}
+        </Button>
     </>
   )
 }

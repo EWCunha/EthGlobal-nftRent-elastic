@@ -16,33 +16,32 @@ const Header = () => {
 
   return (
     <>
-    <AppBar position="static" sx={{marginBottom:2}}>
- <CssBaseline />
- <Toolbar>
-   <IconButton href="/">
-   <Typography variant="h4" color="white">
-     Elastic 
-   </Typography>
-   </IconButton>
+      <AppBar position="static" sx={{marginBottom:2}}>
+        <CssBaseline />
+        <Toolbar>
+          <IconButton href="/">
+            <Typography variant="h4" color="white">
+              Elastic 
+            </Typography>
+          </IconButton> 
  
- 
-     <div>
-       <Link to="/">
-         Home
-       </Link>
-       <Link to="/List">
-         List
-       </Link> 
-       <Link to="/Search">
-         Search
-       </Link>
+          <div>
+            <Link to="/">
+              Home
+            </Link>
+            <Link to="/List">
+              List
+            </Link> 
+            <Link to="/Search">
+              Search
+            </Link>
       
-      <Web3Connect/>
-     </div>      
- </Toolbar>
-</AppBar>
+            <Web3Connect/>
+          </div>      
  
- </>
+        </Toolbar>
+      </AppBar>
+    </>
   )
 }
 
