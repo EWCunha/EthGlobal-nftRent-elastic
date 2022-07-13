@@ -34,8 +34,6 @@ const List = () => {
 
   return (
 
-
-
     <Grid container item spacing = { 2 }>
 
       <Grid container item xs={ 12 } sm={ 12 } md={ 12 }>
@@ -46,25 +44,24 @@ const List = () => {
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
         <TextField label="details benefits"
-                  variant="outlined"
-                  onChange={(e) => setBenefits(e.target.value)}        
+        variant="outlined"
+        onChange={(e) => setBenefits(e.target.value)}        
         >
         </TextField>
-
       </Grid>
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
         <TextField label="rent per day"
-                  variant="outlined"
-                  onChange={(e) => setRentPerDay(e.target.value)}         
+        variant="outlined"
+        onChange={(e) => setRentPerDay(e.target.value)}         
         >
         </TextField>
       </Grid>
 
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
-      <TextField label="collateral deposit"
-                  variant="outlined"
-                  onChange={(e) => setCollateralDeposit(e.target.value)}         
+        <TextField label="collateral deposit"
+        variant="outlined"
+        onChange={(e) => setCollateralDeposit(e.target.value)}         
         >
         </TextField>
       </Grid>
@@ -72,24 +69,15 @@ const List = () => {
       <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
         <Box>
           <Button variant="contained"
-                  color="error"
-                  onClick={listNFT}
-          >LIST NFT
+            color="error"
+            onClick={listNFT}
+          >
+            LIST NFT
           </Button>
         </Box>
-      
       </Grid>
 
-   
-
-      
     </Grid>
-    //title: list an nft
-    //3 fields for data input
-      //details
-      //rent per day
-      //collateral deposit
-    //button that says list nft (red) - round
   )
 }
 

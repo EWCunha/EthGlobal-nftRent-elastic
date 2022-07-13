@@ -6,43 +6,42 @@ import ElasticLogo from '../img/TestImage.png'
 
 const Home = () => {
   return (
+
     <Grid container item spacing = { 2 }>
 
       <Grid container item>
         <Typography>
           Welcome to Elastic!
-        </Typography>
-       
+        </Typography>   
       </Grid>
+
       <img width='50%' height='50%' src={ElasticLogo}/>
+      
       <Grid item>
         <Box>
-            <Link to='List'>
+          <Link to='List'>
             <Button variant = "contained"
-                  color = "success"
-          >
-            List an NFT
-          </Button>
-            </Link>
+            color = "success"
+            >
+              List an NFT
+            </Button>
+          </Link>
         </Box>
       </Grid>
 
       <Grid item>
         <Box>
-            <Link to='Rent'>
+          <Link to='Rent'>
             <Button variant = "contained"
-                  color = "warning"
-          >
-            Rent an NFT
-          </Button>
-            </Link>
+            color = "warning"
+            >
+              Rent an NFT
+            </Button>
+          </Link>
        
         </Box>
       </Grid>
 
-   
-
-      
     </Grid>
   )
 }

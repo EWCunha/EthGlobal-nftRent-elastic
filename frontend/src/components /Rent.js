@@ -8,22 +8,23 @@ const rentNFT = ()=>{
 }
 
   return (
+
     <Grid container item spacing = { 2 }>
 
-    <Grid item
-          xs={ 12 }
-          sm={ 12 }
-          md={ 12 }
-    >
-      <Typography>
-        Rental Agreement
-      </Typography>
-    </Grid>
+      <Grid item
+      xs={ 12 }
+      sm={ 12 }
+      md={ 12 }
+      >
+        <Typography>
+          Rental Agreement
+        </Typography>
+      </Grid>
 
     <Grid item
-          xs={ 12 }
-          sm={ 12 }
-          md={ 12 }
+    xs={ 12 }
+    sm={ 12 }
+    md={ 12 }
     >
       <Typography>
         Deposit needed to rent
@@ -31,18 +32,22 @@ const rentNFT = ()=>{
     </Grid>
 
     <Grid item 
-            xs={ 6 }
-            sm={ 6 }
-            md={ 6 }>
-      <Box sx={{bgcolor: "red"}}
-      >
+    xs={ 6 }
+    sm={ 6 }
+    md={ 6 }
+    >
+      <Box sx={{bgcolor: "red"}}>
         <Typography>
           Calendar element to be inserted
         </Typography>
       </Box>
     </Grid>
 
-    <Grid item xs={ 6 } sm={ 6 } md={ 6 }>
+    <Grid item
+    xs={ 6 }
+    sm={ 6 }
+    md={ 6 }
+    >
       <Typography>
         Output: Rental Cost + Collateral Deposit
       </Typography>
@@ -56,30 +61,17 @@ const rentNFT = ()=>{
         </Typography>
 
       </Box>
+
       <Button variant="contained"
-                color="warning"
-                onClick={rentNFT}
+      color="warning"
+      onClick={rentNFT}
       >
         RENT NFT
       </Button>
     </Grid>
 
-    
-
-    </Grid>
-
-
-//rental agreement [view]
-//collateral needed to rent
-
-//calendar select- rent til which day(box)
-
-//Cost
-
-//return by: date
-//send to: address
-
-//rent nft button
+  </Grid>
+  
   )
 }
 
