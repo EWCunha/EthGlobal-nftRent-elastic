@@ -4,98 +4,258 @@ pragma solidity ^0.8.15;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IAgreement.sol";
+import "./Agreement.sol";
 
 contract Elastic is Ownable {
-    struct NFTData {
-        address tenant;
-        address owner;
-        uint256 tokenId;
-        uint256 collateral;
-        uint256 daysToRent;
-        uint256 ratePerDay;
-        bytes32[] benefits;
+    enum ProposalStatus {
+        PROPOSED,
+        ACCEPTED,
+        DECLINED,
+        ONGOING,
+        FINISHED
     }
 
-    uint256 itemCount;
+    struct NFTData {
+        address owner;
+        uint256 tokenId;
+        address nftAddress;
+        uint256 collateral;
+        uint256 pricePerDay;
+        bool automaticApproval;
+        bool rented;
+        bytes32 benefits;
+        uint256[] proposalIds;
+    }
 
-    NFTData[] itemList;
-    mapping(address => NFTData) nftData;
-    mapping(uint256 => address) itemAddress;
+    struct Proposal {
+        address tenant;
+        uint256 itemId;
+        ProposalStatus status;
+        uint256 daysToRent;
+        address agreementAddress;
+    }
 
-    error InvalidAddress();
-    error InvalidBalance();
-    error executionFailed();
+    uint256 public nextItemId = 1;
+    uint256 public nextProposalId = 1;
+
+    mapping(uint256 => NFTData) public items;
+    mapping(uint256 => Proposal) public proposals;
+
+    error AccessDenied();
+    error NotOwner();
+    error AlreadyRented();
+    error InvalidId();
+    error NotAcceptedProposal();
+    error LowAmount();
 
     event NFTListed(
         address indexed owner,
+        uint256 indexed itemId,
+        bytes32 indexed benefits,
         uint256 collateral,
-        uint256 daysToRent
+        uint256 price
     );
-
-    event NFTRented(address indexed tenant, address indexed item);
+    event NFTUnlisted(address indexed owner, uint256 indexed itemId);
+    event NFTRented(
+        address indexed owner,
+        address indexed tenant,
+        address indexed agreement,
+        address itemAddress,
+        uint256 itemId,
+        uint256 proposalId
+    );
+    event NewProposal(
+        address indexed tenant,
+        uint256 indexed itemId,
+        uint256 indexed proposalId
+    );
+    event ChangedProposalStatus(
+        uint256 indexed proposalId,
+        ProposalStatus status
+    );
 
     /**
     @notice depositToRent allows owner of NFT to list his nft to the marketplace
     @param _nft address of ERC721
     @param _tokenId ERC721's tokenID
-    @param _dayToRent number of days the owner would like to rent his NFT
     @param _price desire price for the full period
+    @param _collateral desire collateral for the NFT
     @param _benefits list of the benifits the listed NFT grant
     */
-
-    function depositToRent(
+    function listNFT(
         address _nft,
         uint256 _tokenId,
-        uint256 _dayToRent,
         uint256 _price,
-        bytes32[] calldata _benefits
+        uint256 _collateral,
+        bytes32 _benefits
     ) external {
         if (IERC721(_nft).ownerOf(_tokenId) != msg.sender) {
-            revert InvalidAddress();
+            revert NotOwner();
         }
         IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
-        // we should consider collateral as 110%
-        uint256 collateral = _price + _price / 10;
-        // determine the daily rate. it will serve in case the tenant returns NFT before deadline
-        uint256 ratePerDay = collateral / _dayToRent;
+
         // add new item to the marketpalce
-        NFTData memory item = NFTData(
-            address(0),
-            msg.sender,
-            _tokenId,
-            collateral,
-            _dayToRent,
-            ratePerDay,
-            _benefits
-        );
-        itemList.push(item);
-        itemAddress[itemCount] = _nft;
+        NFTData memory item;
+        item.owner = msg.sender;
+        item.tokenId = _tokenId;
+        item.nftAddress = _nft;
+        item.collateral = _collateral;
+        item.pricePerDay = _price;
+        item.automaticApproval = true; // for now, should be false
+        item.rented = false;
+        item.benefits = _benefits;
+
+        items[nextItemId] = item;
+
         unchecked {
-            itemCount++;
+            nextItemId++;
         }
-        emit NFTListed(msg.sender, collateral, _dayToRent);
+
+        emit NFTListed(
+            msg.sender,
+            nextItemId--,
+            _benefits,
+            _collateral,
+            _price
+        );
+    }
+
+    /**
+    @notice unlistNFT allows owner to unlist not rented NFTs
+    @param _itemId ID of the listed NFT
+    */
+    function unlistNFT(uint256 _itemId) external {
+        if (items[_itemId].owner != msg.sender) {
+            revert AccessDenied();
+        }
+        if (items[_itemId].rented) {
+            revert AlreadyRented();
+        }
+
+        IERC721(items[_itemId].nftAddress).transferFrom(
+            address(this),
+            msg.sender,
+            items[_itemId].tokenId
+        );
+
+        delete items[_itemId];
+
+        emit NFTUnlisted(msg.sender, _itemId);
+    }
+
+    /**
+    @notice newProposal allows borrower to propose a new renting agreement
+    @param _itemId ID of the NFT to be rented
+    @param _daysToRent number of days to rent the NFT
+    */
+    function newProposal(uint256 _itemId, uint256 _daysToRent) external {
+        if (_itemId == 0 || _itemId >= nextItemId) {
+            revert InvalidId();
+        }
+        if (msg.sender == items[_itemId].owner) {
+            revert AccessDenied();
+        }
+
+        Proposal memory proposal = Proposal(
+            msg.sender,
+            _itemId,
+            items[_itemId].automaticApproval
+                ? ProposalStatus.ACCEPTED
+                : ProposalStatus.PROPOSED,
+            _daysToRent,
+            address(0)
+        );
+
+        proposals[nextProposalId] = proposal;
+        items[_itemId].proposalIds.push(nextProposalId);
+
+        unchecked {
+            nextProposalId++;
+        }
+
+        emit NewProposal(msg.sender, _itemId, nextProposalId--);
+    }
+
+    /**
+    @notice changeProposalStatus changes the status of a existing proposal
+    @param _proposalId ID of the proposal which status must be changed
+    @param _status status to which the proposal must be changed
+    */
+    function changeProposalStatus(uint256 _proposalId, ProposalStatus _status)
+        public
+    {
+        uint256 itemId = proposals[_proposalId].itemId;
+        address agreementContract = proposals[_proposalId].agreementAddress;
+
+        if (
+            msg.sender != items[itemId].owner &&
+            msg.sender != address(this) &&
+            msg.sender != agreementContract
+        ) {
+            revert AccessDenied();
+        }
+        if (_proposalId == 0 || _proposalId >= nextProposalId) {
+            revert InvalidId();
+        }
+
+        Proposal storage proposal = proposals[_proposalId];
+        proposal.status = _status;
+
+        emit ChangedProposalStatus(_proposalId, _status);
     }
 
     /** 
     @notice tenant rent the NFT list on the platform
-    @param _itemId id of the NFT on the listed on the platform
+    @param _proposalId id of the rent proposal
     */
-    function rent(uint256 _itemId) external {
-        uint256 balance = address(msg.sender).balance;
-        NFTData memory item = itemList[_itemId];
-        if (item.collateral > balance) {
-            revert InvalidBalance();
+    function rent(uint256 _proposalId) external payable {
+        uint256 itemId = proposals[_proposalId].itemId;
+        address proposalCreator = proposals[_proposalId].tenant;
+        NFTData storage item = items[itemId];
+
+        if (item.rented) {
+            revert AlreadyRented();
         }
-        (bool success, ) = msg.sender.call{value: item.collateral}("");
-        if (!success) {
-            revert executionFailed();
+        if (proposals[_proposalId].status != ProposalStatus.ACCEPTED) {
+            revert NotAcceptedProposal();
         }
-        item.tenant = msg.sender;
-        // transfer to NFT to the tenant
-        address _nft = itemAddress[_itemId];
-        // todo , create agreement contract and deploy it , with the data
+        if (msg.sender != proposalCreator) {
+            revert AccessDenied();
+        }
+        if (msg.value >= item.collateral) {
+            revert LowAmount();
+        }
+
+        Proposal storage proposal = proposals[_proposalId];
+
+        Agreement agreement = new Agreement(
+            address(this),
+            item.owner,
+            msg.sender,
+            msg.value,
+            proposal.daysToRent,
+            item.tokenId,
+            item.nftAddress,
+            _proposalId,
+            item.pricePerDay
+        );
+
+        payable(address(agreement)).transfer(msg.value);
+        proposal.agreementAddress = address(agreement);
+        proposal.status = ProposalStatus.ONGOING;
+        item.rented = true;
+
         // transfer NFT to tenant
+        address _nft = items[itemId].nftAddress;
         IERC721(_nft).transferFrom(address(this), msg.sender, item.tokenId);
-        emit NFTRented(msg.sender, _nft);
+
+        emit NFTRented(
+            item.owner,
+            msg.sender,
+            address(agreement),
+            _nft,
+            itemId,
+            _proposalId
+        );
     }
 }
