@@ -39,7 +39,7 @@ interface IAgreement {
         view
         returns (NewAgreementData memory);
 
-    function returnNFT() external;
+    function returnNFT() external payable;
 
     function withdrawCollateral() external;
 }

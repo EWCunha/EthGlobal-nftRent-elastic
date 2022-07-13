@@ -224,7 +224,7 @@ contract Agreement is IAgreement {
                 4
             )
         );
-        selfdestruct(elasticAddress);
+        selfdestruct(payable(elasticAddress));
     }
 
     modifier onlyBorrower() {

@@ -24,7 +24,7 @@ contract Elastic is Ownable {
         bool automaticApproval;
         bool rented;
         bytes32 benefits;
-        uint256 proposalsCount;
+        uint256[] proposalIds;
     }
 
     struct Proposal {
@@ -40,7 +40,6 @@ contract Elastic is Ownable {
 
     mapping(uint256 => NFTData) public items;
     mapping(uint256 => Proposal) public proposals;
-    mapping(uint256 => mapping(uint256 => Proposal)) public itemProposals;
 
     error AccessDenied();
     error NotOwner();
@@ -96,22 +95,22 @@ contract Elastic is Ownable {
         IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
 
         // add new item to the marketpalce
-        NFTData memory item = NFTData(
-            msg.sender,
-            _tokenId,
-            _nft,
-            _collateral,
-            _price,
-            true, // for now, should be false
-            false,
-            _benefits,
-            0
-        );
+        NFTData memory item;
+        item.owner = msg.sender;
+        item.tokenId = _tokenId;
+        item.nftAddress = _nft;
+        item.collateral = _collateral;
+        item.pricePerDay = _price;
+        item.automaticApproval = true; // for now, should be false
+        item.rented = false;
+        item.benefits = _benefits;
+
         items[nextItemId] = item;
 
         unchecked {
             nextItemId++;
         }
+
         emit NFTListed(
             msg.sender,
             nextItemId--,
@@ -140,7 +139,6 @@ contract Elastic is Ownable {
         );
 
         delete items[_itemId];
-        delete itemProposals[_itemId];
 
         emit NFTUnlisted(msg.sender, _itemId);
     }
@@ -169,7 +167,8 @@ contract Elastic is Ownable {
         );
 
         proposals[nextProposalId] = proposal;
-        itemProposals[_itemId][nextProposalId] = proposal;
+        items[_itemId].proposalIds.push(nextProposalId);
+
         unchecked {
             nextProposalId++;
         }
@@ -230,6 +229,7 @@ contract Elastic is Ownable {
         Proposal storage proposal = proposals[_proposalId];
 
         Agreement agreement = new Agreement(
+            address(this),
             item.owner,
             msg.sender,
             msg.value,
