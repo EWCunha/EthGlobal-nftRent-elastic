@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Web3Connect from './Web3Connect'
+import { useSelector, useDispatch } from 'react-redux'
 
 import {
   AppBar,
@@ -13,6 +14,8 @@ import {
 
 
 const Header = () => {
+
+  const defaultAccount = useSelector((state) => state.defaultAccount)
 
   return (
     <>
@@ -35,6 +38,13 @@ const Header = () => {
             <Link to="/Search">
               Search
             </Link>
+
+            {
+              defaultAccount ? 
+              <Link to="/Dashboard">
+                Dashboard
+              </Link> : null
+            }
       
             <Web3Connect/>
           </div>      
