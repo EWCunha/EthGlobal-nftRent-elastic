@@ -3,6 +3,7 @@ smart contracts/node_modules
 smart contracts/artifacts
 smart contracts/cache
 smart contracts/.env
+smart contracts/contracts/Advanced
 
 # dependencies
 frontend/node_modules
