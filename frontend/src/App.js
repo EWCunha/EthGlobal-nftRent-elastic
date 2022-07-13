@@ -7,6 +7,7 @@ import Search from "./components /Search";
 import Header from "./components /Header";
 import Dashboard from "./components /Dashboard";
 import { createTheme, ThemeProvider} from "@mui/material"
+import { useSelector } from "react-redux"
 
 
 let theme = createTheme({
@@ -21,6 +22,8 @@ let theme = createTheme({
 });
 
 function App() {
+
+
   return (
     <>
       <ThemeProvider theme={theme}>
