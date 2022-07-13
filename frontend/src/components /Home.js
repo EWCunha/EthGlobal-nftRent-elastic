@@ -15,7 +15,7 @@ const Home = () => {
         </Typography>   
       </Grid>
 
-      <img width='50%' height='50%' src={ElasticLogo}/>
+      <img width='25%' height='25%' src={ElasticLogo}/>
       
       <Grid item>
         <Box>
