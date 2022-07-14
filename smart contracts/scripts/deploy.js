@@ -15,10 +15,12 @@ async function main() {
   const elastic_json = require("../artifacts/contracts/Elastic.sol/Elastic.json")
   const agreement_json = require("../artifacts/contracts/Agreement.sol/Agreement.json")
   const agora_json = require("../artifacts/contracts/Agora.sol/Agora.json")
+  const ierc721_json = require("../artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json")
 
   const elastic_contract_obj = { address: elastic.address, abi: elastic_json.abi }
   const agreement_contract_obj = { address: "", abi: agreement_json.abi }
   const agora_contract_obj = { address: "", abi: agora_json.abi }
+  const ierc721_obj = { address: "", abi: ierc721_json.abi }
 
   fs.writeFile("../frontend/src/contracts/Elastic.json", JSON.stringify(elastic_contract_obj), function (err) {
     if (err) throw err;
@@ -33,6 +35,12 @@ async function main() {
   )
 
   fs.writeFile("../frontend/src/contracts/Agora.json", JSON.stringify(agora_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete Agora');
+  }
+  )
+
+  fs.writeFile("../frontend/src/contracts/IERC721.json", JSON.stringify(ierc721_obj), function (err) {
     if (err) throw err;
     console.log('complete Agora');
   }
