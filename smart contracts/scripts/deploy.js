@@ -5,20 +5,40 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const fs = require('fs');
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const Elastic = await hre.ethers.getContractFactory("Elastic");
+  const elastic = await Elastic.deploy();
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  await elastic.deployed();
+  const elastic_json = require("../artifacts/contracts/Elastic.sol/Elastic.json")
+  const agreement_json = require("../artifacts/contracts/Agreement.sol/Agreement.json")
+  const agora_json = require("../artifacts/contracts/Agora.sol/Agora.json")
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const elastic_contract_obj = { address: elastic.address, abi: elastic_json.abi }
+  const agreement_contract_obj = { address: "", abi: agreement_json.abi }
+  const agora_contract_obj = { address: "", abi: agora_json.abi }
 
-  await lock.deployed();
+  fs.writeFile("../frontend/src/contracts/Elastic.json", JSON.stringify(elastic_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete Elastic');
+  }
+  )
 
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  fs.writeFile("../frontend/src/contracts/Agreement.json", JSON.stringify(agreement_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete Agreement');
+  }
+  )
+
+  fs.writeFile("../frontend/src/contracts/Agora.json", JSON.stringify(agora_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete Agora');
+  }
+  )
+
+  console.log("Deployed at:", elastic.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
