@@ -3,7 +3,7 @@ import { Box, Button, Typography, Card, Grid, TextField } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/ERC721.json'
 import { ethers } from 'ethers'
-import ElasticContractJSON from '../contracts/ERC721.json'
+import ElasticContractJSON from '../contracts/Elastic.json'
 const List = () => {
 
   const defaultAccount = useSelector((state) => state.defaultAccount)
@@ -42,7 +42,7 @@ const List = () => {
     if (ethers.utils.isAddress(nFTAddress)){
       console.log("CONTRACT ADDRESS DETECTED")   
       try{   
-        const interfaceERC = new ethers.Contract(nFTAddress, ercInterfaceABI, tempSigner)
+        const interfaceERC = new ethers.Contract(nFTAddress, ercInterfaceABI.abi, tempSigner)
         dispatch({type:"SET_ERC_INTERFACE",payload: interfaceERC})
         }
       catch{
@@ -63,9 +63,11 @@ const List = () => {
 
 
   const listNFT= async () => {
+    console.log("ELASTIC CONTRACT:", elasticContractAddress)
    //isApprovedForAll(address owner, address operator)
    //Returns if the operator is allowed to manage all of the assets of owner.
     if(await interfaceERC.isApprovedForAll(nFTAddress,elasticContractAddress)){
+      console.log("approved- about to list...")
       await contract.listNFT(
        nFTAddress,
        tokenId,
@@ -76,7 +78,10 @@ const List = () => {
     }
     else{
       try{
+        console.log("not approved- so getting approval...")
+
       await interfaceERC.setApprovalForAll(elasticContractAddress,true)
+  
       await contract.listNFT(
         nFTAddress,
         tokenId,
