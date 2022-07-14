@@ -242,4 +242,6 @@ contract Agreement is IAgreement {
         );
         _;
     }
+
+    fallback() external payable {}
 }
