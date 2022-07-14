@@ -1,5 +1,5 @@
 {
-    "address": "0xaD2d84C98c4f721Bfa3fDe4706ac00DBacc09B48",
+    "address": "0xE80Cce7755af6976D0e08F7930f36c00eD4C667D",
     "abi": [
         {
             "inputs": [],
@@ -37,17 +37,23 @@
                 {
                     "indexed": true,
                     "internalType": "uint256",
-                    "name": "proposalId",
+                    "name": "itemId",
                     "type": "uint256"
                 },
                 {
                     "indexed": false,
-                    "internalType": "enum Elastic.ProposalStatus",
-                    "name": "status",
-                    "type": "uint8"
+                    "internalType": "uint256",
+                    "name": "collateral",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
                 }
             ],
-            "name": "ChangedProposalStatus",
+            "name": "ListedNFTDataModified",
             "type": "event"
         },
         {
@@ -67,9 +73,9 @@
                 },
                 {
                     "indexed": true,
-                    "internalType": "bytes32",
+                    "internalType": "string",
                     "name": "benefits",
-                    "type": "bytes32"
+                    "type": "string"
                 },
                 {
                     "indexed": false,
@@ -119,15 +125,28 @@
                     "internalType": "uint256",
                     "name": "itemId",
                     "type": "uint256"
+                }
+            ],
+            "name": "NFTRented",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
                 },
                 {
                     "indexed": false,
                     "internalType": "uint256",
-                    "name": "proposalId",
+                    "name": "timestamp",
                     "type": "uint256"
                 }
             ],
-            "name": "NFTRented",
+            "name": "NFTReturned",
             "type": "event"
         },
         {
@@ -155,31 +174,6 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "tenant",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "itemId",
-                    "type": "uint256"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "proposalId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "NewProposal",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
                     "name": "previousOwner",
                     "type": "address"
                 },
@@ -197,18 +191,19 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "_proposalId",
+                    "name": "",
                     "type": "uint256"
-                },
-                {
-                    "internalType": "enum Elastic.ProposalStatus",
-                    "name": "_status",
-                    "type": "uint8"
                 }
             ],
-            "name": "changeProposalStatus",
-            "outputs": [],
-            "stateMutability": "nonpayable",
+            "name": "activeItem",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {
@@ -248,18 +243,18 @@
                 },
                 {
                     "internalType": "bool",
-                    "name": "automaticApproval",
-                    "type": "bool"
-                },
-                {
-                    "internalType": "bool",
                     "name": "rented",
                     "type": "bool"
                 },
                 {
-                    "internalType": "bytes32",
+                    "internalType": "string",
                     "name": "benefits",
-                    "type": "bytes32"
+                    "type": "string"
+                },
+                {
+                    "internalType": "address",
+                    "name": "agreementAddress",
+                    "type": "address"
                 }
             ],
             "stateMutability": "view",
@@ -288,9 +283,9 @@
                     "type": "uint256"
                 },
                 {
-                    "internalType": "bytes32",
+                    "internalType": "string",
                     "name": "_benefits",
-                    "type": "bytes32"
+                    "type": "string"
                 }
             ],
             "name": "listNFT",
@@ -307,11 +302,16 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "_daysToRent",
+                    "name": "_collateral",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_price",
                     "type": "uint256"
                 }
             ],
-            "name": "newProposal",
+            "name": "modifyListedNFT",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -330,8 +330,43 @@
             "type": "function"
         },
         {
-            "inputs": [],
-            "name": "nextProposalId",
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "nftListed",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "nftsListedByOwner",
             "outputs": [
                 {
                     "internalType": "uint256",
@@ -356,62 +391,10 @@
             "type": "function"
         },
         {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "name": "proposals",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "tenant",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "itemId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "enum Elastic.ProposalStatus",
-                    "name": "status",
-                    "type": "uint8"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "daysToRent",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "address",
-                    "name": "agreementAddress",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
             "inputs": [],
             "name": "renounceOwnership",
             "outputs": [],
             "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_proposalId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "rent",
-            "outputs": [],
-            "stateMutability": "payable",
             "type": "function"
         },
         {
@@ -435,7 +418,7 @@
                     "type": "uint256"
                 }
             ],
-            "name": "unlistNFT",
+            "name": "updateNFTRentedToReturn",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
