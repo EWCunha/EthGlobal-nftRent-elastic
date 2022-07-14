@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Button, Typography, Card, Grid, TextField } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import ercInterfaceABI from '../contracts/ERC721.json'
+import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
 import ElasticContractJSON from '../contracts/Elastic.json'
 const List = () => {
