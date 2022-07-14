@@ -1,11 +1,11 @@
 
 import {Routes, Route} from "react-router-dom";
-import Home from "./components /Home";
-import Rent from "./components /Rent";
-import List from "./components /List";
-import Search from "./components /Search";
-import Header from "./components /Header";
-import Dashboard from "./components /Dashboard";
+import Home from "./components/Home";
+import Rent from "./components/Rent";
+import List from "./components/List";
+import Search from "./components/Search";
+import Header from "./components/Header";
+import Dashboard from "./components/Dashboard";
 import { createTheme, ThemeProvider} from "@mui/material"
 import contractJSON from "./contracts/Elastic.json"
 import { ethers } from 'ethers'
