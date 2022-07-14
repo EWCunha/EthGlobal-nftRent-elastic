@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Button} from "@mui/material"
 import { ethers } from 'ethers'
 import { useDispatch } from 'react-redux'
-import contractJSON from "../contract_info/contractABI.json"
+import contractJSON from "../contracts/Elastic.json"
 
 const Web3Connect = () => {
 

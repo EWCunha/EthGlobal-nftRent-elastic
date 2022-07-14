@@ -7,10 +7,11 @@ import Search from "./components /Search";
 import Header from "./components /Header";
 import Dashboard from "./components /Dashboard";
 import { createTheme, ThemeProvider} from "@mui/material"
-import contractJSON from "./contract_info/contractABI.json"
+import contractJSON from "./contracts/Elastic.json"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
+
 
 let theme = createTheme({
   palette: {

@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Button, Typography, Card, Grid, TextField } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-
+import ercInterfaceABI from '../contracts/ERC721.json'
+import { ethers } from 'ethers'
+import ElasticContractJSON from '../contracts/ERC721.json'
 const List = () => {
 
   const defaultAccount = useSelector((state) => state.defaultAccount)
   const contract = useSelector((state) => state.contract)
+  const tempSigner = useSelector((state)=> state.signer)
+  const interfaceERC = useSelector((state)=> state.ercInterface)
 
   const [benefits, setBenefits] = useState(null);
   const [rentPerDay, setRentPerDay] = useState(null);
   const [collateralDeposit, setCollateralDeposit] = useState(null);
   const [nFTAddress, setNFTAddress] = useState(null);
   const [tokenId, setTokenId] = useState(null);
+
+  const elasticContractAddress = ElasticContractJSON.address
 
   useEffect (() => {
     if (benefits){
@@ -32,10 +38,19 @@ const List = () => {
   },[collateralDeposit])
 
   useEffect (() => {
-    if (nFTAddress){
-      console.log(nFTAddress);
-    }
-  },[nFTAddress])
+    console.log(nFTAddress);
+    if (ethers.utils.isAddress(nFTAddress)){
+      console.log("CONTRACT ADDRESS DETECTED")   
+      try{   
+        const interfaceERC = new ethers.Contract(nFTAddress, ercInterfaceABI, tempSigner)
+        dispatch({type:"SET_ERC_INTERFACE",payload: interfaceERC})
+        }
+      catch{
+        alert("contract object for interface not made")
+        }    
+  }
+}
+,[nFTAddress])
 
   useEffect (() => {
     if (tokenId){
@@ -45,14 +60,37 @@ const List = () => {
 
   const dispatch = useDispatch()
 
-  const listNFT= () => {
-    contract.listNFT(
-      nFTAddress,
+
+
+  const listNFT= async () => {
+   //isApprovedForAll(address owner, address operator)
+   //Returns if the operator is allowed to manage all of the assets of owner.
+    if(await interfaceERC.isApprovedForAll(nFTAddress,elasticContractAddress)){
+      await contract.listNFT(
+       nFTAddress,
        tokenId,
        rentPerDay,
        collateralDeposit,
        benefits
       )
+    }
+    else{
+      try{
+      await interfaceERC.setApprovalForAll(elasticContractAddress,true)
+      await contract.listNFT(
+        nFTAddress,
+        tokenId,
+        rentPerDay,
+        collateralDeposit,
+        benefits
+       )
+
+      }
+      catch{
+        alert("Approval could not be set")
+      }
+
+    }
   }
 
   return (

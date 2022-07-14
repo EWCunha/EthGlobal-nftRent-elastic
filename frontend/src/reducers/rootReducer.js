@@ -4,7 +4,8 @@ const initialState = {
     defaultAccountBalance: null,
     provider: null,
     signer: null,
-    contract:null
+    contract:null, 
+    ercInterface:null,
  }
 
  function rootReducer( state = initialState, action) {
@@ -32,6 +33,10 @@ const initialState = {
         case "SET_CONTRACT":
             return{
                 ...state, contract:action.payload
+            }
+        case "SET_ERC_INTERFACE":
+            return{
+                ...state, ercInterface:action.payload
             }
         default:
             return state
