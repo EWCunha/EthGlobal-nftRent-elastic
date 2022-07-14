@@ -94,8 +94,8 @@
       }
     },
     "contracts/Elastic.sol": {
-      "lastModificationDate": 1657838679598,
-      "contentHash": "649729ad3f7b2e2019b2ceb23cd8022c",
+      "lastModificationDate": 1657840422297,
+      "contentHash": "80f0362995230ff33fb5efaea407dcf9",
       "sourceName": "contracts/Elastic.sol",
       "solcConfig": {
         "settings": {
@@ -129,6 +129,7 @@
         "contracts/interfaces/IElastic.sol",
         "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
         "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol"
       ],

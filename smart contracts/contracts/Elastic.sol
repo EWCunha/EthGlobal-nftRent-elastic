@@ -2,6 +2,7 @@
 pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IAgreement.sol";
 import "./Agreement.sol";
@@ -36,6 +37,7 @@ contract Elastic is Ownable {
     event NFTListed(
         address indexed owner,
         uint256 indexed itemId,
+        string tokenURI,
         string indexed benefits,
         uint256 collateral,
         uint256 price
@@ -115,6 +117,7 @@ contract Elastic is Ownable {
         emit NFTListed(
             msg.sender,
             nextItemId--,
+            IERC721Metadata(_nft).tokenURI(_tokenId),
             _benefits,
             _collateral,
             _price
