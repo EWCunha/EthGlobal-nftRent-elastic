@@ -218,7 +218,11 @@ contract Elastic is Ownable {
     @param _itemId id of the listed NFT
     @param _daysToRent number of days to rent NFT
     */
-    function rent(uint256 _itemId, uint256 _daysToRent) external payable {
+    function rent(uint256 _itemId, uint256 _daysToRent)
+        external
+        payable
+        returns (address)
+    {
         require(activeItem[_itemId] == true, "not active");
         NFTData memory item = items[_itemId];
 
@@ -263,6 +267,7 @@ contract Elastic is Ownable {
             items[_itemId].nftAddress,
             _itemId
         );
+        return address(agreement);
     }
 
     modifier onlyAuthorized(uint256 _itemId) {

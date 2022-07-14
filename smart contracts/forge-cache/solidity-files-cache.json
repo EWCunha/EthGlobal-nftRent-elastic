@@ -51,8 +51,8 @@
       }
     },
     "contracts/Agreement.sol": {
-      "lastModificationDate": 1657837024401,
-      "contentHash": "2cf208ccc7559dc7db5e0c9ba4cd1fa8",
+      "lastModificationDate": 1657838920701,
+      "contentHash": "9ee565c3c099c7142bfb911a32dd70bb",
       "sourceName": "contracts/Agreement.sol",
       "solcConfig": {
         "settings": {
@@ -94,8 +94,8 @@
       }
     },
     "contracts/Elastic.sol": {
-      "lastModificationDate": 1657838501765,
-      "contentHash": "359de9a4f989b2cdc8cde254452c176f",
+      "lastModificationDate": 1657838679598,
+      "contentHash": "649729ad3f7b2e2019b2ceb23cd8022c",
       "sourceName": "contracts/Elastic.sol",
       "solcConfig": {
         "settings": {
@@ -188,8 +188,8 @@
       }
     },
     "contracts/interfaces/IAgreement.sol": {
-      "lastModificationDate": 1657828166488,
-      "contentHash": "5ef4b9e9aa819b800e78ef52ccab4a89",
+      "lastModificationDate": 1657838938713,
+      "contentHash": "2371f35a39d29c58f86a2adcd3858835",
       "sourceName": "contracts/interfaces/IAgreement.sol",
       "solcConfig": {
         "settings": {
@@ -997,8 +997,8 @@
       }
     },
     "test/Elastic.t.sol": {
-      "lastModificationDate": 1657838476059,
-      "contentHash": "61c3b59b4a1c2ff431d138c27c70aac3",
+      "lastModificationDate": 1657838956068,
+      "contentHash": "f7622187f57a8ef7cd6ea5684b923a2f",
       "sourceName": "test/Elastic.t.sol",
       "solcConfig": {
         "settings": {

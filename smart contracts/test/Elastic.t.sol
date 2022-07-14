@@ -4,6 +4,7 @@ pragma solidity ^0.8.15;
 import "../contracts/Elastic.sol";
 import "../contracts/Agreement.sol";
 import "../contracts/Test/TESTERC721.sol";
+import "../contracts/interfaces/IAgreement.sol";
 import "forge-std/Test.sol";
 
 contract ElasticTest is Test {
@@ -57,6 +58,7 @@ contract ElasticTest is Test {
         vm.deal(address(elastic), 100000000e18);
         console2.log(address(tenant).balance);
         vm.prank(tenant);
-        elastic.rent{value: 12e18}(1, 30);
+        address agreement = elastic.rent{value: 12e18}(1, 30);
+        assertEq(IAgreement(agreement).getElasticAddress(), address(elastic));
     }
 }
