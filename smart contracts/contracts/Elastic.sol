@@ -21,6 +21,7 @@ contract Elastic is Ownable {
     uint256 public nextItemId = 1; // 0 is reserved for items no longer listed
 
     mapping(address => uint256[]) public nftsListedByOwner;
+    mapping(address => uint256[]) public borrowersNfts;
     mapping(uint256 => bool) public activeItem;
     mapping(address => mapping(uint256 => bool)) public nftListed;
     mapping(uint256 => NFTData) public items;
@@ -35,7 +36,7 @@ contract Elastic is Ownable {
     event NFTListed(
         address indexed owner,
         uint256 indexed itemId,
-        bytes32 indexed benefits,
+        string indexed benefits,
         uint256 collateral,
         uint256 price
     );
@@ -67,7 +68,7 @@ contract Elastic is Ownable {
         uint256 _tokenId,
         uint256 _price,
         uint256 _collateral,
-        string _benefits
+        string calldata _benefits
     ) external {
         if (IERC721(_nft).ownerOf(_tokenId) != msg.sender) {
             revert NotOwner();
@@ -120,12 +121,19 @@ contract Elastic is Ownable {
         }
 
         delete items[_itemId];
+        uint256 jj;
         for (uint256 ii = 0; ii < nftsListedByOwner[msg.sender].length; ii++) {
             if (nftsListedByOwner[msg.sender][ii] == _itemId) {
-                nftsListedByOwner[msg.sender].pop(ii);
-                break;
+                delete nftsListedByOwner[msg.sender][ii];
+                jj = ii;
+            }
+            if (ii > jj) {
+                nftsListedByOwner[msg.sender][
+                    jj + (1 - (ii - jj))
+                ] = nftsListedByOwner[msg.sender][ii];
             }
         }
+        nftsListedByOwner[msg.sender].pop();
 
         activeItem[_itemId] = false;
         nftListed[items[_itemId].nftAddress][items[_itemId].tokenId] = false;
@@ -144,7 +152,6 @@ contract Elastic is Ownable {
         uint256 _collateral,
         uint256 _price
     ) external {
-        NFTData storage data = items[_itemId];
         if (items[_itemId].rented) {
             revert AlreadyRented();
         }
@@ -159,12 +166,27 @@ contract Elastic is Ownable {
     @notice updateNFTRentedToReturn sets the rented field of listed NFT to false
     @param _itemId ID of the listed NFT
     */
-    function updateNFTRentedToReturn(uint256 _itemId) external {
+    function returnNFT(uint256 _itemId, address _borrower) external {
         if (items[_itemId].agreementAddress != msg.sender) {
             revert AccessDenied();
         }
 
         items[_itemId].rented = false;
+        items[_itemId].agreementAddress = address(0);
+
+        uint256 jj;
+        for (uint256 ii = 0; ii < borrowersNfts[_borrower].length; ii++) {
+            if (borrowersNfts[_borrower][ii] == _itemId) {
+                delete borrowersNfts[_borrower][ii];
+                jj = ii;
+            }
+            if (ii > jj) {
+                borrowersNfts[_borrower][jj + (1 - (ii - jj))] = borrowersNfts[
+                    _borrower
+                ][ii];
+            }
+        }
+        borrowersNfts[_borrower].pop();
 
         emit NFTReturned(_itemId, block.timestamp);
     }
@@ -180,7 +202,7 @@ contract Elastic is Ownable {
         if (item.rented) {
             revert AlreadyRented();
         }
-        if (msg.sender != proposalCreator) {
+        if (msg.sender == item.owner) {
             revert AccessDenied();
         }
         if (msg.value >= item.collateral) {
@@ -201,6 +223,7 @@ contract Elastic is Ownable {
         payable(address(agreement)).transfer(msg.value);
         item.agreementAddress = address(agreement);
         item.rented = true;
+        borrowersNfts[msg.sender].push(_itemId);
 
         // transfer NFT to tenant
         address _nft = items[_itemId].nftAddress;
@@ -222,5 +245,7 @@ contract Elastic is Ownable {
         ) {
             revert AccessDenied();
         }
+
+        _;
     }
 }

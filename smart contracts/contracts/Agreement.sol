@@ -3,6 +3,7 @@ pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IAgreement.sol";
+import "./interfaces/IElastic.sol";
 
 contract Agreement is IAgreement {
     address public elasticAddress;
@@ -44,7 +45,6 @@ contract Agreement is IAgreement {
         uint256 _rentDays,
         uint256 _tokenId,
         address _nftAddress,
-        uint256 _proposalId,
         uint256 _price
     ) {
         elasticAddress = _elasticAddress;
@@ -54,7 +54,6 @@ contract Agreement is IAgreement {
         agreement.rentDays = _rentDays;
         agreement.tokenId = _tokenId;
         agreement.nftAddress = _nftAddress;
-        agreement.proposalId = _proposalId;
         agreement.price = _price;
         agreement.startTime = block.timestamp;
     }
@@ -182,6 +181,8 @@ contract Agreement is IAgreement {
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
 
+        IElastic(elasticAddress).updateNFTRentedToReturn(agreement.tokenId);
+
         emit NFTReturned(
             address(this),
             agreement.owner,
@@ -205,6 +206,8 @@ contract Agreement is IAgreement {
         payable(msg.sender).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
 
+        IElastic(elasticAddress).unlistNFT(agreement.tokenId);
+
         emit CollateralWithdrawed(
             address(this),
             agreement.owner,
@@ -217,13 +220,6 @@ contract Agreement is IAgreement {
     @notice _burnAgreement internal function to burn this smart contract after its end
     */
     function _burnAgreement() internal {
-        (bool success, ) = elasticAddress.call(
-            abi.encodeWithSignature(
-                "changeProposalStatus(uint256,ProposalStatus)",
-                agreement.proposalId,
-                4
-            )
-        );
         selfdestruct(payable(elasticAddress));
     }
 
