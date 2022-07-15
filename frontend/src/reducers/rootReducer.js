@@ -1,5 +1,5 @@
 const initialState = { 
-    benefits: ["apple", "pear"], 
+    nftData: null, 
     defaultAccount: null,
     defaultAccountBalance: null,
     provider: null,
@@ -10,9 +10,9 @@ const initialState = {
 
  function rootReducer( state = initialState, action) {
     switch(action.type) {
-        case "ENTER_DESCRIPTION": 
+        case "SET_NFT_DATA": 
             return {
-                ...state, benefits: [...state.benefits, action.payload]
+                ...state, nftData: action.payload
             }
         case "SET_PROVIDER":
             return{

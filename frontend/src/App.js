@@ -11,7 +11,7 @@ import contractJSON from "./contracts/Elastic.json"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
-
+import ElasticContractBuilder from './contracts/Elastic.json'
 
 let theme = createTheme({
   palette: {
@@ -31,27 +31,46 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const state = useSelector(state=>state)
+  const provider = useSelector(state => state.provider)
 
   const [stateContract, setStateContract] = useState(null)
 
   useEffect(() => {
     updateEthers()
-    
   },[])
+
+  useEffect(()=>{
+    if(provider){
+      LogData()
+    }
+  },[provider])
 
 
   //useEffect for debugging
-  useEffect(() => {
-    if(stateContract) {
-      console.log(state)
-    }
-  },[stateContract])
+  // useEffect(() => {
+  //   if(stateContract) {
+  //     console.log(state)
+  //   }
+  // },[stateContract])
 
+  async function LogData() {
+    const eventABI = ["event NFTListed(address indexed owner,uint256 indexed itemId,string tokenURI,string indexed benefits,string benefits,uint256 collateral,uint256 price)"]
+    const iface = new ethers.utils.Interface(eventABI)
+
+    const filter = {
+      address: ElasticContractBuilder.address,
+      topics: [iface.getEventTopic("NFTListed")],
+      fromBlock: 0
+    }
+
+    const logs = await provider.getLogs(filter)
+    const decodedEvents = logs.map(log => {
+      return iface.parseLog(log).args
+    })
+    dispatch({type:'SET_NFT_DATA',payload:decodedEvents})
+  }
 
   const updateEthers = async () => {
-    
-
     
     let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
     dispatch({type:"SET_PROVIDER",payload:tempProvider})
