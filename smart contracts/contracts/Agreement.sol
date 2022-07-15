@@ -223,6 +223,8 @@ contract Agreement is IAgreement {
         selfdestruct(payable(elasticAddress));
     }
 
+    receive() external payable {}
+
     modifier onlyBorrower() {
         require(agreement.borrower == msg.sender, "access denied");
         _;

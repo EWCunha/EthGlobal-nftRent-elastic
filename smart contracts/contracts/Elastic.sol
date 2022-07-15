@@ -238,6 +238,8 @@ contract Elastic is Ownable {
         );
     }
 
+    receive() external payable {}
+
     modifier onlyAuthorized(uint256 _itemId) {
         if (
             items[_itemId].owner != msg.sender &&
