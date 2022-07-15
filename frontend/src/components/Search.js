@@ -30,6 +30,8 @@ const Search = () => {
     const eventABI = ["event NFTListed(address indexed owner,uint256 indexed itemId,string tokenURI,string indexed benefits,string benefits,uint256 collateral,uint256 price)"]
     const iface = new ethers.utils.Interface(eventABI)
 
+
+
     const filter = {
       address: ElasticContractBuilder.address,
       topics: [iface.getEventTopic("NFTListed")],
