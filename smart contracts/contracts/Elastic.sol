@@ -121,6 +121,7 @@ contract Elastic is Ownable {
             IERC721Metadata(_nft).tokenURI(_tokenId),
             _benefits,
             _benefits,
+            _benefits,
             _collateral,
             _price
         );
@@ -272,6 +273,8 @@ contract Elastic is Ownable {
         );
         return address(agreement);
     }
+
+    receive() external payable {}
 
     modifier onlyAuthorized(uint256 _itemId) {
         if (
