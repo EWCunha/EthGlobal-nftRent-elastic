@@ -1,5 +1,5 @@
 {
-    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "address": "0x33e6961eDc112C0213B70c17ad01AD6Ae9E09A96",
     "abi": [
         {
             "inputs": [],
@@ -72,9 +72,21 @@
                     "type": "uint256"
                 },
                 {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "tokenURI",
+                    "type": "string"
+                },
+                {
                     "indexed": true,
                     "internalType": "string",
                     "name": "benefits",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "benefitsClearText",
                     "type": "string"
                 },
                 {
@@ -188,6 +200,10 @@
             "type": "event"
         },
         {
+            "stateMutability": "payable",
+            "type": "fallback"
+        },
+        {
             "inputs": [
                 {
                     "internalType": "uint256",
@@ -225,6 +241,86 @@
                     "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "_item",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getDataItem",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "address",
+                            "name": "owner",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "tokenId",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "nftAddress",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "collateral",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "pricePerDay",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "rented",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "benefits",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "agreementAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "internalType": "struct Elastic.NFTData",
+                    "name": "",
+                    "type": "tuple"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                }
+            ],
+            "name": "getItemListByOwner",
+            "outputs": [
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
                 }
             ],
             "stateMutability": "view",
@@ -435,7 +531,13 @@
                 }
             ],
             "name": "rent",
-            "outputs": [],
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
             "stateMutability": "payable",
             "type": "function"
         },
@@ -482,10 +584,6 @@
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
-        },
-        {
-            "stateMutability": "payable",
-            "type": "receive"
         }
     ]
 }
