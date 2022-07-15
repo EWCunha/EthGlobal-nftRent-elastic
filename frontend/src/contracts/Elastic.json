@@ -1,5 +1,5 @@
 {
-    "address": "0x33e6961eDc112C0213B70c17ad01AD6Ae9E09A96",
+    "address": "0x6FCBBf1131F70E557d1Cf2C43591cE2C18C01832",
     "abi": [
         {
             "inputs": [],
@@ -121,7 +121,7 @@
                     "type": "address"
                 },
                 {
-                    "indexed": true,
+                    "indexed": false,
                     "internalType": "address",
                     "name": "agreement",
                     "type": "address"
@@ -133,7 +133,7 @@
                     "type": "address"
                 },
                 {
-                    "indexed": false,
+                    "indexed": true,
                     "internalType": "uint256",
                     "name": "itemId",
                     "type": "uint256"

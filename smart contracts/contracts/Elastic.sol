@@ -47,9 +47,9 @@ contract Elastic is Ownable {
     event NFTRented(
         address indexed owner,
         address indexed tenant,
-        address indexed agreement,
+        address agreement,
         address itemAddress,
-        uint256 itemId
+        uint256 indexed itemId
     );
     event ListedNFTDataModified(
         uint256 indexed itemId,
