@@ -81,7 +81,7 @@ const List = () => {
         console.log("not approved- so getting approval...")
 
       await interfaceERC.setApprovalForAll(elasticContractAddress,true)
-  
+
       await contract.listNFT(
         nFTAddress,
         tokenId,
