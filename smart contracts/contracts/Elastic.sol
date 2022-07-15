@@ -88,7 +88,7 @@ contract Elastic is Ownable {
         uint256 _price,
         uint256 _collateral,
         string calldata _benefits
-    ) external returns (uint256) {
+    ) external {
         if (IERC721(_nft).ownerOf(_tokenId) != msg.sender) {
             revert NotOwner();
         }
@@ -117,15 +117,13 @@ contract Elastic is Ownable {
 
         emit NFTListed(
             msg.sender,
-            nextItemId--,
+            nextItemId - 1,
             IERC721Metadata(_nft).tokenURI(_tokenId),
             _benefits,
             _benefits,
             _collateral,
             _price
         );
-
-        return nextItemId--;
     }
 
     /**

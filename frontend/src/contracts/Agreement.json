@@ -178,6 +178,10 @@
             "type": "event"
         },
         {
+            "stateMutability": "payable",
+            "type": "fallback"
+        },
+        {
             "inputs": [],
             "name": "acceptUpdatedAgreementData",
             "outputs": [],
@@ -187,6 +191,19 @@
         {
             "inputs": [],
             "name": "elasticAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getElasticAddress",
             "outputs": [
                 {
                     "internalType": "address",
@@ -346,10 +363,6 @@
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
-        },
-        {
-            "stateMutability": "payable",
-            "type": "receive"
         }
     ]
 }
