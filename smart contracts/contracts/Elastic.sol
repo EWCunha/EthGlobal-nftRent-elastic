@@ -2,6 +2,7 @@
 pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IAgreement.sol";
 import "./Agreement.sol";
@@ -36,6 +37,7 @@ contract Elastic is Ownable {
     event NFTListed(
         address indexed owner,
         uint256 indexed itemId,
+        string tokenURI,
         string indexed benefits,
         uint256 collateral,
         uint256 price
@@ -56,6 +58,22 @@ contract Elastic is Ownable {
     event NFTReturned(uint256 indexed itemId, uint256 timestamp);
 
     /**
+    @notice return the list of item owner by the msg.sender
+    @param _owner , address to check 
+    */
+    function getItemListByOwner(address _owner)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return nftsListedByOwner[_owner];
+    }
+
+    function getDataItem(uint256 _item) public view returns (NFTData memory) {
+        return items[_item];
+    }
+
+    /**
     @notice depositToRent allows owner of NFT to list his nft to the marketplace
     @param _nft address of ERC721
     @param _tokenId ERC721's tokenID
@@ -69,21 +87,23 @@ contract Elastic is Ownable {
         uint256 _price,
         uint256 _collateral,
         string calldata _benefits
-    ) external {
+    ) external returns (uint256) {
         if (IERC721(_nft).ownerOf(_tokenId) != msg.sender) {
             revert NotOwner();
         }
         IERC721(_nft).transferFrom(msg.sender, address(this), _tokenId);
 
         // add new item to the marketpalce
-        NFTData memory item;
-        item.owner = msg.sender;
-        item.tokenId = _tokenId;
-        item.nftAddress = _nft;
-        item.collateral = _collateral;
-        item.pricePerDay = _price;
-        item.rented = false;
-        item.benefits = _benefits;
+        NFTData memory item = NFTData(
+            msg.sender,
+            _tokenId,
+            _nft,
+            _collateral,
+            _price,
+            false,
+            _benefits,
+            address(0)
+        );
 
         nftsListedByOwner[msg.sender].push(nextItemId);
         items[nextItemId] = item;
@@ -97,10 +117,13 @@ contract Elastic is Ownable {
         emit NFTListed(
             msg.sender,
             nextItemId--,
+            IERC721Metadata(_nft).tokenURI(_tokenId),
             _benefits,
             _collateral,
             _price
         );
+
+        return nextItemId--;
     }
 
     /**
@@ -152,6 +175,8 @@ contract Elastic is Ownable {
         uint256 _collateral,
         uint256 _price
     ) external {
+        require(activeItem[_itemId] == true, "not active");
+        require(items[_itemId].owner == msg.sender, "not owner");
         if (items[_itemId].rented) {
             revert AlreadyRented();
         }
@@ -196,8 +221,13 @@ contract Elastic is Ownable {
     @param _itemId id of the listed NFT
     @param _daysToRent number of days to rent NFT
     */
-    function rent(uint256 _itemId, uint256 _daysToRent) external payable {
-        NFTData storage item = items[_itemId];
+    function rent(uint256 _itemId, uint256 _daysToRent)
+        external
+        payable
+        returns (address)
+    {
+        require(activeItem[_itemId] == true, "not active");
+        NFTData memory item = items[_itemId];
 
         if (item.rented) {
             revert AlreadyRented();
@@ -205,7 +235,7 @@ contract Elastic is Ownable {
         if (msg.sender == item.owner) {
             revert AccessDenied();
         }
-        if (msg.value >= item.collateral) {
+        if (msg.value < item.collateral) {
             revert LowAmount();
         }
 
@@ -226,16 +256,21 @@ contract Elastic is Ownable {
         borrowersNfts[msg.sender].push(_itemId);
 
         // transfer NFT to tenant
-        address _nft = items[_itemId].nftAddress;
-        IERC721(_nft).transferFrom(address(this), msg.sender, item.tokenId);
+
+        IERC721(items[_itemId].nftAddress).transferFrom(
+            address(this),
+            msg.sender,
+            items[_itemId].tokenId
+        );
 
         emit NFTRented(
             item.owner,
             msg.sender,
             address(agreement),
-            _nft,
+            items[_itemId].nftAddress,
             _itemId
         );
+        return address(agreement);
     }
 
     modifier onlyAuthorized(uint256 _itemId) {

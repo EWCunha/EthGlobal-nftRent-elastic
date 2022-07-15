@@ -2,6 +2,7 @@
 smart contracts/node_modules
 smart contracts/artifacts
 smart contracts/cache
+smart contracts/out/
 smart contracts/.env
 smart contracts/contracts/Advanced
 
