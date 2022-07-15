@@ -42,4 +42,6 @@ interface IAgreement {
     function returnNFT() external payable;
 
     function withdrawCollateral() external;
+
+    function getElasticAddress() external returns (address);
 }

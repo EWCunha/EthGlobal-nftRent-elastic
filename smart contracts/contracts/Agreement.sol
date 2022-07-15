@@ -58,6 +58,10 @@ contract Agreement is IAgreement {
         agreement.startTime = block.timestamp;
     }
 
+    function getElasticAddress() public view returns (address) {
+        return elasticAddress;
+    }
+
     /**
     @notice readPayment allows the owner, the borrower, and the broker smart contract to read the required payment amount so far
     */
@@ -244,4 +248,6 @@ contract Agreement is IAgreement {
         );
         _;
     }
+
+    fallback() external payable {}
 }
