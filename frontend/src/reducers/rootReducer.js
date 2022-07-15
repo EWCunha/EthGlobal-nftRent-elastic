@@ -12,7 +12,7 @@ const initialState = {
     switch(action.type) {
         case "SET_NFT_DATA": 
             return {
-                ...state, benefits: action.payload
+                ...state, nftData: action.payload
             }
         case "SET_PROVIDER":
             return{

@@ -15,9 +15,9 @@ const Search = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (provider && ElasticContractBuilder.address) {
-      LogData()
-    }
+   if(nftData){
+    console.log(nftData)
+   }
   }, [])
 
   //   useEffect(()=>{
@@ -26,24 +26,24 @@ const Search = () => {
   //   }
   //   },[nftData])
 
-  async function LogData() {
-    const eventABI = ["event NFTListed(address indexed owner,uint256 indexed itemId,string tokenURI,string indexed benefits,string benefits,uint256 collateral,uint256 price)"]
-    const iface = new ethers.utils.Interface(eventABI)
+  // async function LogData() {
+  //   const eventABI = ["event NFTListed(address indexed owner,uint256 indexed itemId,string tokenURI,string indexed benefits,string benefits,uint256 collateral,uint256 price)"]
+  //   const iface = new ethers.utils.Interface(eventABI)
 
 
 
-    const filter = {
-      address: ElasticContractBuilder.address,
-      topics: [iface.getEventTopic("NFTListed")],
-      fromBlock: 0
-    }
+  //   const filter = {
+  //     address: ElasticContractBuilder.address,
+  //     topics: [iface.getEventTopic("NFTListed")],
+  //     fromBlock: 0
+  //   }
 
-    const logs = await provider.getLogs(filter)
-    const decodedEvents = logs.map(log => {
-      return iface.parseLog(log).args
-    })
-    console.log(decodedEvents)
-  }
+  //   const logs = await provider.getLogs(filter)
+  //   const decodedEvents = logs.map(log => {
+  //     return iface.parseLog(log).args
+  //   })
+  //   console.log(decodedEvents)
+  // }
 
   // const SearchResults = () => {
   //   return(
