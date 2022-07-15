@@ -39,6 +39,7 @@ contract Elastic is Ownable {
         uint256 indexed itemId,
         string tokenURI,
         string indexed benefits,
+        string benefitsClearText,
         uint256 collateral,
         uint256 price
     );
@@ -118,6 +119,7 @@ contract Elastic is Ownable {
             msg.sender,
             nextItemId--,
             IERC721Metadata(_nft).tokenURI(_tokenId),
+            _benefits,
             _benefits,
             _collateral,
             _price
@@ -273,8 +275,6 @@ contract Elastic is Ownable {
         return address(agreement);
     }
 
-    receive() external payable {}
-
     modifier onlyAuthorized(uint256 _itemId) {
         if (
             items[_itemId].owner != msg.sender &&
@@ -285,4 +285,6 @@ contract Elastic is Ownable {
 
         _;
     }
+
+    fallback() external payable {}
 }
