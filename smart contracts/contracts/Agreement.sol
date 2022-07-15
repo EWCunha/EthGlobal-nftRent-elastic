@@ -169,7 +169,7 @@ contract Agreement is IAgreement {
     */
     function returnNFT() external payable override onlyBorrower {
         uint256 totalPaymentAmount = (block.timestamp - agreement.startTime) *
-            agreement.price;
+            (agreement.price / (24 * 60 * 60));
 
         require(
             address(this).balance >= totalPaymentAmount,
