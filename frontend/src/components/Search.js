@@ -32,10 +32,10 @@ const Search = () => {
 
     const filter = {
       address: ElasticContractBuilder.address,
-      // topics: [iface.getEventTopic("NFTListed")],
+      topics: [iface.getEventTopic("NFTListed")],
       fromBlock: 0
     }
-    console.log(iface.getEventTopic("NFTListed") === ethers.utils.id("NFTListed(address,uint256,string,uint256,uint256)"))
+
     const logs = await provider.getLogs(filter)
     const decodedEvents = logs.map(log => {
       return iface.parseLog(log).args
