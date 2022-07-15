@@ -37,6 +37,7 @@ contract Elastic is Ownable {
         address indexed owner,
         uint256 indexed itemId,
         string indexed benefits,
+        string benefitsClearText,
         uint256 collateral,
         uint256 price
     );
@@ -97,6 +98,7 @@ contract Elastic is Ownable {
         emit NFTListed(
             msg.sender,
             nextItemId--,
+            _benefits,
             _benefits,
             _collateral,
             _price
@@ -237,6 +239,8 @@ contract Elastic is Ownable {
             _itemId
         );
     }
+
+    receive() external payable {}
 
     modifier onlyAuthorized(uint256 _itemId) {
         if (
