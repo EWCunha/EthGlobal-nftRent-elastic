@@ -12,6 +12,12 @@ async function main() {
   const elastic = await Elastic.deploy();
 
   await elastic.deployed();
+
+  await hre.run("verify:verify", {
+    address: elastic.address,
+    constructorArguments: [],
+  });
+
   const elastic_json = require("../artifacts/contracts/Elastic.sol/Elastic.json")
   const agreement_json = require("../artifacts/contracts/Agreement.sol/Agreement.json")
   const agora_json = require("../artifacts/contracts/Agora.sol/Agora.json")
