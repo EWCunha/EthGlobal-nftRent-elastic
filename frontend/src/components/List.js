@@ -8,157 +8,156 @@ const List = () => {
 
   const defaultAccount = useSelector((state) => state.defaultAccount)
   const contract = useSelector((state) => state.contract)
-  const tempSigner = useSelector((state)=> state.signer)
-  const interfaceERC = useSelector((state)=> state.ercInterface)
+  const tempSigner = useSelector((state) => state.signer)
+  const contractERC = useSelector((state) => state.ercInterface)
 
   const [benefits, setBenefits] = useState(null);
   const [rentPerDay, setRentPerDay] = useState(null);
   const [collateralDeposit, setCollateralDeposit] = useState(null);
   const [nFTAddress, setNFTAddress] = useState(null);
   const [tokenId, setTokenId] = useState(null);
+  const [approved, setApproved] = useState(false);
 
   const elasticContractAddress = ElasticContractJSON.address
 
-  useEffect (() => {
-    if (benefits){
+  useEffect(() => {
+    if (benefits) {
       console.log(benefits);
     }
-  },[benefits])
+  }, [benefits])
 
-  useEffect (() => {
-    if (rentPerDay){
+  useEffect(() => {
+    if (rentPerDay) {
       console.log(rentPerDay);
     }
-  },[rentPerDay])
+  }, [rentPerDay])
 
-  useEffect (() => {
-    if (collateralDeposit){
+  useEffect(() => {
+    if (collateralDeposit) {
       console.log(collateralDeposit);
     }
-  },[collateralDeposit])
+  }, [collateralDeposit])
 
-  useEffect (() => {
-    console.log(nFTAddress);
-    if (ethers.utils.isAddress(nFTAddress)){
-      console.log("CONTRACT ADDRESS DETECTED")   
-      try{   
-        const interfaceERC = new ethers.Contract(nFTAddress, ercInterfaceABI.abi, tempSigner)
-        dispatch({type:"SET_ERC_INTERFACE",payload: interfaceERC})
-        }
-      catch{
-        alert("contract object for interface not made")
-        }    
-  }
-}
-,[nFTAddress])
+  useEffect(() => {
+    if (ethers.utils.isAddress(nFTAddress)) {
+      const contractERC = new ethers.Contract(nFTAddress, ercInterfaceABI.abi, tempSigner)
+      dispatch({ type: "SET_ERC_INTERFACE", payload: contractERC })
+    }
+  }, [nFTAddress])
 
-  useEffect (() => {
-    if (tokenId){
+  useEffect(() => {
+    if (tokenId) {
       console.log(tokenId);
     }
-  },[tokenId])
+  }, [tokenId])
+
+  useEffect(() => {
+    if (defaultAccount && contractERC) {
+      checkIfApproved()
+    }
+  }, [defaultAccount, contractERC])
 
   const dispatch = useDispatch()
 
+  async function checkIfApproved() {
+    const isApproved = await contractERC.isApprovedForAll(defaultAccount, elasticContractAddress)
+    setApproved(isApproved)
+  }
 
-
-  const listNFT= async () => {
-    console.log("ELASTIC CONTRACT:", elasticContractAddress)
-   //isApprovedForAll(address owner, address operator)
-   //Returns if the operator is allowed to manage all of the assets of owner.
-    if(await interfaceERC.isApprovedForAll(nFTAddress,elasticContractAddress)){
-      console.log("approved- about to list...")
-      await contract.listNFT(
-       nFTAddress,
-       tokenId,
-       rentPerDay,
-       collateralDeposit,
-       benefits
-      )
+  const approveOperator = async () => {
+    if (!approved) {
+      await contractERC.setApprovalForAll(elasticContractAddress, true)
+      setApproved(true)
     }
-    else{
-      try{
-        console.log("not approved- so getting approval...")
+  }
 
-      await interfaceERC.setApprovalForAll(elasticContractAddress,true)
-
-      await contract.listNFT(
-        nFTAddress,
-        tokenId,
-        rentPerDay,
-        collateralDeposit,
-        benefits
-       )
-
-      }
-      catch{
-        alert("Approval could not be set")
-      }
-
-    }
+  const listNFT = async () => {
+    await contract.listNFT(
+      nFTAddress,
+      tokenId,
+      rentPerDay,
+      collateralDeposit,
+      benefits
+    )
   }
 
   return (
 
-    
-     defaultAccount ? (
-      
-      <Grid container item spacing = { 2 }>
 
-        <Grid container item xs={ 12 } sm={ 12 } md={ 12 }>
+    defaultAccount ? (
+
+      <Grid container item spacing={2}>
+
+        <Grid container item xs={12} sm={12} md={12}>
           <Typography>
             LIST AN NFT
           </Typography>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <TextField label="Details benefits"
-          variant="outlined"
-          onChange={(e) => setBenefits(e.target.value)}        
+            variant="outlined"
+            onChange={(e) => setBenefits(e.target.value)}
           >
           </TextField>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <TextField label="Rent per day"
-          variant="outlined"
-          onChange={(e) => setRentPerDay(e.target.value)}         
+            variant="outlined"
+            onChange={(e) => setRentPerDay(e.target.value)}
           >
           </TextField>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <TextField label="Collateral deposit"
-          variant="outlined"
-          onChange={(e) => setCollateralDeposit(e.target.value)}         
+            variant="outlined"
+            onChange={(e) => setCollateralDeposit(e.target.value)}
           >
           </TextField>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <TextField label="NFT address"
-          variant="outlined"
-          onChange={(e) => setNFTAddress(e.target.value)}        
+            variant="outlined"
+            onChange={(e) => setNFTAddress(e.target.value)}
           >
           </TextField>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <TextField label="Token id"
-          variant="outlined"
-          onChange={(e) => setTokenId(e.target.value)}        
+            variant="outlined"
+            onChange={(e) => setTokenId(e.target.value)}
           >
           </TextField>
         </Grid>
 
-        <Grid item xs={ 12 } sm={ 12 } md={ 12 }>
+        <Grid item xs={12} sm={12} md={12}>
           <Box>
-            <Button variant="contained"
-              color="error"
-              onClick={listNFT}
-            >
-              LIST NFT
-            </Button>
+            {contractERC ? (approved ? (
+              <Button variant="contained"
+                color="success"
+                onClick={listNFT}
+              >
+                LIST NFT
+              </Button>
+            ) : (
+              <Button variant="contained"
+                color="warning"
+                onClick={approveOperator}
+              >
+                APPROVE
+              </Button>
+            )) : (
+              <Button variant="contained"
+                color="error"
+              >
+                INPUT NFT ADDRESS
+              </Button>
+            )}
+
           </Box>
         </Grid>
 
