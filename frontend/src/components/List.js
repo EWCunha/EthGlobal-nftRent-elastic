@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography, Card, Grid, TextField } from '@mui/material'
+import { Box, Button, Typography, Card, Grid, TextField, tabClasses } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
@@ -66,7 +66,8 @@ const List = () => {
 
   const approveOperator = async () => {
     if (!approved) {
-      await contractERC.setApprovalForAll(elasticContractAddress, true)
+      const tx = await contractERC.setApprovalForAll(elasticContractAddress, true)
+      await tx.wait(1)
       setApproved(true)
     }
   }
