@@ -20,6 +20,7 @@ import {
 
 import { useSelector, useDispatch } from 'react-redux'
 import ElasticContractBuilder from '../contracts/Elastic.json'
+import { logEventData } from '../utils'
 import RentalModal from './RentalModal';
 
 const style = {
@@ -37,16 +38,25 @@ const Search = () => {
 
   const nftData = useSelector((state) => state.nftData)
   const contract = useSelector((state)=>state.contract)
+  const provider = useSelector(state => state.provider)
 
   const [data,setData] = useState(null)
   const [page,setPage] = useState(0)
   const [rowsPerPage,setRowsPerPage] = useState(5)
   const [searchwords,setSearchWords] = useState("")
 
-  const[rentdays, setRentDays] = useState(null)
+  const [rentdays, setRentDays] = useState(null)
   const [openModal, setOpenModal] = useState(false)
   const [itemSelect,setItemSelect] = useState(null)
   const [collateralSelect,setCollateralSelect] = useState(null)
+
+  const [listedNFTs, setListedNFTs] = useState([])
+
+  useEffect(() => {
+    if (provider && ElasticContractBuilder.address) {
+      logEventData("NFTListed", [], provider, setListedNFTs)
+    }
+  }, [])
 
 
 const repackageData = ()=>{

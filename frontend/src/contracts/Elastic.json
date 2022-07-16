@@ -1,5 +1,5 @@
 {
-    "address": "0x6FCBBf1131F70E557d1Cf2C43591cE2C18C01832",
+    "address": "0x6E28B85E80080F8d50436F0E2C9c44BF49cC56fe",
     "abi": [
         {
             "inputs": [],
@@ -136,6 +136,18 @@
                     "indexed": true,
                     "internalType": "uint256",
                     "name": "itemId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "daysToRent",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "startTime",
                     "type": "uint256"
                 }
             ],

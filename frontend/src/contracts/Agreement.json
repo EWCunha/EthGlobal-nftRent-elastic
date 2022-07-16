@@ -42,6 +42,11 @@
                     "internalType": "uint256",
                     "name": "_price",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_startTime",
+                    "type": "uint256"
                 }
             ],
             "stateMutability": "nonpayable",

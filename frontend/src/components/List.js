@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
 import ElasticContractJSON from '../contracts/Elastic.json'
+
 const List = () => {
 
   const defaultAccount = useSelector((state) => state.defaultAccount)
@@ -72,7 +73,8 @@ const List = () => {
     }
   }
 
-  const listNFT = async () => {
+  const listNFT = async (evt) => {
+    evt.preventDefault()
     const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
     const weiRentPerDay = ethers.utils.parseEther(rentPerDay.toString())
   
