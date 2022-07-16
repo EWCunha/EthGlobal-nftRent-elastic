@@ -73,11 +73,14 @@ const List = () => {
   }
 
   const listNFT = async () => {
+    const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
+    const weiRentPerDay = ethers.utils.parseEther(rentPerDay.toString())
+  
     await contract.listNFT(
       nFTAddress,
       tokenId,
-      rentPerDay,
-      collateralDeposit,
+      weiRentPerDay,
+      weiCollateral,
       benefits
     )
   }
@@ -104,7 +107,7 @@ const List = () => {
         </Grid>
 
         <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Rent per day"
+          <TextField label="Rent per day (ETH)"
             variant="outlined"
             onChange={(e) => setRentPerDay(e.target.value)}
           >
@@ -112,7 +115,7 @@ const List = () => {
         </Grid>
 
         <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Collateral deposit"
+          <TextField label="Collateral deposit (ETH)"
             variant="outlined"
             onChange={(e) => setCollateralDeposit(e.target.value)}
           >

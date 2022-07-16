@@ -16,6 +16,7 @@ import {
   Tab,
   Modal,
   } from '@mui/material'
+  import { ethers } from 'ethers'
 
 import { useSelector, useDispatch } from 'react-redux'
 import ElasticContractBuilder from '../contracts/Elastic.json'
@@ -45,6 +46,7 @@ const Search = () => {
   const[rentdays, setRentDays] = useState(null)
   const [openModal, setOpenModal] = useState(false)
   const [itemSelect,setItemSelect] = useState(null)
+  const [collateralSelect,setCollateralSelect] = useState(null)
 
 
 const repackageData = ()=>{
@@ -55,8 +57,9 @@ const repackageData = ()=>{
     simplifiedItem["itemId"]= item[1].toNumber()
     simplifiedItem["itemURI"] = item[2]
     simplifiedItem["itemDescription"] = item[4]
-    simplifiedItem["collateral"] = item[5].toNumber()
-    simplifiedItem["price"] = item[6].toNumber()
+    simplifiedItem["collateral"] = parseFloat(ethers.utils.formatEther(item[5]))
+    // console.log(typeof(ethers.utils.formatEther(item[5])))
+    simplifiedItem["price"] = parseFloat(ethers.utils.formatEther(item[6]))
     container.push(simplifiedItem)
   })
   return container
@@ -75,7 +78,9 @@ const handleChangeRowsPerPage = (event)=>{
   setPage(0)
 }
 
-const handleModalOpen = (select)=>{
+const handleModalOpen = (e,select,collateral)=>{
+  e.preventDefault()
+  setCollateralSelect(collateral)
   setItemSelect(select)
   setOpenModal(true)
 }
@@ -91,9 +96,14 @@ const handleRentalDays = (value)=>{
 }
 
 const completeRental = ()=>{
-  console.log("item select",itemSelect)
-  console.log("rent days",rentdays)
-  contract.rent(itemSelect,rentdays)
+  // console.log("item select",typeof(itemSelect))
+  // console.log("rent days",typeof(rentdays))
+  let numDays = parseInt(rentdays)
+  let collateralFloat = parseInt(collateralSelect)
+  // console.log(parseInt(collateralSelect))
+  const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
+  console.log("wei",parseInt(weiCollateral))
+  contract.rent(itemSelect,numDays,{value:weiCollateral})
 }
 
 const RenderedData = ()=>{
@@ -108,8 +118,8 @@ const RenderedData = ()=>{
                            <TableCell align="center">ItemID</TableCell>
                            <TableCell align="center">ItemURI</TableCell>
                            <TableCell align="center">Rental Benefits Description</TableCell>
-                           <TableCell align="center">Collateral</TableCell>
-                           <TableCell align="center">Price</TableCell>
+                           <TableCell align="center">Collateral (ETH)</TableCell>
+                           <TableCell align="center">Price (ETH)</TableCell>
                            <TableCell align="center"></TableCell>
                        </TableRow>
                        </TableHead>
@@ -118,6 +128,10 @@ const RenderedData = ()=>{
                {
                        data?(
                     data.slice(0).reverse().slice(page * rowsPerPage, page*rowsPerPage+rowsPerPage).map((item)=>{
+                      
+                      // let ethCollateral = ethers.utils.parseEther(item.collateral.toString())
+                      // console.log(parseInt(ethCollateral))
+                
                            return(
                            <TableRow key={item.itemId}>
                                <TableCell>{item.itemId}</TableCell> 
@@ -125,7 +139,7 @@ const RenderedData = ()=>{
                                <TableCell align="center">{item.itemDescription}</TableCell>
                                <TableCell align="center">{item.collateral}</TableCell>
                                <TableCell align="center">{item.price}</TableCell>
-                               <TableCell> <Button variant="contained" color="success" onClick={()=>handleModalOpen(item.itemId)}>RENT</Button> </TableCell>   
+                               <TableCell> <Button variant="contained" color="success" onClick={(e)=>handleModalOpen(e,item.itemId, item.collateral)}>RENT</Button> </TableCell>   
                            </TableRow> )
                })
     
