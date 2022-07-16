@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { ethers } from 'ethers'
 import ElasticContractBuilder from '../contracts/Elastic.json'
+import { logEventData } from '../utils'
 
 
 const Search = () => {
@@ -14,37 +15,25 @@ const Search = () => {
   const provider = useSelector(state => state.provider)
   const dispatch = useDispatch()
 
+  const [listedNFTs, setListedNFTs] = useState([])
+
   useEffect(() => {
     if (provider && ElasticContractBuilder.address) {
-      LogData()
+      logEventData("NFTListed", [], provider, setListedNFTs)
     }
   }, [])
+
+  useEffect(() => {
+    if (listedNFTs.length > 0) {
+      console.log(listedNFTs)
+    }
+  }, [listedNFTs])
 
   //   useEffect(()=>{
   //   if(nftData){
   //  console.log("nft Data",nftData)
   //   }
-  //   },[nftData])
-
-  async function LogData() {
-    const eventABI = ["event NFTListed(address indexed owner,uint256 indexed itemId,string tokenURI,string indexed benefits,string benefits,uint256 collateral,uint256 price)"]
-    const iface = new ethers.utils.Interface(eventABI)
-
-
-
-    const filter = {
-      address: ElasticContractBuilder.address,
-      topics: [iface.getEventTopic("NFTListed")],
-      fromBlock: 0
-    }
-
-    const logs = await provider.getLogs(filter)
-    const decodedEvents = logs.map(log => {
-      return iface.parseLog(log).args
-    })
-    console.log(decodedEvents)
-  }
-
+  //   },[nftData])  
 
   // const SearchResults = () => {
   //   return(

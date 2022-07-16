@@ -72,7 +72,8 @@ const List = () => {
     }
   }
 
-  const listNFT = async () => {
+  const listNFT = async (evt) => {
+    evt.preventDefault()
     await contract.listNFT(
       nFTAddress,
       tokenId,
