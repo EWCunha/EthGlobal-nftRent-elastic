@@ -57,8 +57,9 @@ const repackageData = ()=>{
     simplifiedItem["itemId"]= item[1].toNumber()
     simplifiedItem["itemURI"] = item[2]
     simplifiedItem["itemDescription"] = item[4]
-    simplifiedItem["collateral"] = ethers.utils.formatEther(item[5])
-    simplifiedItem["price"] = ethers.utils.formatEther(item[6])
+    simplifiedItem["collateral"] = parseFloat(ethers.utils.formatEther(item[5]))
+    // console.log(typeof(ethers.utils.formatEther(item[5])))
+    simplifiedItem["price"] = parseFloat(ethers.utils.formatEther(item[6]))
     container.push(simplifiedItem)
   })
   return container
@@ -99,7 +100,10 @@ const completeRental = ()=>{
   // console.log("rent days",typeof(rentdays))
   let numDays = parseInt(rentdays)
   let collateralFloat = parseInt(collateralSelect)
-  contract.rent(itemSelect,numDays,{value:collateralFloat})
+  // console.log(parseInt(collateralSelect))
+  const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
+  console.log("wei",parseInt(weiCollateral))
+  contract.rent(itemSelect,numDays,{value:weiCollateral})
 }
 
 const RenderedData = ()=>{
