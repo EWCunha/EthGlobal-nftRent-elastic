@@ -15,13 +15,17 @@ const Dashboard = () => {
 
     const [listedNFTs, setListedNFTs] = useState([])
     const [rentedNFTs, setRentedNFTs] = useState([])
+    const [rentedOwnedNFTs, setRentedOwnedNFTs] = useState([])
     const [nftsInfoOwned, setNftsInfoOwned] = useState([])
     const [nftsInfoRented, setNftsInfoRented] = useState([])
     const [time, setTime] = useState(Date.now());
 
-    const getNftsInfo = (stateVariable, stateVariableInfo, setterFunctionInfo) => {
+    const getNftsInfo = async (stateVariable, setterFunctionInfo) => {
         setterFunctionInfo([])
-        stateVariable.map(async nft => {
+
+        const resultInfo = []
+        for (let ii = 0; ii < stateVariable.length; ii++) {
+            const nft = stateVariable[ii]
             const nftData = await contract.items(nft.itemId)
 
             const returnObj = {
@@ -30,16 +34,17 @@ const Dashboard = () => {
                 tokenId: nftData[1].toNumber(),
                 nftAddress: nftData[2],
                 collateral: parseFloat(ethers.utils.formatEther(nftData[3])),
-                price: parseFloat(ethers.utils.formatEther(nftData[4]).mul(24 * 60 * 60)),
+                price: parseFloat(ethers.utils.formatEther(nftData[4])),
                 rented: nftData[5],
                 benefits: nftData[6],
                 agreementAddress: nftData[7]
             }
 
             delete returnObj.benefitsClearText
+            resultInfo.push(returnObj)
+        }
 
-            setterFunctionInfo([...stateVariableInfo, returnObj])
-        })
+        setterFunctionInfo(resultInfo)
     }
 
     const handleNftTables = async (event1, event2, filter1, filter2, setterFunction) => {
@@ -49,12 +54,22 @@ const Dashboard = () => {
         setterFunction(finalResult)
     }
 
-    const handleTimer = (startTime, daysToRent) => {
+    // const handleOwnedNftRented = async (nfts) => {
+    //     const result1 = await logEventData(event1, filter1, provider)
+    //     const itemIdsRented = result1.map(item => {
+    //         return item.itemId
+    //     })
+    //     for (let ii = 0; ii < itemIdsRented.length; ii++) {
+
+    //     }
+    // }
+
+    const handleTimer = (startTime, daysToRent, returnStr = true) => {
         const currentTimer = startTime + daysToRent * 24 * 60 * 60 - time / 1000
         if (currentTimer >= 0) {
-            return new Date(currentTimer * 1000).toISOString().substring(11, 19)
+            return returnStr ? new Date(currentTimer * 1000).toISOString().substring(11, 19) : new Date(currentTimer * 1000)
         } else {
-            return "00:00:00"
+            return returnStr ? "00:00:00" : 0
         }
     }
 
@@ -68,12 +83,18 @@ const Dashboard = () => {
         if (defaultAccount) {
             handleNftTables("NFTListed", "NFTUnlisted", [defaultAccount], [defaultAccount], setListedNFTs)
             handleNftTables("NFTRented", "NFTReturned", [null, defaultAccount], [defaultAccount], setRentedNFTs)
+            logEventData("NFTRented", [defaultAccount], provider, setRentedOwnedNFTs)
         }
+
+        const interval = setInterval(() => setTime(Date.now()), 1000);
+        return () => {
+            clearInterval(interval);
+        };
     }, [])
 
     useEffect(() => {
         if (listedNFTs.length > 0) {
-            getNftsInfo(listedNFTs, nftsInfoOwned, setNftsInfoOwned)
+            getNftsInfo(listedNFTs, setNftsInfoOwned)
         }
     }, [listedNFTs])
 
@@ -84,17 +105,16 @@ const Dashboard = () => {
     }, [rentedNFTs])
 
     useEffect(() => {
-        const interval = setInterval(() => setTime(Date.now()), 1000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
+        if (nftsInfoOwned.length > 0 && rentedOwnedNFTs.length > 0) {
+            console.log(rentedOwnedNFTs)
+        }
+    }, [nftsInfoOwned, rentedOwnedNFTs]);
 
     return (
         <>
             <Grid container style={{ display: "flex", gap: "1rem" }}>
                 <DashboardOwnedCard nftsInfoOwned={nftsInfoOwned} handleTimer={handleTimer} />
-                <DashboardRentedCard nftsInfoRented={nftsInfoRented} handleTimer={handleTimer} />
+                <DashboardRentedCard nftsInfoRented={nftsInfoRented} handleTimer={handleTimer} time={time} />
             </Grid>
         </>
     )

@@ -1,46 +1,51 @@
-const initialState = { 
-    nftData: null, 
+const initialState = {
+    nftListed: null,
+    nftRented: null,
     defaultAccount: null,
     defaultAccountBalance: null,
     provider: null,
     signer: null,
-    contract:null, 
-    ercInterface:null,
- }
+    contract: null,
+    ercInterface: null,
+}
 
- function rootReducer( state = initialState, action) {
-    switch(action.type) {
-        case "SET_NFT_DATA": 
+function rootReducer(state = initialState, action) {
+    switch (action.type) {
+        case "SET_NFT_LISTED":
             return {
-                ...state, nftData: action.payload
+                ...state, nftListed: action.payload
+            }
+        case "SET_NFT_RENTED":
+            return {
+                ...state, nftRented: action.payload
             }
         case "SET_PROVIDER":
-            return{
+            return {
                 ...state, provider: action.payload
             }
         case "SET_ACCOUNT":
-            return{
+            return {
                 ...state, defaultAccount: action.payload
             }
         case "SET_BALANCE":
-            return{
+            return {
                 ...state, defaultAccountBalance: action.payload
             }
         case "SET_SIGNER":
-            return{
-                ...state, signer:action.payload
+            return {
+                ...state, signer: action.payload
             }
         case "SET_CONTRACT":
-            return{
-                ...state, contract:action.payload
+            return {
+                ...state, contract: action.payload
             }
         case "SET_ERC_INTERFACE":
-            return{
-                ...state, ercInterface:action.payload
+            return {
+                ...state, ercInterface: action.payload
             }
         default:
             return state
     }
- }
+}
 
- export default rootReducer
+export default rootReducer

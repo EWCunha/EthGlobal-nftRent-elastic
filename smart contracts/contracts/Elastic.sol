@@ -16,7 +16,13 @@ contract Elastic is Ownable {
         uint256 price;
         bool rented;
         string benefits;
+    }
+
+    struct RentedNFT {
         address agreementAddress;
+        uint256 rentedTime;
+        uint256 collateral;
+        uint256 price;
     }
 
     uint256 public nextItemId = 1; // 0 is reserved for items no longer listed
@@ -24,8 +30,9 @@ contract Elastic is Ownable {
     mapping(address => uint256[]) public nftsListedByOwner;
     mapping(address => uint256[]) public borrowersNfts;
     mapping(uint256 => bool) public activeItem;
-    mapping(address => mapping(uint256 => bool)) public nftListed;
+    mapping(address => mapping(uint256 => uint256)) public nftListedToItemId; // itemId = 0 means that the NFT is no longer listed
     mapping(uint256 => NFTData) public items;
+    mapping(uint256 => RentedNFT) public rentedItems;
 
     error AccessDenied(uint256 itemId, address caller);
     error NotOwner(address caller);
@@ -116,7 +123,7 @@ contract Elastic is Ownable {
         nftsListedByOwner[msg.sender].push(nextItemId);
         items[nextItemId] = item;
         activeItem[nextItemId] = true;
-        nftListed[_nft][_tokenId] = true;
+        nftListedToItemId[_nft][_tokenId] = nextItemId;
 
         unchecked {
             nextItemId++;
@@ -167,7 +174,9 @@ contract Elastic is Ownable {
         address owner = items[_itemId].owner;
 
         activeItem[_itemId] = false;
-        nftListed[items[_itemId].nftAddress][items[_itemId].tokenId] = false;
+        delete nftListedToItemId[items[_itemId].nftAddress][
+            items[_itemId].tokenId
+        ];
         // delete items[_itemId]; // should be deleted though?
 
         emit NFTUnlisted(owner, _itemId);
@@ -224,6 +233,7 @@ contract Elastic is Ownable {
             }
         }
         borrowersNfts[_borrower].pop();
+        delete rentedItems[_itemId];
 
         emit NFTReturned(_borrower, _itemId, block.timestamp);
     }
@@ -262,7 +272,8 @@ contract Elastic is Ownable {
             item.tokenId,
             item.nftAddress,
             item.price,
-            block.timestamp
+            block.timestamp,
+            _itemId
         );
 
         payable(address(agreement)).transfer(msg.value);

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
-import { copyToClipboard } from '../utils'
+import { copyToClipboard, roundDecimal } from '../utils'
 
 export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
     return (
@@ -13,8 +13,8 @@ export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
                             <TableCell align="center">Item ID</TableCell>
                             <TableCell align="center">Address</TableCell>
                             <TableCell align="center">Token ID</TableCell>
-                            <TableCell align="center">Collateral</TableCell>
-                            <TableCell align="center">Price/day</TableCell>
+                            <TableCell align="center">Collateral (ETH)</TableCell>
+                            <TableCell align="center">Price/day (ETH)</TableCell>
                             <TableCell align="center">Benefit(s)</TableCell>
                             {nftsInfoOwned.length > 0 && nftsInfoOwned.filter(el => el.rented).length > 0 ? (
                                 <>
@@ -46,13 +46,26 @@ export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
                                     </Tooltip>
                                 </TableCell>
                                 <TableCell align="center">{nft.tokenId}</TableCell>
-                                <TableCell align="center">{`${nft.collateral} ETH`}</TableCell>
-                                <TableCell align="center">{`${nft.price} ETH`}</TableCell>
+                                <TableCell align="center">{nft.collateral}</TableCell>
+                                <TableCell align="center">{roundDecimal(nft.price * 24 * 60 * 60, 5)}</TableCell>
                                 <TableCell align="center">{nft.benefits}</TableCell>
                                 {nft.rented ? (
                                     <>
-                                        <TableCell align="center">{nft.agreementAddress}</TableCell>
+                                        <TableCell align="center">
+                                            <Tooltip title="Copy to Clipboard">
+                                                <Chip
+                                                    onClick={(e) => copyToClipboard(e, nft.agreementAddress)}
+                                                    label={nft.agreementAddress.substr(0, 6) + "..." + nft.agreementAddress.substr(nft.agreementAddress.length - 4, nft.agreementAddress.length)}
+                                                    variant="outlined"
+                                                />
+                                            </Tooltip>
+                                        </TableCell>
                                         <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
+                                    </>
+                                ) : nftsInfoOwned.length > 0 && nftsInfoOwned.filter(el => el.rented).length > 0 ? (
+                                    <>
+                                        <TableCell align="center">--</TableCell>
+                                        <TableCell align="center">--</TableCell>
                                     </>
                                 ) : (
                                     <></>
