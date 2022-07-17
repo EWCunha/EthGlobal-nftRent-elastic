@@ -34,7 +34,7 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
     let decodedEvents = []
     for (let ii = 0; ii < decodedEventsInputs.length; ii++) {
         const result = decodedEventsInputs[ii].map((input, index) => {
-            if (input.name === "itemId" || input.name === "daysToRent" || input.name === "startTime") {
+            if (input.name === "itemId" || input.name === "rentTime" || input.name === "startTime") {
                 return { [input.name]: decodedEventsArgs[ii][index].toNumber() }
             } else if (ethers.BigNumber.isBigNumber(decodedEventsArgs[ii][index])) {
                 return { [input.name]: parseFloat(ethers.utils.formatEther(decodedEventsArgs[ii][index])) }
@@ -77,4 +77,8 @@ const filterEventsData = (eventData1, eventData2, fieldName = "itemId") => {
     return resultEventData
 }
 
-export { logEventData, copyToClipboard, filterEventsData }
+function roundDecimal(num, decimals) {
+    return Number(Math.round(num + "e" + decimals) + "e-" + decimals);
+}
+
+export { logEventData, copyToClipboard, filterEventsData, roundDecimal }

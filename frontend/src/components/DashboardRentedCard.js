@@ -1,9 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
-import { copyToClipboard } from '../utils'
+import { copyToClipboard, roundDecimal } from '../utils'
 
-export const DashboardRentedCard = ({ nftsInfoRented, handleTimer }) => {
-    const [elabsedTime, setElapsedTime] = useState(undefined)
+export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time }) => {
+
+    const [totalPayment, setTotalPayment] = useState(undefined)
+
+    useEffect(() => {
+
+    }, [time])
 
     return (
         <Card>
@@ -16,11 +21,12 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer }) => {
                                 <TableCell align="center">Item ID</TableCell>
                                 <TableCell align="center">Address</TableCell>
                                 <TableCell align="center">Token ID</TableCell>
-                                <TableCell align="center">Collateral</TableCell>
-                                <TableCell align="center">Price/day</TableCell>
+                                <TableCell align="center">Collateral (ETH)</TableCell>
+                                <TableCell align="center">Price/day (ETH)</TableCell>
                                 <TableCell align="center">Benefit(s)</TableCell>
                                 <TableCell align="center">Agreement</TableCell>
                                 <TableCell align="center">Elapsed time</TableCell>
+                                <TableCell align="center">Total payment</TableCell>
                                 <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableHead>
@@ -43,8 +49,8 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer }) => {
                                         </Tooltip>
                                     </TableCell>
                                     <TableCell align="center">{nft.tokenId}</TableCell>
-                                    <TableCell align="center">{`${nft.collateral} ETH`}</TableCell>
-                                    <TableCell align="center">{`${nft.price} ETH`}</TableCell>
+                                    <TableCell align="center">{nft.collateral}</TableCell>
+                                    <TableCell align="center">{roundDecimal(nft.price * 24 * 60 * 60, 5)}</TableCell>
                                     <TableCell align="center">{nft.benefits}</TableCell>
                                     <TableCell align="center">
                                         <Tooltip title="Copy to Clipboard">
@@ -55,6 +61,7 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer }) => {
                                             />
                                         </Tooltip>
                                     </TableCell>
+                                    <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
                                     <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
                                     <TableCell align="center">
                                         <Button variant="contained"

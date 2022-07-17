@@ -53,7 +53,8 @@ contract Agreement is IAgreement {
         uint256 _tokenId,
         address _nftAddress,
         uint256 _price,
-        uint256 _startTime
+        uint256 _startTime,
+        uint256 _itemId
     ) {
         elasticAddress = _elasticAddress;
         agreement.owner = _owner;
@@ -64,6 +65,7 @@ contract Agreement is IAgreement {
         agreement.nftAddress = _nftAddress;
         agreement.price = _price;
         agreement.startTime = _startTime;
+        agreement.itemId = _itemId;
     }
 
     function getElasticAddress() public view returns (address) {
