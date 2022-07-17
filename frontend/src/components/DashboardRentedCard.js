@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
-export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time }) => {
+export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnNFT }) => {
 
-    const [totalPayment, setTotalPayment] = useState(undefined)
+    // const [totalPayment, setTotalPayment] = useState(undefined)
 
-    useEffect(() => {
-
-    }, [time])
+    const totalPayment = (startTime, price) => {
+        const runnedTime = time / 1000 - startTime
+        return runnedTime * price
+    }
 
     return (
         <Card>
@@ -55,18 +56,19 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time }) => {
                                     <TableCell align="center">
                                         <Tooltip title="Copy to Clipboard">
                                             <Chip
-                                                onClick={(e) => copyToClipboard(e, nft.agreement)}
-                                                label={nft.agreement.substr(0, 6) + "..." + nft.agreement.substr(nft.agreement.length - 4, nft.agreement.length)}
+                                                onClick={(e) => copyToClipboard(e, nft.agreementAddress)}
+                                                label={nft.agreementAddress.substr(0, 6) + "..." + nft.agreementAddress.substr(nft.agreementAddress.length - 4, nft.agreementAddress.length)}
                                                 variant="outlined"
                                             />
                                         </Tooltip>
                                     </TableCell>
-                                    <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
-                                    <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
+                                    <TableCell align="center">{handleTimer(nft.startTime, nft.rentTime)}</TableCell>
+                                    <TableCell align="center">{roundDecimal(totalPayment(nft.startTime, nft.price), 5)}</TableCell>
                                     <TableCell align="center">
                                         <Button variant="contained"
                                             color="success"
-                                            disabled={handleTimer(nft.startTime, nft.daysToRent) === "00:00:00" ? false : true}
+                                            disabled={handleTimer(nft.startTime, nft.rentTime) === "00:00:00" ? false : true}
+                                            onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress)}
                                         >
                                             RETURN NFT
                                         </Button>

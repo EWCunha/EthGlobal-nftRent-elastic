@@ -197,7 +197,7 @@ contract Agreement is IAgreement {
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
 
-        IElastic(elasticAddress).updateNFTRentedToReturn(agreement.tokenId);
+        IElastic(elasticAddress).returnNFT(agreement.itemId);
 
         emit NFTReturnedAgreement(
             address(this),
@@ -222,7 +222,7 @@ contract Agreement is IAgreement {
         payable(msg.sender).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
 
-        IElastic(elasticAddress).unlistNFT(agreement.tokenId);
+        IElastic(elasticAddress).unlistNFT(agreement.itemId);
 
         emit CollateralWithdrawed(
             address(this),

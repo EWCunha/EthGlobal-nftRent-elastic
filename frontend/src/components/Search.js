@@ -97,7 +97,7 @@ const Search = () => {
     let collateralFloat = parseInt(collateralSelect)
     // console.log(parseInt(collateralSelect))
     const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
-    contract.rent(itemSelect, numDays, { value: weiCollateral })
+    contract.rent(itemSelect, numDays * 24 * 60 * 60, { value: weiCollateral })
   }
 
   const RenderedData = () => {
