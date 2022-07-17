@@ -11,7 +11,14 @@ contract Agreement is IAgreement {
     AgreementData agreement;
     NewAgreementData newAgreement;
 
-    event NFTReturned(
+    error AgreementNotEnoughFunds(
+        uint256 availableFunds,
+        uint256 requiredFunds
+    );
+    error AgreementNotExpired(uint256 endTime);
+    error AgreementAccessDenied(address caller);
+
+    event NFTReturnedAgreement(
         address indexed agreement,
         address owner,
         address borrower,
@@ -42,7 +49,7 @@ contract Agreement is IAgreement {
         address _owner,
         address _borrower,
         uint256 _collateral,
-        uint256 _rentDays,
+        uint256 _rentTime,
         uint256 _tokenId,
         address _nftAddress,
         uint256 _price,
@@ -52,7 +59,7 @@ contract Agreement is IAgreement {
         agreement.owner = _owner;
         agreement.borrower = _borrower;
         agreement.collateral = _collateral;
-        agreement.rentDays = _rentDays;
+        agreement.rentTime = _rentTime;
         agreement.tokenId = _tokenId;
         agreement.nftAddress = _nftAddress;
         agreement.price = _price;
@@ -94,16 +101,16 @@ contract Agreement is IAgreement {
     /**
     @notice updateAgreementData allows the owner to update the agreement and change the agreement
     @param _collateral new collateral for the rented NFT
-    @param _rentDays new amount of renting days for the rented NFT
+    @param _rentTime new amount of renting time (in seconds) for the rented NFT
     @param _price new rent price value for the rented NFT
     */
     function updateAgreementData(
         uint256 _collateral,
-        uint256 _rentDays,
+        uint256 _rentTime,
         uint256 _price
     ) external override onlyInvolved {
         newAgreement.collateral = _collateral;
-        newAgreement.rentDays = _rentDays;
+        newAgreement.rentTime = _rentTime;
         newAgreement.price = _price;
         newAgreement.ownerAccepted = msg.sender == agreement.owner
             ? true
@@ -115,7 +122,7 @@ contract Agreement is IAgreement {
         emit NewAgreementProposal(
             address(this),
             _collateral,
-            _rentDays,
+            _rentTime,
             _price
         );
     }
@@ -133,11 +140,11 @@ contract Agreement is IAgreement {
 
         if (newAgreement.ownerAccepted && newAgreement.borrowerAccepted) {
             agreement.collateral = newAgreement.collateral;
-            agreement.rentDays = newAgreement.rentDays;
+            agreement.rentTime = newAgreement.rentTime;
             agreement.price = newAgreement.price;
 
             newAgreement.collateral = 0;
-            newAgreement.rentDays = 0;
+            newAgreement.rentTime = 0;
             newAgreement.price = 0;
             newAgreement.ownerAccepted = false;
             newAgreement.borrowerAccepted = false;
@@ -147,7 +154,7 @@ contract Agreement is IAgreement {
             address(this),
             msg.sender,
             agreement.collateral,
-            agreement.rentDays,
+            agreement.rentTime,
             agreement.price
         );
     }
@@ -170,12 +177,14 @@ contract Agreement is IAgreement {
     */
     function returnNFT() external payable override onlyBorrower {
         uint256 totalPaymentAmount = (block.timestamp - agreement.startTime) *
-            (agreement.price / (24 * 60 * 60));
+            agreement.price;
 
-        require(
-            address(this).balance >= totalPaymentAmount,
-            "Not enough funds"
-        );
+        if (address(this).balance < totalPaymentAmount) {
+            revert AgreementNotEnoughFunds(
+                address(this).balance,
+                totalPaymentAmount
+            );
+        }
 
         IERC721(agreement.nftAddress).transferFrom(
             msg.sender,
@@ -188,7 +197,7 @@ contract Agreement is IAgreement {
 
         IElastic(elasticAddress).updateNFTRentedToReturn(agreement.tokenId);
 
-        emit NFTReturned(
+        emit NFTReturnedAgreement(
             address(this),
             agreement.owner,
             agreement.borrower,
@@ -202,11 +211,11 @@ contract Agreement is IAgreement {
     @notice withdrawCollateral allows NFT owner to get the collateral, if the borrower does not return the NFT back at the agreed time
     */
     function withdrawCollateral() external override onlyOwner {
-        require(
-            agreement.startTime + agreement.rentDays * 24 * 60 * 60 >=
-                block.timestamp,
-            "Cannot take collateral before agreement end"
-        );
+        if (agreement.startTime + agreement.rentTime < block.timestamp) {
+            revert AgreementNotExpired(
+                agreement.startTime + agreement.rentTime
+            );
+        }
 
         payable(msg.sender).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
@@ -228,27 +237,32 @@ contract Agreement is IAgreement {
         selfdestruct(payable(elasticAddress));
     }
 
-    receive() external payable {}
-
     modifier onlyBorrower() {
-        require(agreement.borrower == msg.sender, "access denied");
+        if (agreement.borrower != msg.sender) {
+            revert AgreementAccessDenied(msg.sender);
+        }
         _;
     }
 
     modifier onlyOwner() {
-        require(agreement.owner == msg.sender, "access denied");
+        if (agreement.owner != msg.sender) {
+            revert AgreementAccessDenied(msg.sender);
+        }
         _;
     }
 
     modifier onlyInvolved() {
-        require(
-            agreement.owner == msg.sender ||
-                agreement.borrower == msg.sender ||
-                elasticAddress == msg.sender,
-            "access denied"
-        );
+        if (
+            agreement.owner != msg.sender &&
+            agreement.borrower != msg.sender &&
+            elasticAddress != msg.sender
+        ) {
+            revert AgreementAccessDenied(msg.sender);
+        }
         _;
     }
 
     fallback() external payable {}
+
+    receive() external payable {}
 }

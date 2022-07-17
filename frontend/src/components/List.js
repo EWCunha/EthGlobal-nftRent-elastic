@@ -53,12 +53,14 @@ const List = () => {
   const listNFT = async (evt) => {
     evt.preventDefault()
     const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
-    const weiRentPerDay = ethers.utils.parseEther(rentPerDay.toString())
+
+    // Storing price per second in WEI
+    const weiPrice = ethers.utils.parseEther(rentPerDay.toString()).div(24 * 60 * 60)
 
     await contract.listNFT(
       nFTAddress,
       tokenId,
-      weiRentPerDay,
+      weiPrice,
       weiCollateral,
       benefits
     )

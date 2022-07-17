@@ -1,8 +1,19 @@
 {
-    "address": "0x6E28B85E80080F8d50436F0E2C9c44BF49cC56fe",
+    "address": "0xDCF94D8e92a9B8f1621628E4a590e65F744A4FeF",
     "abi": [
         {
-            "inputs": [],
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+                }
+            ],
             "name": "AccessDenied",
             "type": "error"
         },
@@ -17,17 +28,39 @@
             "type": "error"
         },
         {
-            "inputs": [],
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rightAmount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "wrongAmount",
+                    "type": "uint256"
+                }
+            ],
             "name": "LowAmount",
             "type": "error"
         },
         {
             "inputs": [],
-            "name": "NotAcceptedProposal",
+            "name": "NotActive",
             "type": "error"
         },
         {
-            "inputs": [],
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+                }
+            ],
             "name": "NotOwner",
             "type": "error"
         },
@@ -123,13 +156,13 @@
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "agreement",
+                    "name": "agreementAddress",
                     "type": "address"
                 },
                 {
                     "indexed": false,
                     "internalType": "address",
-                    "name": "itemAddress",
+                    "name": "nftAddress",
                     "type": "address"
                 },
                 {
@@ -141,7 +174,7 @@
                 {
                     "indexed": false,
                     "internalType": "uint256",
-                    "name": "daysToRent",
+                    "name": "rentTime",
                     "type": "uint256"
                 },
                 {
@@ -157,6 +190,12 @@
         {
             "anonymous": false,
             "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "tenant",
+                    "type": "address"
+                },
                 {
                     "indexed": true,
                     "internalType": "uint256",
@@ -292,7 +331,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "pricePerDay",
+                            "name": "price",
                             "type": "uint256"
                         },
                         {
@@ -370,7 +409,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "pricePerDay",
+                    "name": "price",
                     "type": "uint256"
                 },
                 {
@@ -538,7 +577,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "_daysToRent",
+                    "name": "_rentTime",
                     "type": "uint256"
                 }
             ],
@@ -596,6 +635,10 @@
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
+        },
+        {
+            "stateMutability": "payable",
+            "type": "receive"
         }
     ]
 }

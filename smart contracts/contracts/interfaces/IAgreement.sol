@@ -6,17 +6,18 @@ interface IAgreement {
         address owner;
         address borrower;
         uint256 collateral;
-        uint256 rentDays;
+        uint256 rentTime;
         uint256 tokenId;
         address nftAddress;
         uint256 proposalId;
         uint256 price;
         uint256 startTime;
+        uint256 itemId;
     }
 
     struct NewAgreementData {
         uint256 collateral;
-        uint256 rentDays;
+        uint256 rentTime;
         uint256 price;
         bool ownerAccepted;
         bool borrowerAccepted;
@@ -28,7 +29,7 @@ interface IAgreement {
 
     function updateAgreementData(
         uint256 _collateral,
-        uint256 _rentDays,
+        uint256 _rentTime,
         uint256 _price
     ) external;
 

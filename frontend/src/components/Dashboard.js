@@ -30,7 +30,7 @@ const Dashboard = () => {
                 tokenId: nftData[1].toNumber(),
                 nftAddress: nftData[2],
                 collateral: parseFloat(ethers.utils.formatEther(nftData[3])),
-                price: parseFloat(ethers.utils.formatEther(nftData[4])),
+                price: parseFloat(ethers.utils.formatEther(nftData[4]).mul(24 * 60 * 60)),
                 rented: nftData[5],
                 benefits: nftData[6],
                 agreementAddress: nftData[7]
