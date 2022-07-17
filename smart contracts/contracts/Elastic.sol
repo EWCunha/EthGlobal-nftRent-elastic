@@ -47,8 +47,8 @@ contract Elastic is Ownable {
     event NFTRented(
         address indexed owner,
         address indexed tenant,
-        address agreement,
-        address itemAddress,
+        address agreementAddress,
+        address nftAddress,
         uint256 indexed itemId,
         uint256 daysToRent,
         uint256 startTime
@@ -59,7 +59,11 @@ contract Elastic is Ownable {
         uint256 collateral,
         uint256 price
     );
-    event NFTReturned(uint256 indexed itemId, uint256 timestamp);
+    event NFTReturned(
+        address indexed tenant,
+        uint256 indexed itemId,
+        uint256 timestamp
+    );
 
     /**
     @notice return the list of item owner by the msg.sender
@@ -217,7 +221,7 @@ contract Elastic is Ownable {
         }
         borrowersNfts[_borrower].pop();
 
-        emit NFTReturned(_itemId, block.timestamp);
+        emit NFTReturned(_borrower, _itemId, block.timestamp);
     }
 
     /** 
@@ -231,7 +235,7 @@ contract Elastic is Ownable {
         returns (address)
     {
         require(activeItem[_itemId] == true, "not active");
-        NFTData memory item = items[_itemId];
+        NFTData storage item = items[_itemId];
 
         if (item.rented) {
             revert AlreadyRented();

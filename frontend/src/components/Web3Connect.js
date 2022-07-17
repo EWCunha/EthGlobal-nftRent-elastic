@@ -16,12 +16,14 @@ const Web3Connect = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [connectButtonColor, setConnectButtonColor] = useState("secondary")
 
-    const [defaultAccount, setDefaultAccount] = useState(null)
+    const [defaultAccount, setDefaultAccount] = useState(undefined)
     const [provider, setProvider] = useState(null)
     const [signer, setSigner] = useState(null)
     const [walletBalance, setWalletBalance] = useState(null)
+    const [connected, setConnected] = useState(false)
 
-    const connectWalletHandler = () => {
+    const connectWalletHandler = (evt) => {
+        evt.preventDefault()
         if (window.ethereum && window.ethereum.isMetaMask) {
             window.ethereum.request({ method: 'eth_requestAccounts' })
                 .then(result => {
@@ -38,6 +40,14 @@ const Web3Connect = () => {
         }
     }
 
+    const disconnectWalletHandler = (evt) => {
+        evt.preventDefault()
+        setConnButtonText('Connect Wallet')
+        setConnectButtonColor("secondary")
+        setDefaultAccount(undefined)
+        setConnected(false)
+    }
+
     const accountChangedHandler = (newAccount) => {
         if (!accountchanging) {
             setAccountChanging(true)
@@ -46,6 +56,7 @@ const Web3Connect = () => {
             dispatch({ type: "SET_ACCOUNT", payload: newAccountResult })
             updateEthers();
             setConnButtonText("Connected: " + newAccountResult.substr(0, 6) + "..." + newAccountResult.substr(newAccountResult.length - 4, newAccountResult.length))
+            setConnected(true)
         }
     }
 
