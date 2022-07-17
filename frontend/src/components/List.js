@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography, Card, Grid, TextField, tabClasses } from '@mui/material'
+import { Box, Button, Typography, Grid, TextField, InputAdornment } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
@@ -21,23 +21,6 @@ const List = () => {
 
   const elasticContractAddress = ElasticContractJSON.address
 
-  useEffect(() => {
-    if (benefits) {
-      console.log(benefits);
-    }
-  }, [benefits])
-
-  useEffect(() => {
-    if (rentPerDay) {
-      console.log(rentPerDay);
-    }
-  }, [rentPerDay])
-
-  useEffect(() => {
-    if (collateralDeposit) {
-      console.log(collateralDeposit);
-    }
-  }, [collateralDeposit])
 
   useEffect(() => {
     if (ethers.utils.isAddress(nFTAddress)) {
@@ -45,12 +28,6 @@ const List = () => {
       dispatch({ type: "SET_ERC_INTERFACE", payload: contractERC })
     }
   }, [nFTAddress])
-
-  useEffect(() => {
-    if (tokenId) {
-      console.log(tokenId);
-    }
-  }, [tokenId])
 
   useEffect(() => {
     if (defaultAccount && contractERC) {
@@ -77,7 +54,7 @@ const List = () => {
     evt.preventDefault()
     const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
     const weiRentPerDay = ethers.utils.parseEther(rentPerDay.toString())
-  
+
     await contract.listNFT(
       nFTAddress,
       tokenId,
@@ -109,17 +86,23 @@ const List = () => {
         </Grid>
 
         <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Rent per day (ETH)"
+          <TextField label="Rent per day"
             variant="outlined"
             onChange={(e) => setRentPerDay(e.target.value)}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+            }}
           >
           </TextField>
         </Grid>
 
         <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Collateral deposit (ETH)"
+          <TextField label="Collateral deposit"
             variant="outlined"
             onChange={(e) => setCollateralDeposit(e.target.value)}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+            }}
           >
           </TextField>
         </Grid>
@@ -167,7 +150,7 @@ const List = () => {
           </Box>
         </Grid>
 
-      </Grid>
+      </Grid >
 
     ) : <div>Please connect your wallet to list an NFT.</div>
   )

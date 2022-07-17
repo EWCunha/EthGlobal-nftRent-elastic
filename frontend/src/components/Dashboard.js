@@ -16,6 +16,7 @@ const Dashboard = () => {
     const [listedNFTs, setListedNFTs] = useState([])
     const [rentedNFTs, setRentedNFTs] = useState([])
     const [nftsInfo, setNftsInfo] = useState([])
+    const [time, setTime] = useState(Date.now());
 
     const getNftsInfo = async () => {
         setNftsInfo([])
@@ -39,6 +40,8 @@ const Dashboard = () => {
                 rented: nftTreatedData[5],
                 benefits: nftTreatedData[6],
                 agreementAddress: nftTreatedData[7],
+                daysToRent: nft.daysToRent,
+                startTime: nft.startTime,
             }
 
             setNftsInfo([returnObj, ...nftsInfo])
@@ -61,27 +64,25 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (listedNFTs.length > 0 && rentedNFTs.length > 0) {
-            console.log(listedNFTs, rentedNFTs)
             getNftsInfo()
         }
-
         if (listedNFTs.length > 0) {
             getNftsInfo()
         }
     }, [listedNFTs, rentedNFTs])
 
     useEffect(() => {
-        if (nftsInfo.length > 0) {
-            console.log(nftsInfo)
-        }
-
-    }, [nftsInfo])
+        const interval = setInterval(() => setTime(Date.now()), 1000);
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
 
     return (
         <>
             <Grid container style={{ display: "flex", gap: "1rem" }}>
-                <DashboardOwnedCard nftsInfo={nftsInfo} />
-                <DashboardRentedCard nftsInfo={nftsInfo} />
+                <DashboardOwnedCard nftsInfo={nftsInfo} time={time} />
+                <DashboardRentedCard nftsInfo={nftsInfo} time={time} />
             </Grid>
         </>
     )

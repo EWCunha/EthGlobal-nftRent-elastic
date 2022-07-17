@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { copyToClipboard } from '../utils'
 
-export const DashboardOwnedCard = ({ nftsInfo }) => {
+export const DashboardOwnedCard = ({ nftsInfo, time }) => {
     return (
         <Card>
             <h2>Owned</h2>
@@ -16,7 +16,15 @@ export const DashboardOwnedCard = ({ nftsInfo }) => {
                             <TableCell>Collateral</TableCell>
                             <TableCell>Price/day</TableCell>
                             <TableCell>Benefit(s)</TableCell>
-                            <TableCell></TableCell>
+                            {nftsInfo.filter(el => el.rented).length > 0 ? (
+                                <>
+                                    <TableCell>Agreement</TableCell>
+                                    <TableCell>Elapsed time</TableCell>
+                                    <TableCell></TableCell>
+                                </>
+                            ) : (
+                                <TableCell></TableCell>
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -41,6 +49,14 @@ export const DashboardOwnedCard = ({ nftsInfo }) => {
                                 <TableCell>{`${nft.collateral} ETH`}</TableCell>
                                 <TableCell>{`${nft.pricePerDay} ETH`}</TableCell>
                                 <TableCell>{nft.benefits}</TableCell>
+                                {nft.rented ? (
+                                    <>
+                                        <TableCell>{nft.agreementAddress}</TableCell>
+                                        <TableCell>{new Date((nft.startTime + nft.daysToRent * 24 * 60 * 60 - time) * 1000).toISOString().substring(11, 16)}</TableCell>
+                                    </>
+                                ) : (
+                                    <meta></meta>
+                                )}
                                 <TableCell>
                                     {nft.rented ? (
                                         <Button variant="contained"
