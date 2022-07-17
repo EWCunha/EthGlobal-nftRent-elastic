@@ -30,27 +30,31 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
     const decodedEventsInputs = logs.map(log => {
         return iface.parseLog(log).eventFragment.inputs
     })
-    const decodedEvents = decodedEventsInputs.map((inputs, indexes) => inputs.map((input, index) => {
-        // console.log(input, decodedEventsArgs[indexes][index])
-        return { [input]: decodedEventsArgs[indexes][index] }
-    }))
 
-    // // console.log(decodedEventsInputs)
-    // // console.log(decodedEventsArgs)
-    console.log(decodedEvents)
+    let decodedEvents = []
+    for (let ii = 0; ii < decodedEventsInputs.length; ii++) {
+        const result = decodedEventsInputs[ii].map((input, index) => {
+            if (input.name === "itemId" || input.name === "daysToRent" || input.name === "startTime") {
+                return { [input.name]: decodedEventsArgs[ii][index].toNumber() }
+            } else if (ethers.BigNumber.isBigNumber(decodedEventsArgs[ii][index])) {
+                return { [input.name]: parseFloat(ethers.utils.formatEther(decodedEventsArgs[ii][index])) }
+            } else {
+                return { [input.name]: decodedEventsArgs[ii][index] }
+            }
+        })
 
-    const decodedEventsRight = decodedEventsArgs.map(elem => elem.map(el => {
-        if (ethers.BigNumber.isBigNumber(el)) {
-            return ethers.utils.formatEther(el)
-        } else {
-            return el
+        let realRestul = {}
+        for (let jj = 0; jj < result.length; jj++) {
+            realRestul = { ...realRestul, ...result[jj] }
         }
-    }))
+        decodedEvents.push(realRestul)
+    }
 
     if (typeof setterFunction !== "undefined") {
-        setterFunction(decodedEventsRight)
+        setterFunction(decodedEvents)
     }
-    return decodedEventsRight
+
+    return decodedEvents
 }
 
 const copyToClipboard = async (evt, value) => {
