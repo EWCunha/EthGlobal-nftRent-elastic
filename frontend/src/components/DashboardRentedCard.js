@@ -16,6 +16,8 @@ export const DashboardRentedCard = ({ nftsInfo }) => {
                             <TableCell>Collateral</TableCell>
                             <TableCell>Price/day</TableCell>
                             <TableCell>Benefit(s)</TableCell>
+                            <TableCell>Agreement</TableCell>
+                            <TableCell>Elapsed time</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>

@@ -24,13 +24,24 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
     }
 
     const logs = await provider.getLogs(filter)
-    const decodedEvents = logs.map(log => {
+    const decodedEventsArgs = logs.map(log => {
         return iface.parseLog(log).args
     })
+    const decodedEventsInputs = logs.map(log => {
+        return iface.parseLog(log).eventFragment.inputs
+    })
+    const decodedEvents = decodedEventsInputs.map((inputs, indexes) => inputs.map((input, index) => {
+        // console.log(input, decodedEventsArgs[indexes][index])
+        return { [input]: decodedEventsArgs[indexes][index] }
+    }))
 
-    const decodedEventsRight = decodedEvents.map(elem => elem.map(el => {
+    // // console.log(decodedEventsInputs)
+    // // console.log(decodedEventsArgs)
+    console.log(decodedEvents)
+
+    const decodedEventsRight = decodedEventsArgs.map(elem => elem.map(el => {
         if (ethers.BigNumber.isBigNumber(el)) {
-            return el.toNumber()
+            return ethers.utils.formatEther(el)
         } else {
             return el
         }
