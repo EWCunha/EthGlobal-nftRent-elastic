@@ -7,16 +7,34 @@
 const hre = require("hardhat");
 const fs = require('fs');
 
-async function main() {
-  const Elastic = await hre.ethers.getContractFactory("Elastic");
-  const elastic = await Elastic.deploy();
+async function main(deploy = true) {
 
-  await elastic.deployed();
+  let elastic
+  if (deploy) {
+    const Elastic = await hre.ethers.getContractFactory("Elastic");
+    elastic = await Elastic.deploy();
 
-  await hre.run("verify:verify", {
-    address: elastic.address,
-    constructorArguments: [],
-  });
+    await elastic.deployed();
+
+    let trial = 1
+    while (true) {
+      try {
+        await hre.run("verify:verify", {
+          address: elastic.address,
+          constructorArguments: [],
+        });
+        break
+      } catch (e) {
+        if (e.message.includes("Already Verified")) {
+          break
+        }
+        console.log(`Trial ${trial}`)
+        trial++
+      }
+    }
+  } else {
+    elastic = require("../../frontend/src/contracts/Elastic.json")
+  }
 
   const elastic_json = require("../artifacts/contracts/Elastic.sol/Elastic.json")
   const agreement_json = require("../artifacts/contracts/Agreement.sol/Agreement.json")

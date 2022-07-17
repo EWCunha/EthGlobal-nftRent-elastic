@@ -25,7 +25,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "_rentDays",
+                    "name": "_rentTime",
                     "type": "uint256"
                 },
                 {
@@ -51,6 +51,44 @@
             ],
             "stateMutability": "nonpayable",
             "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+                }
+            ],
+            "name": "AgreementAccessDenied",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "availableFunds",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "requiredFunds",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AgreementNotEnoughFunds",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "endTime",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AgreementNotExpired",
+            "type": "error"
         },
         {
             "anonymous": false,
@@ -148,7 +186,7 @@
                     "type": "uint256"
                 }
             ],
-            "name": "NFTReturned",
+            "name": "NFTReturnedAgreement",
             "type": "event"
         },
         {
@@ -242,7 +280,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "rentDays",
+                            "name": "rentTime",
                             "type": "uint256"
                         },
                         {
@@ -268,6 +306,11 @@
                         {
                             "internalType": "uint256",
                             "name": "startTime",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "itemId",
                             "type": "uint256"
                         }
                     ],
@@ -305,7 +348,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "rentDays",
+                            "name": "rentTime",
                             "type": "uint256"
                         },
                         {
@@ -348,7 +391,7 @@
                 },
                 {
                     "internalType": "uint256",
-                    "name": "_rentDays",
+                    "name": "_rentTime",
                     "type": "uint256"
                 },
                 {
@@ -368,6 +411,10 @@
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
+        },
+        {
+            "stateMutability": "payable",
+            "type": "receive"
         }
     ]
 }
