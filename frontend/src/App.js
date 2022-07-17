@@ -62,13 +62,13 @@ function App() {
 
   const updateEthers = async () => {
 
-    let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
+    let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
     dispatch({ type: "SET_PROVIDER", payload: tempProvider })
 
-    let tempSigner = await tempProvider.getSigner();
+    let tempSigner = tempProvider.getSigner();
     dispatch({ type: "SET_SIGNER", payload: tempSigner })
 
-    let tempContract = await new ethers.Contract(ADDRESS, ABI, tempSigner)
+    let tempContract = new ethers.Contract(ADDRESS, ABI, tempSigner)
     dispatch({ type: "SET_CONTRACT", payload: tempContract })
 
     setStateContract(tempContract)
