@@ -55,9 +55,18 @@ const Search = () => {
   const [NFTsAvailable, setNFTsAvailable] = useState([])
 
   useEffect(() => {
-    if (nftListed && (nftRented || nftUnlisted)) {
-      const result1 = filterEventsData(nftListed, nftUnlisted)
-      setNFTsAvailable(filterEventsData(result1, nftRented))
+    if (nftListed) {
+      if (nftUnlisted) {
+        const result1 = filterEventsData(nftListed, nftUnlisted)
+        if (nftRented) {
+          setNFTsAvailable(filterEventsData(result1, nftRented))
+        }
+      } else {
+        if (nftRented) {
+          setNFTsAvailable(filterEventsData(nftListed, nftRented))
+        }
+      }
+
     }
 
   }, [nftListed, nftRented, nftUnlisted])

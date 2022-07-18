@@ -68,6 +68,7 @@ const copyToClipboard = async (evt, value) => {
 
 const filterEventsData = (eventData1, eventData2, fieldName = "itemId") => {
     const itemIdsArr = []
+
     for (let jj = 0; jj < eventData2.length; jj++) {
         itemIdsArr.push(eventData2[jj][fieldName])
     }
