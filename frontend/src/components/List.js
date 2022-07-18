@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography, Grid, TextField, InputAdornment,Card,CardHeader } from '@mui/material'
+import { Box, Button, Typography, Grid, TextField, InputAdornment, Card, CardHeader } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
@@ -70,102 +70,121 @@ const List = () => {
   return (
 
 
-    defaultAccount ? (  
-<Box>
-  <center>
-  <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "white" }}>
-  <CardHeader title="LIST AN NFT"/>
-           
-  <Grid container item spacing={2}>
-        <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Details benefits"
-            variant="outlined"
-            onChange={(e) => setBenefits(e.target.value)}
-          >
-          </TextField>
-        </Grid>
+    defaultAccount ? (
+      <Box>
+        <center>
+          <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "white", width: "40%", marginTop: 3, boxShadow: 3 }}>
+            <CardHeader title="LIST AN NFT" />
 
-        <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Rent per day"
-            variant="outlined"
-            onChange={(e) => setRentPerDay(e.target.value)}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
-            }}
-          >
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Collateral deposit"
-            variant="outlined"
-            onChange={(e) => setCollateralDeposit(e.target.value)}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
-            }}
-          >
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={12}>
-          <TextField label="NFT address"
-            variant="outlined"
-            onChange={(e) => setNFTAddress(e.target.value)}
-          >
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={12}>
-          <TextField label="Token id"
-            variant="outlined"
-            onChange={(e) => setTokenId(e.target.value)}
-          >
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={12}>
-          <Box>
-            {contractERC ? (approved ? (
-              <Button variant="contained"
-                color="success"
-                onClick={listNFT}
+            
+              <Grid
+                container
+                columns={{ xs: 12, sm: 12, md: 12 }}
+                item
+                spacing={2}
+                direction="column"
+                justifyContent="center"
+                alignItems="stretch"
+                paddingRight={4}
+                paddingLeft={4}
+                paddingBottom={3}
+                paddingTop={2}
               >
-                LIST NFT
-              </Button>
-            ) : (
-              <Button variant="contained"
-                color="warning"
-                onClick={approveOperator}
-              >
-                APPROVE
-              </Button>
-            )) : (
-              <Button variant="contained"
-                color="error"
-              >
-                INPUT NFT ADDRESS
-              </Button>
-            )}
+                <Grid item>
+                  <TextField label="Details benefits"
+                    variant="outlined"
+                    onChange={(e) => setBenefits(e.target.value)}
+                    fullWidth="true"
+                  >
+                  </TextField>
+                </Grid>
 
-          </Box>
-        </Grid>
-      </Grid > 
-  </Card>
-  </center>
-</Box>
-     
+                <Grid item >
+                  <TextField label="Rent per day"
+                    variant="outlined"
+                    onChange={(e) => setRentPerDay(e.target.value)}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+                    }}
+                    fullWidth="true"
+                  >
+                  </TextField>
+                </Grid>
+
+                <Grid item>
+                  <TextField label="Collateral deposit"
+                    variant="outlined"
+                    onChange={(e) => setCollateralDeposit(e.target.value)}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+                    }}
+                    fullWidth="true"
+                  >
+                  </TextField>
+                </Grid>
+
+                <Grid item>
+                  <TextField label="NFT address"
+                    variant="outlined"
+                    onChange={(e) => setNFTAddress(e.target.value)}
+                    fullWidth="true"
+                  >
+                  </TextField>
+                </Grid>
+
+                <Grid item>
+                  <TextField label="Token id"
+                    variant="outlined"
+                    onChange={(e) => setTokenId(e.target.value)}
+                    fullWidth="true"
+                  >
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={12} sm={12} md={12}>
+                  <Box>
+                    {contractERC ? (approved ? (
+                      <Button variant="contained"
+                        color="success"
+                        onClick={listNFT}
+                      >
+                        LIST NFT
+                      </Button>
+                    ) : (
+                      <Button variant="contained"
+                        color="warning"
+                        onClick={approveOperator}
+                      >
+                        APPROVE
+                      </Button>
+                    )) : (
+                      <Button variant="contained"
+                        color="error"
+                      >
+                        INPUT NFT ADDRESS
+                      </Button>
+                    )}
+
+                  </Box>
+                </Grid>
+              </Grid>
+        
+          </Card>
+        </center>
+      </Box>
+
 
     ) : <div>
       <center>
-      <Typography sx={{fontSize:20}}>
-      Please connect your wallet to list an NFT.
-      </Typography>
-      <img width='25%' height='25%' src={ElasticLogo}/>
+        <Typography sx={{ fontSize: 20 }}>
+          Please connect your wallet to list an NFT.
+        </Typography>
+        <img width='25%' height='25%' src={ElasticLogo} />
 
 
       </center>
-    
-      </div>
+
+    </div>
   )
 }
 
