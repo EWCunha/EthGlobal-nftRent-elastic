@@ -29,25 +29,33 @@ const Dashboard = () => {
         const resultInfo = []
         for (let ii = 0; ii < stateVariable.length; ii++) {
             const nft = stateVariable[ii]
-            const nftData = await contract.items(nft.itemId)
+            const ListedNftData = await contract.items(nft.itemId)
+            const RentedNftData = await contract.rentedItems(nft.itemId)
 
             const returnObj = {
                 ...nft,
-                owner: nftData[0],
-                tokenId: nftData[1].toNumber(),
-                nftAddress: nftData[2],
-                collateral: parseFloat(ethers.utils.formatEther(nftData[3])),
-                price: parseFloat(ethers.utils.formatEther(nftData[4])),
-                rented: nftData[5],
-                benefits: nftData[6],
-                agreementAddress: nftData[7]
+                owner: ListedNftData.owner,
+                tokenId: ListedNftData.tokenId.toNumber(),
+                nftAddress: ListedNftData.nftAddress,
+                collateral: parseFloat(ethers.utils.formatEther(ListedNftData.collateral)),
+                price: parseFloat(ethers.utils.formatEther(ListedNftData.price)),
+                rented: ListedNftData.rented,
+                benefits: ListedNftData.benefits,
+                agreementAddress: RentedNftData.agreementAddress
             }
 
             delete returnObj.benefitsClearText
             resultInfo.push(returnObj)
         }
 
-        setterFunctionInfo(resultInfo)
+        let finalResult
+        if (rentedOwnedNFTs.length > 0) {
+            finalResult = handleOwnedNftRented(resultInfo, rentedOwnedNFTs)
+        } else {
+            finalResult = resultInfo
+        }
+
+        setterFunctionInfo(finalResult)
     }
 
     const handleNftTables = async (event1, event2, filter1, filter2, setterFunction) => {
@@ -57,15 +65,26 @@ const Dashboard = () => {
         setterFunction(finalResult)
     }
 
-    // const handleOwnedNftRented = async (nfts) => {
-    //     const result1 = await logEventData(event1, filter1, provider)
-    //     const itemIdsRented = result1.map(item => {
-    //         return item.itemId
-    //     })
-    //     for (let ii = 0; ii < itemIdsRented.length; ii++) {
+    function handleOwnedNftRented(infoOwned, rentedOwned) {
+        if (infoOwned.length > 0 && rentedOwned.length > 0) {
+            const newNftsInfoOwned = [...infoOwned]
+            for (let ii = 0; ii < rentedOwned.length; ii++) {
+                for (let jj = 0; jj < newNftsInfoOwned.length; jj++) {
+                    if (rentedOwned[ii].itemId === newNftsInfoOwned[jj].itemId) {
+                        newNftsInfoOwned[jj] = {
+                            ...newNftsInfoOwned[jj],
+                            startTime: rentedOwned[ii].startTime,
+                            rentTime: rentedOwned[ii].rentTime,
+                            agreementAddress: rentedOwned[ii].agreementAddress
+                        }
+                        break
+                    }
+                }
+            }
 
-    //     }
-    // }
+            return newNftsInfoOwned
+        }
+    }
 
     const handleTimer = (startTime, rentTime, returnStr = true) => {
         const currentTimer = startTime + rentTime - time / 1000
@@ -112,9 +131,9 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (defaultAccount) {
+            logEventData("NFTRented", [defaultAccount], provider, setRentedOwnedNFTs)
             handleNftTables("NFTListed", "NFTUnlisted", [defaultAccount], [defaultAccount], setListedNFTs)
             handleNftTables("NFTRented", "NFTReturned", [null, defaultAccount], [defaultAccount], setRentedNFTs)
-            logEventData("NFTRented", [defaultAccount], provider, setRentedOwnedNFTs)
         }
 
         const interval = setInterval(() => setTime(Date.now()), 1000);
@@ -142,8 +161,13 @@ const Dashboard = () => {
     }, [nftsInfoRented])
 
     useEffect(() => {
+        console.log(nftsInfoOwned)
+        // console.log(nftsInfoOwned)
+    }, [nftsInfoOwned])
+
+    useEffect(() => {
         if (nftsInfoOwned.length > 0 && rentedOwnedNFTs.length > 0) {
-            // console.log(rentedOwnedNFTs)
+            // console.log(nftsInfoOwned)
         }
     }, [nftsInfoOwned, rentedOwnedNFTs]);
 

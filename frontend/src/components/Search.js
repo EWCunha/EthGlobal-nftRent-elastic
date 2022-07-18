@@ -38,6 +38,7 @@ const style = {
 const Search = () => {
 
   const nftListed = useSelector((state) => state.nftListed)
+  const nftUnlisted = useSelector((state) => state.nftUnlisted)
   const nftRented = useSelector((state) => state.nftRented)
   const contract = useSelector((state) => state.contract)
   const provider = useSelector(state => state.provider)
@@ -54,11 +55,12 @@ const Search = () => {
   const [NFTsAvailable, setNFTsAvailable] = useState([])
 
   useEffect(() => {
-    if (nftListed && nftRented) {
-      setNFTsAvailable(filterEventsData(nftListed, nftRented))
+    if (nftListed && (nftRented || nftUnlisted)) {
+      const result1 = filterEventsData(nftListed, nftUnlisted)
+      setNFTsAvailable(filterEventsData(result1, nftRented))
     }
 
-  }, [nftListed, nftRented])
+  }, [nftListed, nftRented, nftUnlisted])
 
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -91,11 +93,7 @@ const Search = () => {
   }
 
   const completeRental = () => {
-    // console.log("item select",typeof(itemSelect))
-    // console.log("rent days",typeof(rentdays))
-    let numDays = parseInt(rentdays)
-    let collateralFloat = parseInt(collateralSelect)
-    // console.log(parseInt(collateralSelect))
+    const numDays = parseFloat(rentdays)
     const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
     contract.rent(itemSelect, numDays * 24 * 60 * 60, { value: weiCollateral })
   }

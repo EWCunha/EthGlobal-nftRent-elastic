@@ -44,6 +44,8 @@ function App() {
     const loggingData = async () => {
       const decodedEventsNFTListed = await logEventData("NFTListed", [], provider)
       dispatch({ type: 'SET_NFT_LISTED', payload: decodedEventsNFTListed })
+      const decodedEventsNFTUNlisted = await logEventData("NFTUnlisted", [], provider)
+      dispatch({ type: 'SET_NFT_UNLISTED', payload: decodedEventsNFTUNlisted })
       const decodedEventsNFTRented = await logEventData("NFTRented", [], provider)
       dispatch({ type: 'SET_NFT_RENTED', payload: decodedEventsNFTRented })
     }
