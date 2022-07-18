@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography, Grid, TextField, InputAdornment, Card, CardHeader } from '@mui/material'
+import { Box, 
+  Button, 
+  Typography, 
+  Grid, 
+  TextField, 
+  InputAdornment, 
+  Card, 
+  CardHeader, 
+  Snackbar,
+  IconButton,
+  Alert,
+  CircularProgress
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
+
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
 import ElasticContractJSON from '../contracts/Elastic.json'
 import ElasticLogo from '../img/TestImage.png'
+import { useNavigate } from "react-router-dom";
 
 const List = () => {
 
@@ -20,8 +35,11 @@ const List = () => {
   const [tokenId, setTokenId] = useState(null);
   const [approved, setApproved] = useState(false);
 
-  const elasticContractAddress = ElasticContractJSON.address
+  const [openListingSnackbar, setOpenListingSnackbar] = useState(false)
 
+  const elasticContractAddress = ElasticContractJSON.address
+  
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (ethers.utils.isAddress(nFTAddress)) {
@@ -58,20 +76,56 @@ const List = () => {
     // Storing price per second in WEI
     const weiPrice = ethers.utils.parseEther(rentPerDay.toString()).div(24 * 60 * 60)
 
-    await contract.listNFT(
-      nFTAddress,
-      tokenId,
-      weiPrice,
-      weiCollateral,
-      benefits
-    )
+    try{
+      const tx =  await contract.listNFT(
+        nFTAddress,
+        tokenId,
+        weiPrice,
+        weiCollateral,
+        benefits
+      )
+      setOpenListingSnackbar(true)
+    }
+    catch{
+      alert('unable to create rental listing')
+    }
   }
+
+  const handleListingSnackbarClose = ()=>{
+    setOpenListingSnackbar(false)
+  }
+
+
+  const action = (
+    <>
+      <Alert severity="success">
+      <Button size="small" onClick={()=>navigate('/Dashboard')}>
+        DASHBOARD
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleListingSnackbarClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+      </Alert>
+    </>
+  );
 
   return (
 
 
     defaultAccount ? (
       <Box>
+        <Snackbar
+            open={openListingSnackbar}
+            autoHideDuration={6000}
+            onClose={handleListingSnackbarClose}
+            message="NFT Listed, check Dashboard to view -->"
+            action={action}
+        />
         <center>
           <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "white", width: "40%", marginTop: 3, boxShadow: 3 }}>
             <CardHeader title="LIST AN NFT" />
