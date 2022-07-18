@@ -67,7 +67,6 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                                     <TableCell align="center">
                                         <Button variant="contained"
                                             color="success"
-                                            disabled={handleTimer(nft.startTime, nft.rentTime) === "00:00:00" ? false : true}
                                             onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress)}
                                         >
                                             RETURN NFT
