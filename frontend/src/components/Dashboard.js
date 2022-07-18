@@ -96,11 +96,11 @@ const Dashboard = () => {
         let hoursStr
         let minutesStr
         let secondsStr
-        if (hours < 10) { hoursStr = "0" + hours; }
-        if (minutes < 10) { minutesStr = "0" + minutes; }
-        if (seconds < 10) { secondsStr = "0" + seconds; }
+        if (hours < 10) { hoursStr = `0${hours}`; }
+        if (minutes < 10) { minutesStr = `0${minutes}`; }
+        if (seconds < 10) { secondsStr = `0${seconds}`; }
 
-        if (currentTimer >= 0) {
+        if (currentTimer > 0) {
             if (returnStr) {
                 return `${hoursStr}:${minutesStr}:${secondsStr}`
             }
