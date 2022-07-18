@@ -71,40 +71,44 @@ const Search = () => {
 
   }, [nftListed, nftRented, nftUnlisted])
 
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - NFTsAvailable.length) : 0;
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (evt, newPage) => {
+    evt.preventDefault()
     setPage(newPage);
   }
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
+  const handleChangeRowsPerPage = (evt) => {
+    evt.preventDefault()
+    setRowsPerPage(parseInt(evt.target.value, 10))
     setPage(0)
   }
 
-  const handleModalOpen = (e, select, collateral) => {
-    e.preventDefault()
+  const handleModalOpen = (evt, select, collateral) => {
+    evt.preventDefault()
     setCollateralSelect(collateral)
     setItemSelect(select)
     setOpenModal(true)
   }
 
-  const handleClose = () => {
+  const handleClose = (evt) => {
+    evt.preventDefault()
     setItemSelect(null)
     setOpenModal(false)
   }
 
-  const handleRentalDays = (value) => {
-    console.log(value)
-    setRentDays(value)
+  const handleRentalDays = (evt, value) => {
+    evt.preventDefault()
+    console.log(typeof value)
+    setRentDays(parseFloat(value))
   }
 
-  const completeRental = () => {
-    const numDays = parseFloat(rentdays)
+  const completeRental = (evt) => {
+    evt.preventDefault()
+    const rentTime = roundDecimal(parseFloat(rentdays) * 24 * 60 * 60, 0)
     const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
-    contract.rent(itemSelect, numDays * 24 * 60 * 60, { value: weiCollateral })
+    contract.rent(itemSelect, rentTime, { value: weiCollateral })
   }
 
   const RenderedData = () => {
@@ -124,24 +128,19 @@ const Search = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {
-                NFTsAvailable.length > 0 ? (NFTsAvailable.reverse().map((item) => {
-
-                  // let ethCollateral = ethers.utils.parseEther(item.collateral.toString())
-                  // console.log(parseInt(ethCollateral))
-
-                  return (
-                    <TableRow key={item.itemId}>
-                      <TableCell align="center">{item.itemId}</TableCell>
-                      <TableCell align="center">{item.tokenURI ? item.tokenURI : "--"}</TableCell>
-                      <TableCell align="center">{item.benefitsClearText}</TableCell>
-                      <TableCell align="center" >{item.collateral}</TableCell>
-                      <TableCell align="center">{roundDecimal(item.price * 24 * 60 * 60, 5)}</TableCell>
-                      <TableCell> <Button variant="contained" color="success" onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}>RENT</Button> </TableCell>
-                    </TableRow>)
-                })
-                )
-                  : null
+              {NFTsAvailable.length > 0 ? (NFTsAvailable.slice().reverse().map((item) => {
+                return (
+                  <TableRow key={item.itemId}>
+                    <TableCell align="center">{item.itemId}</TableCell>
+                    <TableCell align="center">{item.tokenURI ? item.tokenURI : "--"}</TableCell>
+                    <TableCell align="center">{item.benefitsClearText}</TableCell>
+                    <TableCell align="center" >{item.collateral}</TableCell>
+                    <TableCell align="center">{roundDecimal(item.price * 24 * 60 * 60, 5)}</TableCell>
+                    <TableCell> <Button variant="contained" color="success" onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}>RENT</Button> </TableCell>
+                  </TableRow>)
+              })
+              )
+                : null
               }
               {emptyRows > 0 && (
                 <TableRow

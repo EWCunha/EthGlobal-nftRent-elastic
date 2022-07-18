@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
-import { logEventData, filterEventsData } from '../utils'
+import { logEventData, filterEventsData, roundDecimal } from '../utils'
 import { ethers } from 'ethers'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
@@ -91,11 +91,11 @@ const Dashboard = () => {
         const currentTimer = startTime + rentTime - time / 1000
         const hours = Math.floor(currentTimer / 3600);
         const minutes = Math.floor((currentTimer - (hours * 3600)) / 60);
-        const seconds = currentTimer - (hours * 3600) - (minutes * 60);
+        const seconds = roundDecimal(currentTimer - (hours * 3600) - (minutes * 60), 0);
 
-        let hoursStr
-        let minutesStr
-        let secondsStr
+        let hoursStr = String(hours)
+        let minutesStr = String(minutes)
+        let secondsStr = String(seconds)
         if (hours < 10) { hoursStr = `0${hours}`; }
         if (minutes < 10) { minutesStr = `0${minutes}`; }
         if (seconds < 10) { secondsStr = `0${seconds}`; }
