@@ -20,7 +20,8 @@ contract Elastic is Ownable {
 
     struct RentedNFT {
         address agreementAddress;
-        uint256 rentedTime;
+        uint256 rentTime;
+        uint256 startTime;
         uint256 collateral;
         uint256 price;
     }
@@ -287,6 +288,7 @@ contract Elastic is Ownable {
         rentedItems[_itemId] = RentedNFT(
             address(agreement),
             _rentTime,
+            block.timestamp,
             item.collateral,
             item.price
         );
