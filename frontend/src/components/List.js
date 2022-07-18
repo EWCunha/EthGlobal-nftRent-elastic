@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography, Grid, TextField, InputAdornment } from '@mui/material'
+import { Box, Button, Typography, Grid, TextField, InputAdornment,Card,CardHeader } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
 import ElasticContractJSON from '../contracts/Elastic.json'
+import ElasticLogo from '../img/TestImage.png'
 
 const List = () => {
 
@@ -69,16 +70,13 @@ const List = () => {
   return (
 
 
-    defaultAccount ? (
-
-      <Grid container item spacing={2}>
-
-        <Grid container item xs={12} sm={12} md={12}>
-          <Typography>
-            LIST AN NFT
-          </Typography>
-        </Grid>
-
+    defaultAccount ? (  
+<Box>
+  <center>
+  <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "white" }}>
+  <CardHeader title="LIST AN NFT"/>
+           
+  <Grid container item spacing={2}>
         <Grid item xs={12} sm={12} md={12}>
           <TextField label="Details benefits"
             variant="outlined"
@@ -151,10 +149,23 @@ const List = () => {
 
           </Box>
         </Grid>
+      </Grid > 
+  </Card>
+  </center>
+</Box>
+     
 
-      </Grid >
+    ) : <div>
+      <center>
+      <Typography sx={{fontSize:20}}>
+      Please connect your wallet to list an NFT.
+      </Typography>
+      <img width='25%' height='25%' src={ElasticLogo}/>
 
-    ) : <div>Please connect your wallet to list an NFT.</div>
+
+      </center>
+    
+      </div>
   )
 }
 
