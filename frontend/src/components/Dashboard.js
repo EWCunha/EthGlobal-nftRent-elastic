@@ -5,12 +5,15 @@ import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
 import { logEventData, filterEventsData } from '../utils'
 import { ethers } from 'ethers'
+import agreementJSON from "../contracts/Agreement.json"
+import IERC721JSON from "../contracts/IERC721.json"
 
 
 const Dashboard = () => {
 
     const defaultAccount = useSelector((state) => state.defaultAccount)
     const provider = useSelector(state => state.provider)
+    const signer = useSelector(state => state.signer)
     const contract = useSelector((state) => state.contract)
 
     const [listedNFTs, setListedNFTs] = useState([])
@@ -64,19 +67,47 @@ const Dashboard = () => {
     //     }
     // }
 
-    const handleTimer = (startTime, daysToRent, returnStr = true) => {
-        const currentTimer = startTime + daysToRent * 24 * 60 * 60 - time / 1000
+    const handleTimer = (startTime, rentTime, returnStr = true) => {
+        const currentTimer = startTime + rentTime - time / 1000
+        // console.log(startTime, rentTime)
         if (currentTimer >= 0) {
-            return returnStr ? new Date(currentTimer * 1000).toISOString().substring(11, 19) : new Date(currentTimer * 1000)
+            if (returnStr) {
+                return new Date(currentTimer * 1000).toISOString().substring(11, 19)
+            }
+            return new Date(currentTimer * 1000)
         } else {
-            return returnStr ? "00:00:00" : 0
+            if (returnStr) {
+                return "00:00:00"
+            }
+            return 0
         }
     }
 
-    const unlistNFT = async (evt, nft) => {
+    const unlistNFT = async (evt, itemId) => {
         evt.preventDefault()
 
-        const tx = await contract.unlistNFT(nft.itemId)
+        const tx = await contract.unlistNFT(itemId)
+        await tx.wait(1)
+    }
+
+    const withdrawCollateral = async (evt, agreementAddress) => {
+        evt.preventDefault()
+
+        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+        const tx = await agreementContract.withdrawCollateral()
+        await tx.wait(1)
+    }
+
+    const returnNFT = async (evt, agreementAddress, nftAddress) => {
+        evt.preventDefault()
+
+        const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
+        const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
+        await txApprove.wait(1)
+
+        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+        const txReturnNFT = await agreementContract.returnNFT()
+        await txReturnNFT.wait(1)
     }
 
     useEffect(() => {
@@ -100,21 +131,37 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (rentedNFTs.length > 0) {
-            getNftsInfo(rentedNFTs, nftsInfoRented, setNftsInfoRented)
+            getNftsInfo(rentedNFTs, setNftsInfoRented)
         }
     }, [rentedNFTs])
 
     useEffect(() => {
+        if (nftsInfoRented.length > 0) {
+            console.log(nftsInfoRented)
+        }
+    }, [nftsInfoRented])
+
+    useEffect(() => {
         if (nftsInfoOwned.length > 0 && rentedOwnedNFTs.length > 0) {
-            console.log(rentedOwnedNFTs)
+            // console.log(rentedOwnedNFTs)
         }
     }, [nftsInfoOwned, rentedOwnedNFTs]);
 
     return (
         <>
             <Grid container style={{ display: "flex", gap: "1rem" }}>
-                <DashboardOwnedCard nftsInfoOwned={nftsInfoOwned} handleTimer={handleTimer} />
-                <DashboardRentedCard nftsInfoRented={nftsInfoRented} handleTimer={handleTimer} time={time} />
+                <DashboardOwnedCard
+                    nftsInfoOwned={nftsInfoOwned}
+                    handleTimer={handleTimer}
+                    unlistNFT={unlistNFT}
+                    withdrawCollateral={withdrawCollateral}
+                />
+                <DashboardRentedCard
+                    nftsInfoRented={nftsInfoRented}
+                    handleTimer={handleTimer}
+                    time={time}
+                    returnNFT={returnNFT}
+                />
             </Grid>
         </>
     )

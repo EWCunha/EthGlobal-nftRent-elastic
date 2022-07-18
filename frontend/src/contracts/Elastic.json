@@ -1,5 +1,5 @@
 {
-    "address": "0xDCF94D8e92a9B8f1621628E4a590e65F744A4FeF",
+    "address": "0xfC3Ad18bCAA682aF42218c248eed99C6bc6d4F10",
     "abi": [
         {
             "inputs": [
@@ -343,11 +343,6 @@
                             "internalType": "string",
                             "name": "benefits",
                             "type": "string"
-                        },
-                        {
-                            "internalType": "address",
-                            "name": "agreementAddress",
-                            "type": "address"
                         }
                     ],
                     "internalType": "struct Elastic.NFTData",
@@ -421,11 +416,6 @@
                     "internalType": "string",
                     "name": "benefits",
                     "type": "string"
-                },
-                {
-                    "internalType": "address",
-                    "name": "agreementAddress",
-                    "type": "address"
                 }
             ],
             "stateMutability": "view",
@@ -513,12 +503,12 @@
                     "type": "uint256"
                 }
             ],
-            "name": "nftListed",
+            "name": "nftListedToItemId",
             "outputs": [
                 {
-                    "internalType": "bool",
+                    "internalType": "uint256",
                     "name": "",
-                    "type": "bool"
+                    "type": "uint256"
                 }
             ],
             "stateMutability": "view",
@@ -590,6 +580,40 @@
                 }
             ],
             "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "rentedItems",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "agreementAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "rentedTime",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "collateral",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {

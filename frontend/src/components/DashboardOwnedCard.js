@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
-export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
+export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, withdrawCollateral }) => {
     return (
         <Card>
             <h2>Owned</h2>
@@ -60,7 +60,7 @@ export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
                                                 />
                                             </Tooltip>
                                         </TableCell>
-                                        <TableCell align="center">{handleTimer(nft.startTime, nft.daysToRent)}</TableCell>
+                                        <TableCell align="center">{handleTimer(nft.startTime, nft.rentTime)}</TableCell>
                                     </>
                                 ) : nftsInfoOwned.length > 0 && nftsInfoOwned.filter(el => el.rented).length > 0 ? (
                                     <>
@@ -74,13 +74,16 @@ export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer }) => {
                                     {nft.rented ? (
                                         <Button variant="contained"
                                             color="error"
-                                            disabled={handleTimer(nft.startTime, nft.daysToRent) === "00:00:00" ? false : true}
+                                            disabled={handleTimer(nft.startTime, nft.rentTime) === "00:00:00" ? false : true}
+                                            onClick={e => withdrawCollateral(e, nft.agreementAddress)}
                                         >
                                             WITHDRAW COLLATERAL
                                         </Button>
                                     ) : (
                                         <Button variant="contained"
-                                            color="success">
+                                            color="success"
+                                            onClick={e => unlistNFT(e, nft.itemId)}
+                                        >
                                             UNLIST NFT
                                         </Button>
                                     )}
