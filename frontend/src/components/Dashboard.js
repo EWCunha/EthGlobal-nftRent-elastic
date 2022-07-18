@@ -18,6 +18,7 @@ const Dashboard = () => {
 
     const [listedNFTs, setListedNFTs] = useState([])
     const [rentedNFTs, setRentedNFTs] = useState([])
+    const [returnedNFTs, setRenturnedNFTs] = useState([])
     const [rentedOwnedNFTs, setRentedOwnedNFTs] = useState([])
     const [nftsInfoOwned, setNftsInfoOwned] = useState([])
     const [nftsInfoRented, setNftsInfoRented] = useState([])
@@ -88,12 +89,22 @@ const Dashboard = () => {
 
     const handleTimer = (startTime, rentTime, returnStr = true) => {
         const currentTimer = startTime + rentTime - time / 1000
-        // console.log(startTime, rentTime)
+        const hours = Math.floor(currentTimer / 3600);
+        const minutes = Math.floor((currentTimer - (hours * 3600)) / 60);
+        const seconds = currentTimer - (hours * 3600) - (minutes * 60);
+
+        let hoursStr
+        let minutesStr
+        let secondsStr
+        if (hours < 10) { hoursStr = "0" + hours; }
+        if (minutes < 10) { minutesStr = "0" + minutes; }
+        if (seconds < 10) { secondsStr = "0" + seconds; }
+
         if (currentTimer >= 0) {
             if (returnStr) {
-                return new Date(currentTimer * 1000).toISOString().substring(11, 19)
+                return `${hoursStr}:${minutesStr}:${secondsStr}`
             }
-            return new Date(currentTimer * 1000)
+            return currentTimer
         } else {
             if (returnStr) {
                 return "00:00:00"
