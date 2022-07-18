@@ -23,7 +23,7 @@ contract Agreement is IAgreement {
         address owner,
         address borrower,
         address indexed nftAddress,
-        uint256 indexed tokenId
+        uint256 indexed itemId
     );
     event CollateralWithdrawed(
         address indexed agreement,
@@ -197,14 +197,14 @@ contract Agreement is IAgreement {
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
 
-        IElastic(elasticAddress).returnNFT(agreement.itemId);
+        IElastic(elasticAddress).returnNFT(agreement.itemId, msg.sender);
 
         emit NFTReturnedAgreement(
             address(this),
             agreement.owner,
             agreement.borrower,
             agreement.nftAddress,
-            agreement.tokenId
+            agreement.itemId
         );
         _burnAgreement();
     }
