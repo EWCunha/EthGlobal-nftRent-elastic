@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Web3Connect from './Web3Connect'
 import { useSelector, useDispatch } from 'react-redux'
+import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 
 import {
   AppBar,
@@ -29,6 +30,7 @@ const Header = () => {
           <IconButton component={Link}
           to="/"
           >
+            <ThreeSixtyIcon sx={{color:'white',fontSize:'200%'}}/>
             <Typography variant="h4" color="white">
               Elastic 
             </Typography>

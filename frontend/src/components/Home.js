@@ -1,150 +1,137 @@
 import React from 'react'
-import {  Box, Typography, Card, CardMedia, CardHeader, CardContent, ListItemText,List,ListItem, ListItemIcon} from "@mui/material"
+import {Box, Typography, Card,CardHeader, CardContent, ListItemText,List,ListItem, ListItemIcon} from "@mui/material"
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SearchIcon from '@mui/icons-material/Search';
-import SavingsIcon from '@mui/icons-material/Savings';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 
 const Home = () => {
   return (
     <>
-      <Card sx={{marginTop:2}} variant="outlined">
-        <Box>
-        <Typography sx={{fontSize:20,marginTop:1}}>Welcome To Elastic!</Typography>
-        <SavingsIcon sx={{fontSize:'500%',marginTop:4}} color="primary"/>     
-        </Box>
+  <Card sx={{marginTop:2}} variant="outlined">
+<center>
+<Box>
+        <Typography sx={{fontSize:25,marginTop:1}}>Welcome To Elastic!</Typography>
+        <ThreeSixtyIcon sx={{fontSize:'500%',marginTop:4}} color="primary"/>     
+  </Box>
 
-        <Box sx={{p:0.5,marginTop:1, display:"block"}}>
-        <Card variant="elevation">
-        <CardHeader title="ABOUT"/> 
-  <CardContent>
-<Typography>
-  PiggiFund is a crypto fundraising platform for the masses. Use the PiggiFund Maker to mint a fundraising contract
-  and share out the resulting address, along with the PiggiFund UI, to kick-start your fundraising campaign! 
-</Typography>
-</CardContent>
-          </Card>
-          </Box>
 
 
 <Box sx={{p:0.5,marginTop:1, display:"block"}}>
+  <Card variant="elevation">
+  <CardHeader title="ABOUT"/> 
+  <CardContent>
+<Typography>
+  Elastic is a platform and search engine for renting and searching NFTs by their benefits provided to the owner. 
+</Typography>
+  </CardContent>
+    </Card>
+</Box>
+</center>
+
+<Box sx={{p:0.5,marginTop:1, display:"block"}}>
 <Card variant="elevation">
+<center>
 <CardHeader title="THE PROTOCOL"/> 
+</center>
 <CardContent>
 <List>
     <ListItem>
       <ListItemIcon>
-    <EmojiEventsIcon/>
+    <EmojiEventsIcon sx={{color:"red", fontSize:'200%'}}/>
       </ListItemIcon>
       <ListItemText>
-  The fundraiser sets a contract goal. Funds can be donated towards the goal until met or the refund period arrives. If the funding goal is met 
-  no more contributions can be made to the campaign and the fundraiser is allowed to withdraw all funds.
+List any ERC721 NFT, set rent you'd like per day and the collateral needed to be deposited to enter into a rental period. Highlight the benefits afforded someone from renting your NFT.
       </ListItemText>   
     </ListItem>
 
 
     <ListItem>
       <ListItemIcon>
-<KeyboardReturnIcon/>
+<KeyboardReturnIcon sx={{color:"red", fontSize:'200%'}}/>
       </ListItemIcon>
       <ListItemText>
-A refund period is set by the fundraiser which signals the end of a fundraising campaign without the fundraising goal having been met. 
-Doners have the option of getting a refund on their contribution via the PiggiFund UI. The fundraier is not able to withdraw donations yet. 
-Doners are still able to make contributions.
+When a rental period ends the rentee pays back the amount owed and communication about extensions to the rental period or days to pay back can be negotiated by way of XMTP through our dashboard.   
       </ListItemText>   
     </ListItem>
-
 
     <ListItem>
       <ListItemIcon>
-<HandshakeIcon/>
+<HandshakeIcon sx={{color:"red", fontSize:'200%'}}/>
       </ListItemIcon>
       <ListItemText>
-A claim period is set by the fundraiser signaling the end of when doners can get a refund. During this period, even though the fundraising goal
-has not been met, the fundraiser is allowed to withdraw all donations within the contract.
+If the rentee fails to pay the agreed upon amount or they do not return the NFT, the lister has the option of withdrawing the collateral amount.
       </ListItemText>   
     </ListItem>
-
 
     <ListItem>
       <ListItemIcon>
-<MilitaryTechIcon/>
+<MilitaryTechIcon sx={{color:"red", fontSize:'200%'}}/>
       </ListItemIcon>
       <ListItemText>
-The address of the doner whose contribution pushes the fundraising campaign into the target is recorded as the "Golden Doner" on the contract. This address can be used
-for purposes like sending an token based award- like an NFT.
+Upon each successful return of an NFT rental the rentee will recieve a POAP as a form of social credit for their rent trustworthyness.
       </ListItemText>   
     </ListItem>
-
   </List>
 </CardContent>
-          </Card>
+
+</Card>
 </Box>
 
 
 <Card variant="outlined">
-<CardHeader title="THE TOOLS"/>
+<center>
+<CardHeader sx={{marginBottom:2}} title="THE TOOLS"/>
+</center>
+
 <Box sx={{p:0.5,display:'inline-block', width:1/3}}>
   <Card sx={{height:'45vw'}}variant="outlined">
-      <CardHeader title="PiggiFund Maker"/>
+    <center>
+    <CardHeader title="Elastic List"/>  
       <CardContent>
-     
         <Typography>
-        Use the PiggiFund Maker to deploy your own Solidity smart-contract. Set your funding goal, campaign description, refund period and claim period and house this 
-      information transparently and securely, on chain. 
+Use the List tab to place your NFT on the Elastic rental marketplace. 
         </Typography>
-       
        <HandymanIcon sx={{fontSize:'900%',marginTop:2}} color="primary"/>
-       
       </CardContent>
+      </center>
     </Card>
   </Box>
 
   <Box sx={{p:0.5,display:'inline-block', width:1/3}}>
   <Card sx={{height:'45vw'}} variant="outlined">
-      <CardHeader title="PiggiFund UI"/>
+    <center>
+      <CardHeader title="Elastic Dashboard"/>
       <CardContent>
        <Typography>
-    Visualize and make deposits/withdraws into a PiggiFund contract using the PiggiFund UI. The innovative system detects the user's MetaMask address
-    and will conditionaly render buttons avaiable for deposit, refund or withdraw depending on who the user is and what time period the fundraising 
-    campaign is in.
+Use the Dashboard to track the NFTs you have listed on the Elastic marketplace as well as the rental agreements entered into.
        </Typography>
        <ComputerIcon sx={{fontSize:'900%',marginTop:2}} color="primary"/>
-      
       </CardContent>
+      </center>
     </Card>
 </Box>
 
 <Box sx={{p:0.5,display:'inline-block', width:1/3}}>
 <Card  sx={{height:'45vw'}} variant="outlined">
-      <CardHeader title="PiggiFund Contracts"/>
+  <center>
+      <CardHeader title="Elastic Search"/>
       <CardContent>
         <Typography>
-          Search through PiggiFund contracts and grab an interesting contract address to visit 
-          through the PiggiFund UI
+Search NFTs by their benefits afforded by a rental and enter into new rental agreements from this tab.
         </Typography>
         <SearchIcon  sx={{fontSize:'900%',marginTop:4}} color="primary"/>
-      
       </CardContent>
+  </center>
     </Card>
 </Box>
-
-
 </Card>
 
-  
-
-
-
-
-      </Card>
-  
-    
-    
+      </Card> 
     </>
   )
 }
