@@ -86,27 +86,27 @@ const filterListedUnlistedEventsData = (listedEventArr, unlistedEventArr, fieldN
 }
 
 const filterRentedReturnedEventsData = (rentedEventArr, returnedEventArr, fieldName = "itemId") => {
-    let tempObj = {}
+    let stillRentedItemIdsObj = {}
     if (rentedEventArr && rentedEventArr.length > 0) {
         for (let jj = 0; jj < rentedEventArr.length; jj++) {
-            if (rentedEventArr[jj][fieldName] in tempObj) {
-                tempObj[rentedEventArr[jj][fieldName]]++
+            if (rentedEventArr[jj][fieldName] in stillRentedItemIdsObj) {
+                stillRentedItemIdsObj[rentedEventArr[jj][fieldName]]++
             } else {
-                tempObj[rentedEventArr[jj][fieldName]] = 1
+                stillRentedItemIdsObj[rentedEventArr[jj][fieldName]] = 1
             }
         }
     }
     if (returnedEventArr && returnedEventArr.length > 0) {
         for (let jj = 0; jj < returnedEventArr.length; jj++) {
-            if (returnedEventArr[jj][fieldName] in tempObj) {
-                tempObj[returnedEventArr[jj][fieldName]]--
+            if (returnedEventArr[jj][fieldName] in stillRentedItemIdsObj) {
+                stillRentedItemIdsObj[returnedEventArr[jj][fieldName]]--
             } else {
-                tempObj[returnedEventArr[jj][fieldName]] = 0
+                stillRentedItemIdsObj[returnedEventArr[jj][fieldName]] = 0
             }
         }
     }
 
-    return tempObj
+    return stillRentedItemIdsObj
 }
 
 const filterAvailableItems = (stillListedNFTsArr, balanceNFTsItemIdsObj, fieldName = "itemId") => {
@@ -126,19 +126,18 @@ const filterAvailableItems = (stillListedNFTsArr, balanceNFTsItemIdsObj, fieldNa
 }
 
 const filterRentedItems = (stillRentedNFTsArr, balanceNFTsItemIdsObj, fieldName = "itemId") => {
-    const itemIdsArr = []
-    let resultEventData = []
-    for (const item in balanceNFTsItemIdsObj) {
-        if (balanceNFTsItemIdsObj[item] <= 0) {
-            itemIdsArr.push(parseInt(item))
+    const resultStillRentedNFTsArrReversed = []
+    const reversedStillRentedNFTsArr = stillRentedNFTsArr.slice().reverse()
+    const copyOfBalanceNFTsItemIdsObj = { ...balanceNFTsItemIdsObj }
+    for (let ii = 0; ii < reversedStillRentedNFTsArr.length; ii++) {
+        let item = reversedStillRentedNFTsArr[ii]
+        if (copyOfBalanceNFTsItemIdsObj[item[fieldName]] > 0) {
+            copyOfBalanceNFTsItemIdsObj[item[fieldName]]--
+            resultStillRentedNFTsArrReversed.push(reversedStillRentedNFTsArr[ii])
         }
     }
 
-    if (stillRentedNFTsArr && stillRentedNFTsArr.length > 0) {
-        resultEventData = stillRentedNFTsArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
-    }
-
-    return resultEventData
+    return resultStillRentedNFTsArrReversed.reverse()
 }
 
 function roundDecimal(num, decimals) {

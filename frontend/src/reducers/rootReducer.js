@@ -59,9 +59,9 @@ function rootReducer(state = initialState, action) {
             return {
                 ...state, ercInterface: action.payload
             }
-        case "SET_REFRESH":
-           return {
-                ...state, refresher: state.refresher++
+        case "SET_UPDATE_REFRESHER":
+            return {
+                ...state, refresher: action.payload
             }
         default:
             return state
