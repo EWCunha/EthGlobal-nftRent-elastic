@@ -15,6 +15,7 @@ const Dashboard = () => {
     const provider = useSelector(state => state.provider)
     const signer = useSelector(state => state.signer)
     const contract = useSelector((state) => state.contract)
+    const refresher = useSelector((state) => state.refresher)
 
     const [ownedNFTsData, setOwnedNFTsData] = useState([])
     const [rentedNFTsData, setRentedNFTsData] = useState([])
@@ -130,16 +131,22 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        if (defaultAccount) {
-            handleOwnedNftTable()
-            handleRentedNftTable()
-        }
-
         const interval = setInterval(() => setTime(Date.now()), 1000);
         return () => {
             clearInterval(interval);
         };
     }, [])
+
+    useEffect(() => {
+        if (defaultAccount) {
+            handleOwnedNftTable()
+            handleRentedNftTable()
+        }
+    }, [defaultAccount, refresher])
+
+    // useEffect(() => {
+    //     // window.location.reload(true);
+    // }, [refresher])
 
     useEffect(() => {
         if (ownedNFTsData.length > 0) {

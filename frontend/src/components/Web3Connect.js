@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@mui/material"
 import { ethers } from 'ethers'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import contractJSON from "../contracts/Elastic.json"
 
 const Web3Connect = () => {
@@ -10,6 +10,8 @@ const Web3Connect = () => {
     const ADDRESS = contractJSON.address
 
     const dispatch = useDispatch()
+
+    const refresher = useSelector(state => state.refresher)
 
     const [connButtonText, setConnButtonText] = useState('Connect Wallet');
     const [accountchanging, setAccountChanging] = useState(false)
@@ -98,19 +100,19 @@ const Web3Connect = () => {
 
     useEffect(() => {
         getWalletBalance(provider)
-    }, [provider, walletBalance])
+    }, [provider, walletBalance, refresher])
 
     useEffect(() => {
-        if (accountchanging === false) {
-            // listen for account changes
+        if (window.ethereum) {
             window.ethereum.on('accountsChanged', accountChangedHandler);
             window.ethereum.on('chainChanged', chainChangedHandler);
+
+            return () => {
+                window.ethereum.removeListener('accountsChanged', accountChangedHandler);
+                window.ethereum.removeListener('chainChanged', chainChangedHandler);
+            }
         }
-        else {
-            window.ethereum.removeListener('accountsChanged', accountChangedHandler);
-            window.ethereum.removeListener('chainChanged', chainChangedHandler);
-        }
-    }, [accountchanging])
+    }, [])
 
     return (
         <>

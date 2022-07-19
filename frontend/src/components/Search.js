@@ -36,6 +36,7 @@ const Search = () => {
   const nftRemoved = useSelector((state) => state.nftRemoved)
   const contract = useSelector((state) => state.contract)
   const defaultAccount = useSelector((state) => state.defaultAccount)
+  const refresher = useSelector((state) => state.refresher)
   const provider = useSelector(state => state.provider)
 
   const [page, setPage] = useState(0)
@@ -101,7 +102,7 @@ const Search = () => {
     if (nftListed && nftUnlisted && nftRented && nftReturned && nftRemoved) {
       handleSearchTable()
     }
-  }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved])
+  }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved, refresher])
 
   const RenderedData = () => {
     return (

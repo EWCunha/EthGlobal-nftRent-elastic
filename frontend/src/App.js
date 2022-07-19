@@ -7,10 +7,9 @@ import Search from "./components/Search";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import { createTheme, ThemeProvider } from "@mui/material"
-import contractJSON from "./contracts/Elastic.json"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import ElasticContractBuilder from './contracts/Elastic.json'
 import { logEventData } from "./utils.js"
 
@@ -27,14 +26,18 @@ let theme = createTheme({
 
 function App() {
 
-  const ABI = contractJSON.abi
-  const ADDRESS = contractJSON.address
+  const ABI = ElasticContractBuilder.abi
+  const ADDRESS = ElasticContractBuilder.address
 
   const dispatch = useDispatch()
 
   const provider = useSelector(state => state.provider)
+  const contract = useSelector(state => state.contract)
+  const refresher = useSelector(state => state.refresher)
 
-  const [stateContract, setStateContract] = useState(null)
+  const handleRefresher = () => {
+    dispatch({ type: 'SET_UPDATE_REFRESHER', payload: refresher + 1 })
+  }
 
   useEffect(() => {
     updateEthers()
@@ -56,15 +59,22 @@ function App() {
     if (provider) {
       loggingData()
     }
-  }, [provider])
+  }, [provider, refresher])
 
+  useEffect(() => {
+    if (contract) {
+      contract.on('NFTListed', handleRefresher);
+      contract.on('NFTUnlisted', handleRefresher);
+      contract.on('NFTRented', handleRefresher);
+      contract.on('NFTReturned', handleRefresher);
+      contract.on('NFTRemoved', handleRefresher);
 
-  //useEffect for debugging
-  // useEffect(() => {
-  //   if(stateContract) {
-  //     console.log(state)
-  //   }
-  // },[stateContract])
+      // cleanup this component
+      return () => {
+        contract.removeAllListeners();
+      };
+    }
+  }, [contract, refresher]);
 
   const updateEthers = async () => {
 
@@ -76,11 +86,7 @@ function App() {
 
     let tempContract = new ethers.Contract(ADDRESS, ABI, tempSigner)
     dispatch({ type: "SET_CONTRACT", payload: tempContract })
-
-    setStateContract(tempContract)
-
   }
-
 
   return (
     <>
