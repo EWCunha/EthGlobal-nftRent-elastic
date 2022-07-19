@@ -10,7 +10,7 @@ import { createTheme, ThemeProvider } from "@mui/material"
 import contractJSON from "./contracts/Elastic.json"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef } from 'react'
 import ElasticContractBuilder from './contracts/Elastic.json'
 import { logEventData } from "./utils.js"
 
@@ -31,14 +31,76 @@ function App() {
   const ADDRESS = contractJSON.address
 
   const dispatch = useDispatch()
+  const firstTimeListner = useRef()
+  firstTimeListner.current = true
 
   const provider = useSelector(state => state.provider)
+  const contract = useSelector(state =>state.contract)
 
   const [stateContract, setStateContract] = useState(null)
 
   useEffect(() => {
     updateEthers()
   }, [])
+
+  //event listeners setup to handle app refresh on data change
+  useEffect(()=>{
+
+    if(contract && firstTimeListner.current){
+      contract.on("NFTListed",(owner,itemId,tokenURI,benefits,benefitsClearText,collateral,price,event)=>{ 
+        contract.removeListener("NFTListed",(owner,itemId,tokenURI,benefits,benefitsClearText,collateral,price,event))
+        console.log("NFT LISTED")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+      
+
+      contract.on("NFTUnlisted",(owner,itemID,event)=>{
+        contract.removeListener("NFTUnlisted",(owner,itemID,event))
+        console.log("NFT UNLISTED")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+      
+
+      contract.on("NFTRented",(owner,tenant,itemId,agreementAddress,nftAddress,rentTime,startTime,event)=>{
+        contract.removeListener("NFTRented",(owner,tenant,itemId,agreementAddress,nftAddress,rentTime,startTime,event))
+        console.log("NFT Rented")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+    
+
+      contract.on("ListedNFTDataModified",(owner,itemId,collateral,price,event)=>{
+        contract.removeListener("ListedNFTDataModified",(owner,itemId,collateral,price,event))
+        console.log("NFT Listed Data Modified")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+      
+
+      contract.on("NFTReturned",(owner,tenant,itemId,timestamp, event)=>{
+        contract.removeListener("NFTReturned",(owner,tenant,itemId,timestamp, event))
+        console.log("NFT Returned")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+      
+
+      contract.on("NFTRemoved",(owner,borrower,itemId,event)=>{
+        contract.removeListener("NFTRemoved",(owner,borrower,itemId,event))
+        console.log("NFT Removed")
+        dispatch({ type: 'SET_REFRESH' })
+        firstTimeListner.current = false
+      })
+
+      firstTimeListner.current = false
+    }
+    
+
+  },[contract])
+
+  
 
   useEffect(() => {
     const loggingData = async () => {

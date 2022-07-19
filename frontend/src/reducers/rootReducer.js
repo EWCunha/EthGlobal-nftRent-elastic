@@ -10,6 +10,7 @@ const initialState = {
     signer: null,
     contract: null,
     ercInterface: null,
+    refresher: 0
 }
 
 function rootReducer(state = initialState, action) {
@@ -57,6 +58,10 @@ function rootReducer(state = initialState, action) {
         case "SET_ERC_INTERFACE":
             return {
                 ...state, ercInterface: action.payload
+            }
+        case "SET_REFRESH":
+           return {
+                ...state, refresher: state.refresher++
             }
         default:
             return state
