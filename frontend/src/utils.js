@@ -73,11 +73,14 @@ const filterListedUnlistedEventsData = (listedEventArr, unlistedEventArr, fieldN
         for (let jj = 0; jj < unlistedEventArr.length; jj++) {
             itemIdsArr.push(unlistedEventArr[jj][fieldName])
         }
-
-        if (listedEventArr && listedEventArr.length > 0) {
-            resultEventData = listedEventArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
-        }
     }
+
+    if (listedEventArr && listedEventArr.length > 0) {
+        resultEventData = listedEventArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
+    }
+    // } else if (listedEventArr && listedEventArr.length > 0) {
+    //     resultEventData = listedEventArr
+    // }
 
     return resultEventData
 }
@@ -115,7 +118,7 @@ const filterAvailableItems = (stillListedNFTsArr, notRentedNFTsItemIdsObj, field
         }
     }
 
-    if (stillListedNFTsArr && stillListedNFTsArr.lenth > 0) {
+    if (stillListedNFTsArr && stillListedNFTsArr.length > 0) {
         resultEventData = stillListedNFTsArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
     }
 

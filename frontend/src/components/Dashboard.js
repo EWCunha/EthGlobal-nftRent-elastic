@@ -78,27 +78,6 @@ const Dashboard = () => {
         setRentedNFTsData(stillRentedNFTs)
     }
 
-    // function handleOwnedNftRented(infoOwned, rentedOwned) {
-    //     if (infoOwned.length > 0 && rentedOwned.length > 0) {
-    //         const newNftsInfoOwned = [...infoOwned]
-    //         for (let ii = 0; ii < rentedOwned.length; ii++) {
-    //             for (let jj = 0; jj < newNftsInfoOwned.length; jj++) {
-    //                 if (rentedOwned[ii].itemId === newNftsInfoOwned[jj].itemId) {
-    //                     newNftsInfoOwned[jj] = {
-    //                         ...newNftsInfoOwned[jj],
-    //                         startTime: rentedOwned[ii].startTime,
-    //                         rentTime: rentedOwned[ii].rentTime,
-    //                         agreementAddress: rentedOwned[ii].agreementAddress
-    //                     }
-    //                     break
-    //                 }
-    //             }
-    //         }
-
-    //         return newNftsInfoOwned
-    //     }
-    // }
-
     const handleTimer = (startTime, rentTime, returnStr = true) => {
         const currentTimer = startTime + rentTime - time / 1000
         const hours = Math.floor(currentTimer / 3600);
