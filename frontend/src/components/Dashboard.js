@@ -3,7 +3,10 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
-import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems, roundDecimal } from '../utils'
+import {
+    logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
+    filterAvailableItems, filterRentedItems, roundDecimal
+} from '../utils'
 import { ethers } from 'ethers'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
@@ -41,8 +44,8 @@ const Dashboard = () => {
                 rented: ListedNftData.rented,
                 benefits: ListedNftData.benefits,
                 agreementAddress: RentedNftData.agreementAddress,
-                startTime: RentedNftData.startTime,
-                rentTime: RentedNftData.rentTime
+                startTime: parseFloat(RentedNftData.startTime),
+                rentTime: parseFloat(RentedNftData.rentTime)
             }
 
             delete returnObj.benefitsClearText
@@ -55,16 +58,12 @@ const Dashboard = () => {
     const handleOwnedNftTable = async () => {
         const listedNFts = await logEventData("NFTListed", [defaultAccount], provider)
         const unlistedNFTs = await logEventData("NFTUnlisted", [defaultAccount], provider)
-        const rentedNFTs = await logEventData("NFTRented", [defaultAccount], provider)
-        const returnedNFTs = await logEventData("NFTReturned", [defaultAccount], provider)
         const removedNFTs = await logEventData("NFTRemoved", [defaultAccount], provider)
 
         let stillListedNFTs = filterListedUnlistedEventsData(listedNFts, unlistedNFTs)
         stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, removedNFTs)
 
-        const notRentedNFTs = filterRentedReturnedEventsData(rentedNFTs, returnedNFTs)
-        const availableNFTs = filterAvailableItems(stillListedNFTs, notRentedNFTs)
-        setOwnedNFTsData(availableNFTs)
+        setOwnedNFTsData(stillListedNFTs)
     }
 
     const handleRentedNftTable = async () => {
@@ -73,8 +72,8 @@ const Dashboard = () => {
         const removedNFTs = await logEventData("NFTRemoved", [null, defaultAccount], provider)
 
         const removedAndReturnedNFTs = [...returnedNFTs, ...removedNFTs]
-        const notRentedNFTs = filterRentedReturnedEventsData(rentedNFTs, removedAndReturnedNFTs)
-        const stillRentedNFTs = filterAvailableItems(rentedNFTs, notRentedNFTs)
+        const balanceNFTs = filterRentedReturnedEventsData(rentedNFTs, removedAndReturnedNFTs)
+        const stillRentedNFTs = filterRentedItems(rentedNFTs, balanceNFTs)
         setRentedNFTsData(stillRentedNFTs)
     }
 

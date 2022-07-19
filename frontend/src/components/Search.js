@@ -33,7 +33,7 @@ const Search = () => {
   const nftUnlisted = useSelector((state) => state.nftUnlisted)
   const nftRented = useSelector((state) => state.nftRented)
   const nftReturned = useSelector((state) => state.nftReturned)
-  const nftRemoved = useSelector((state) => state.nftReturned)
+  const nftRemoved = useSelector((state) => state.nftRemoved)
   const contract = useSelector((state) => state.contract)
   const defaultAccount = useSelector((state) => state.defaultAccount)
   const provider = useSelector(state => state.provider)
@@ -53,8 +53,8 @@ const Search = () => {
     let stillListedNFTs = filterListedUnlistedEventsData(nftListed, nftUnlisted)
     stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, nftRemoved)
 
-    const notRentedNFTs = filterRentedReturnedEventsData(nftRented, nftReturned)
-    const availableNFTs = filterAvailableItems(stillListedNFTs, notRentedNFTs)
+    const balanceNFTs = filterRentedReturnedEventsData(nftRented, nftReturned)
+    const availableNFTs = filterAvailableItems(stillListedNFTs, balanceNFTs)
     setNFTsAvailable(availableNFTs)
   }
 
@@ -98,7 +98,9 @@ const Search = () => {
   }
 
   useEffect(() => {
-    handleSearchTable()
+    if (nftListed && nftUnlisted && nftRented && nftReturned && nftRemoved) {
+      handleSearchTable()
+    }
   }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved])
 
   const RenderedData = () => {
@@ -131,7 +133,7 @@ const Search = () => {
                           variant="contained"
                           color="success"
                           onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}
-                          disabled={item.owner === defaultAccount ? false : true}
+                          disabled={item.owner.toLowerCase() === defaultAccount ? true : false}
                         >
                           RENT
                         </Button>
