@@ -35,6 +35,7 @@ const Search = () => {
   const nftReturned = useSelector((state) => state.nftReturned)
   const nftRemoved = useSelector((state) => state.nftReturned)
   const contract = useSelector((state) => state.contract)
+  const defaultAccount = useSelector((state) => state.defaultAccount)
   const provider = useSelector(state => state.provider)
 
   const [page, setPage] = useState(0)
@@ -124,7 +125,26 @@ const Search = () => {
                     <TableCell align="center">{item.benefitsClearText}</TableCell>
                     <TableCell align="center" >{item.collateral}</TableCell>
                     <TableCell align="center">{roundDecimal(item.price * 24 * 60 * 60, 5)}</TableCell>
-                    <TableCell> <Button variant="contained" color="success" onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}>RENT</Button> </TableCell>
+                    <TableCell>
+                      {defaultAccount ? (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}
+                          disabled={item.owner === defaultAccount ? false : true}
+                        >
+                          RENT
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="warning"
+                        >
+                          CONNECT WALLET
+                        </Button>
+                      )}
+
+                    </TableCell>
                   </TableRow>)
               })
               )
