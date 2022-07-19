@@ -34,6 +34,7 @@ const List = () => {
   const [nFTAddress, setNFTAddress] = useState(null);
   const [tokenId, setTokenId] = useState(null);
   const [approved, setApproved] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const [openListingSnackbar, setOpenListingSnackbar] = useState(false)
 
@@ -54,6 +55,18 @@ const List = () => {
     }
   }, [defaultAccount, contractERC])
 
+  useEffect(() => {
+    if (approved) {
+      setProcessing(false)
+    }
+  },[approved])
+
+  useEffect(() => {
+    if(openListingSnackbar) {
+      setProcessing(false)
+    }
+  },[openListingSnackbar])
+
   const dispatch = useDispatch()
 
   async function checkIfApproved() {
@@ -63,6 +76,7 @@ const List = () => {
 
   const approveOperator = async () => {
     if (!approved) {
+      setProcessing(true)
       const tx = await contractERC.setApprovalForAll(elasticContractAddress, true)
       await tx.wait(1)
       setApproved(true)
@@ -70,9 +84,11 @@ const List = () => {
   }
 
   const listNFT = async (evt) => {
-    evt.preventDefault()
-    const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
 
+    evt.preventDefault()
+    setProcessing(true)
+    const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
+    
     // Storing price per second in WEI
     const weiPrice = ethers.utils.parseEther(rentPerDay.toString()).div(24 * 60 * 60)
 
@@ -197,14 +213,16 @@ const List = () => {
 
                 <Grid item xs={12} sm={12} md={12}>
                   <Box>
-                    {contractERC ? (approved ? (
+                    {contractERC ? (approved && !processing ? (
                       <Button variant="contained"
                         color="success"
                         onClick={listNFT}
                       >
                         LIST NFT
                       </Button>
-                    ) : (
+                    ) :
+                    (!approved && processing) || (approved && processing) ? (<CircularProgress/>) : 
+                    (
                       <Button variant="contained"
                         color="warning"
                         onClick={approveOperator}
