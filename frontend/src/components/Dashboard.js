@@ -3,10 +3,7 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
-import {
-    logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
-    filterAvailableItems, filterRentedItems, roundDecimal
-} from '../utils'
+import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems, roundDecimal } from '../utils'
 import { ethers } from 'ethers'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
@@ -74,6 +71,7 @@ const Dashboard = () => {
         const removedAndReturnedNFTs = [...returnedNFTs, ...removedNFTs]
         const balanceNFTs = filterRentedReturnedEventsData(rentedNFTs, removedAndReturnedNFTs)
         const stillRentedNFTs = filterRentedItems(rentedNFTs, balanceNFTs)
+
         setRentedNFTsData(stillRentedNFTs)
     }
 
@@ -122,6 +120,7 @@ const Dashboard = () => {
         evt.preventDefault()
 
         const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
+
         const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
         await txApprove.wait(1)
 
