@@ -85,7 +85,7 @@ const filterListedUnlistedEventsData = (listedEventArr, unlistedEventArr, fieldN
     return resultEventData
 }
 
-const filterRentedReturnedEventsData = (rentedEventArr, returnedEventArr, avialableNFTsArr, fieldName = "itemId") => {
+const filterRentedReturnedEventsData = (rentedEventArr, returnedEventArr, fieldName = "itemId") => {
     let tempObj = {}
     if (rentedEventArr && rentedEventArr.length > 0) {
         for (let jj = 0; jj < rentedEventArr.length; jj++) {
@@ -109,12 +109,12 @@ const filterRentedReturnedEventsData = (rentedEventArr, returnedEventArr, aviala
     return tempObj
 }
 
-const filterAvailableItems = (stillListedNFTsArr, notRentedNFTsItemIdsObj, fieldName = "itemId") => {
+const filterAvailableItems = (stillListedNFTsArr, balanceNFTsItemIdsObj, fieldName = "itemId") => {
     const itemIdsArr = []
     let resultEventData = []
-    for (const item in notRentedNFTsItemIdsObj) {
-        if (notRentedNFTsItemIdsObj[item] <= 0) {
-            itemIdsArr.push(item)
+    for (const item in balanceNFTsItemIdsObj) {
+        if (balanceNFTsItemIdsObj[item] > 0) {
+            itemIdsArr.push(parseInt(item))
         }
     }
 
@@ -125,8 +125,27 @@ const filterAvailableItems = (stillListedNFTsArr, notRentedNFTsItemIdsObj, field
     return resultEventData
 }
 
+const filterRentedItems = (stillRentedNFTsArr, balanceNFTsItemIdsObj, fieldName = "itemId") => {
+    const itemIdsArr = []
+    let resultEventData = []
+    for (const item in balanceNFTsItemIdsObj) {
+        if (balanceNFTsItemIdsObj[item] <= 0) {
+            itemIdsArr.push(parseInt(item))
+        }
+    }
+
+    if (stillRentedNFTsArr && stillRentedNFTsArr.length > 0) {
+        resultEventData = stillRentedNFTsArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
+    }
+
+    return resultEventData
+}
+
 function roundDecimal(num, decimals) {
     return Number(Math.round(num + "e" + decimals) + "e-" + decimals);
 }
 
-export { logEventData, copyToClipboard, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems, roundDecimal }
+export {
+    logEventData, copyToClipboard, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
+    filterAvailableItems, filterRentedItems, roundDecimal
+}
