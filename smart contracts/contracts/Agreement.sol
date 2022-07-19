@@ -10,6 +10,7 @@ contract Agreement is IAgreement {
 
     AgreementData agreement;
     NewAgreementData newAgreement;
+    string CID;
 
     error AgreementNotEnoughFunds(
         uint256 availableFunds,
@@ -42,6 +43,14 @@ contract Agreement is IAgreement {
         uint256 collateral,
         uint256 rentDays,
         uint256 price
+    );
+    event AgreementReceipt(
+        address agreement,
+        address indexed owner,
+        address indexed borrower,
+        string indexed CID,
+        string CIDClearText,
+        string status
     );
 
     constructor(
@@ -94,7 +103,6 @@ contract Agreement is IAgreement {
         external
         view
         override
-        onlyInvolved
         returns (IAgreement.AgreementData memory)
     {
         return agreement;
@@ -197,7 +205,7 @@ contract Agreement is IAgreement {
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
 
-        IElastic(elasticAddress).returnNFT(agreement.itemId, msg.sender);
+        IElastic(elasticAddress).returnNFT(agreement.itemId);
 
         emit NFTReturnedAgreement(
             address(this),
@@ -206,7 +214,7 @@ contract Agreement is IAgreement {
             agreement.nftAddress,
             agreement.itemId
         );
-        _burnAgreement();
+        _burnAgreement("NFT Returned");
     }
 
     /**
@@ -222,20 +230,36 @@ contract Agreement is IAgreement {
         payable(msg.sender).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
 
-        IElastic(elasticAddress).unlistNFT(agreement.itemId);
+        IElastic(elasticAddress).removeNFT(agreement.itemId);
 
         emit CollateralWithdrawed(
             address(this),
             agreement.owner,
             agreement.collateral
         );
-        _burnAgreement();
+        _burnAgreement("Collateral withdrawed");
+    }
+
+    /**
+    @notice writeCID write the CID for IPFS
+    @param _CID the new IPFS CID
+    */
+    function writeCID(string memory _CID) external onlyInvolved {
+        CID = _CID;
     }
 
     /**
     @notice _burnAgreement internal function to burn this smart contract after its end
     */
-    function _burnAgreement() internal {
+    function _burnAgreement(string memory _status) internal {
+        emit AgreementReceipt(
+            address(this),
+            agreement.owner,
+            agreement.borrower,
+            CID,
+            CID,
+            _status
+        );
         selfdestruct(payable(elasticAddress));
     }
 

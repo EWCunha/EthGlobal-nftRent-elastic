@@ -1,5 +1,5 @@
 {
-    "address": "0x1bB162D7c4A4F14d0d42d7D0B3BB6455f9D29129",
+    "address": "0x859614476bf75239ca44AC7464DD044aBe07d2b9",
     "abi": [
         {
             "inputs": [
@@ -67,6 +67,12 @@
         {
             "anonymous": false,
             "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
                 {
                     "indexed": true,
                     "internalType": "uint256",
@@ -150,8 +156,39 @@
                 {
                     "indexed": true,
                     "internalType": "address",
+                    "name": "borrower",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "NFTRemoved",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
                     "name": "tenant",
                     "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
                 },
                 {
                     "indexed": false,
@@ -164,12 +201,6 @@
                     "internalType": "address",
                     "name": "nftAddress",
                     "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "itemId",
-                    "type": "uint256"
                 },
                 {
                     "indexed": false,
@@ -190,6 +221,12 @@
         {
             "anonymous": false,
             "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
                 {
                     "indexed": true,
                     "internalType": "address",
@@ -229,25 +266,6 @@
                 }
             ],
             "name": "NFTUnlisted",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "previousOwner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "OwnershipTransferred",
             "type": "event"
         },
         {
@@ -301,7 +319,7 @@
             "inputs": [
                 {
                     "internalType": "uint256",
-                    "name": "_item",
+                    "name": "_itemId",
                     "type": "uint256"
                 }
             ],
@@ -539,21 +557,14 @@
             "type": "function"
         },
         {
-            "inputs": [],
-            "name": "owner",
-            "outputs": [
+            "inputs": [
                 {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
+                    "internalType": "uint256",
+                    "name": "_itemId",
+                    "type": "uint256"
                 }
             ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "renounceOwnership",
+            "name": "removeNFT",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -598,6 +609,11 @@
                     "type": "address"
                 },
                 {
+                    "internalType": "address",
+                    "name": "borrower",
+                    "type": "address"
+                },
+                {
                     "internalType": "uint256",
                     "name": "rentTime",
                     "type": "uint256"
@@ -605,16 +621,6 @@
                 {
                     "internalType": "uint256",
                     "name": "startTime",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "collateral",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "price",
                     "type": "uint256"
                 }
             ],
@@ -627,27 +633,9 @@
                     "internalType": "uint256",
                     "name": "_itemId",
                     "type": "uint256"
-                },
-                {
-                    "internalType": "address",
-                    "name": "_borrower",
-                    "type": "address"
                 }
             ],
             "name": "returnNFT",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "transferOwnership",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"

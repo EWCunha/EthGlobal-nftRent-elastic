@@ -48,6 +48,10 @@ function App() {
       dispatch({ type: 'SET_NFT_UNLISTED', payload: decodedEventsNFTUNlisted })
       const decodedEventsNFTRented = await logEventData("NFTRented", [], provider)
       dispatch({ type: 'SET_NFT_RENTED', payload: decodedEventsNFTRented })
+      const decodedEventsNFTReturned = await logEventData("NFTReturned", [], provider)
+      dispatch({ type: 'SET_NFT_RETURNED', payload: decodedEventsNFTReturned })
+      const decodedEventsNFTRemoved = await logEventData("NFTRemoved", [], provider)
+      dispatch({ type: 'SET_NFT_REMOVED', payload: decodedEventsNFTRemoved })
     }
     if (provider) {
       loggingData()

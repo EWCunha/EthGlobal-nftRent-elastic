@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
@@ -79,18 +79,26 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                 </TableContainer>
             ) : (
                 <>
-                    <h3>No NFTs rented</h3>
-                    <TableRow>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                    </TableRow>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Item ID</TableCell>
+                                    <TableCell align="center">Address</TableCell>
+                                    <TableCell align="center">Token ID</TableCell>
+                                    <TableCell align="center">Collateral (ETH)</TableCell>
+                                    <TableCell align="center">Price/day (ETH)</TableCell>
+                                    <TableCell align="center">Benefit(s)</TableCell>
+                                    <TableCell align="center">Agreement</TableCell>
+                                    <TableCell align="center">Elapsed time</TableCell>
+                                    <TableCell align="center">Total payment</TableCell>
+                                    <TableCell align="center"></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </>
             )}
         </Card>
