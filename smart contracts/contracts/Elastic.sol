@@ -3,11 +3,9 @@ pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IAgreement.sol";
 import "./Agreement.sol";
 
-contract Elastic is Ownable {
+contract Elastic {
     struct NFTData {
         address owner;
         uint256 tokenId;
@@ -20,10 +18,9 @@ contract Elastic is Ownable {
 
     struct RentedNFT {
         address agreementAddress;
+        address borrower;
         uint256 rentTime;
         uint256 startTime;
-        uint256 collateral;
-        uint256 price;
     }
 
     uint256 public nextItemId = 1; // 0 is reserved for items no longer listed
@@ -55,22 +52,28 @@ contract Elastic is Ownable {
     event NFTRented(
         address indexed owner,
         address indexed tenant,
+        uint256 indexed itemId,
         address agreementAddress,
         address nftAddress,
-        uint256 indexed itemId,
         uint256 rentTime,
         uint256 startTime
     );
     event ListedNFTDataModified(
+        address indexed owner,
         uint256 indexed itemId,
-        // address indexed owner,
         uint256 collateral,
         uint256 price
     );
     event NFTReturned(
+        address indexed owner,
         address indexed tenant,
         uint256 indexed itemId,
         uint256 timestamp
+    );
+    event NFTRemoved(
+        address indexed owner,
+        address indexed borrower,
+        uint256 indexed itemId
     );
 
     /**
@@ -85,8 +88,12 @@ contract Elastic is Ownable {
         return nftsListedByOwner[_owner];
     }
 
-    function getDataItem(uint256 _item) public view returns (NFTData memory) {
-        return items[_item];
+    /**
+    @notice getDataItem returns the data of the listed NFT
+    @param _itemId ID of the listed NFT
+    */
+    function getDataItem(uint256 _itemId) public view returns (NFTData memory) {
+        return items[_itemId];
     }
 
     /**
@@ -144,18 +151,19 @@ contract Elastic is Ownable {
     @notice unlistNFT allows owner to unlist not rented NFTs
     @param _itemId ID of the listed NFT
     */
-    function unlistNFT(uint256 _itemId) external onlyAuthorized(_itemId) {
+    function unlistNFT(uint256 _itemId) external {
+        if (items[_itemId].owner != msg.sender) {
+            revert AccessDenied(_itemId, msg.sender);
+        }
         if (items[_itemId].rented) {
             revert AlreadyRented();
         }
 
-        if (items[_itemId].owner == msg.sender) {
-            IERC721(items[_itemId].nftAddress).transferFrom(
-                address(this),
-                msg.sender,
-                items[_itemId].tokenId
-            );
-        }
+        IERC721(items[_itemId].nftAddress).transferFrom(
+            address(this),
+            msg.sender,
+            items[_itemId].tokenId
+        );
 
         uint256 jj;
         for (uint256 ii = 0; ii < nftsListedByOwner[msg.sender].length; ii++) {
@@ -171,15 +179,13 @@ contract Elastic is Ownable {
         }
         nftsListedByOwner[msg.sender].pop();
 
-        address owner = items[_itemId].owner;
-
         activeItem[_itemId] = false;
         delete nftListedToItemId[items[_itemId].nftAddress][
             items[_itemId].tokenId
         ];
         // delete items[_itemId]; // should be deleted though?
 
-        emit NFTUnlisted(owner, _itemId);
+        emit NFTUnlisted(items[_itemId].owner, _itemId);
     }
 
     /**
@@ -206,40 +212,45 @@ contract Elastic is Ownable {
         items[_itemId].collateral = _collateral;
         items[_itemId].price = _price;
 
-        emit ListedNFTDataModified(_itemId, _collateral, _price);
+        emit ListedNFTDataModified(msg.sender, _itemId, _collateral, _price);
     }
 
     /**
     @notice returnNFT sets the rented field of listed NFT to false
     @param _itemId ID of the listed NFT
-    @param _borrower borrower address of the rented NFT
     */
-    function returnNFT(uint256 _itemId, address _borrower) external {
+    function returnNFT(uint256 _itemId) public {
         if (rentedItems[_itemId].agreementAddress != msg.sender) {
             revert AccessDenied(_itemId, msg.sender);
         }
 
         items[_itemId].rented = false;
+        address borrower = rentedItems[_itemId].borrower;
 
         uint256 jj;
-        for (uint256 ii = 0; ii < borrowersNfts[_borrower].length; ii++) {
-            if (borrowersNfts[_borrower][ii] == _itemId) {
-                delete borrowersNfts[_borrower][ii];
+        for (uint256 ii = 0; ii < borrowersNfts[borrower].length; ii++) {
+            if (borrowersNfts[borrower][ii] == _itemId) {
+                delete borrowersNfts[borrower][ii];
                 jj = ii;
             }
             if (ii > jj) {
-                borrowersNfts[_borrower][ii - 1] = borrowersNfts[_borrower][ii];
+                borrowersNfts[borrower][ii - 1] = borrowersNfts[borrower][ii];
             }
         }
-        borrowersNfts[_borrower].pop();
+        borrowersNfts[borrower].pop();
         delete rentedItems[_itemId];
 
-        emit NFTReturned(_borrower, _itemId, block.timestamp);
+        emit NFTReturned(
+            items[_itemId].owner,
+            borrower,
+            _itemId,
+            block.timestamp
+        );
     }
 
     /** 
     @notice rent tenant rent the NFT list on the platform
-    @param _itemId id of the listed NFT
+    @param _itemId ID of the listed NFT
     @param _rentTime renting time in seconds
     */
     function rent(uint256 _itemId, uint256 _rentTime)
@@ -287,33 +298,68 @@ contract Elastic is Ownable {
         borrowersNfts[msg.sender].push(_itemId);
         rentedItems[_itemId] = RentedNFT(
             address(agreement),
+            msg.sender,
             _rentTime,
-            block.timestamp,
-            item.collateral,
-            item.price
+            block.timestamp
         );
 
         emit NFTRented(
             item.owner,
             msg.sender,
+            _itemId,
             address(agreement),
             items[_itemId].nftAddress,
-            _itemId,
             _rentTime,
             block.timestamp
         );
         return address(agreement);
     }
 
-    modifier onlyAuthorized(uint256 _itemId) {
-        if (
-            items[_itemId].owner != msg.sender &&
-            rentedItems[_itemId].agreementAddress != msg.sender
-        ) {
+    /**
+    @notice removeNFT removes the rented NFT when the borrower does not return it
+    @param _itemId ID of the listed NFT
+    */
+    function removeNFT(uint256 _itemId) external {
+        if (rentedItems[_itemId].agreementAddress != msg.sender) {
             revert AccessDenied(_itemId, msg.sender);
         }
 
-        _;
+        address owner = items[_itemId].owner;
+        address borrower = rentedItems[_itemId].borrower;
+
+        // Unlisting
+        uint256 jj;
+        for (uint256 ii = 0; ii < nftsListedByOwner[owner].length; ii++) {
+            if (nftsListedByOwner[owner][ii] == _itemId) {
+                delete nftsListedByOwner[owner][ii];
+                jj = ii;
+            }
+            if (ii > jj) {
+                nftsListedByOwner[owner][ii - 1] = nftsListedByOwner[owner][ii];
+            }
+        }
+        nftsListedByOwner[owner].pop();
+
+        activeItem[_itemId] = false;
+        delete nftListedToItemId[items[_itemId].nftAddress][
+            items[_itemId].tokenId
+        ];
+
+        // Deleting renting info
+        jj = 0;
+        for (uint256 ii = 0; ii < borrowersNfts[borrower].length; ii++) {
+            if (borrowersNfts[borrower][ii] == _itemId) {
+                delete borrowersNfts[borrower][ii];
+                jj = ii;
+            }
+            if (ii > jj) {
+                borrowersNfts[borrower][ii - 1] = borrowersNfts[borrower][ii];
+            }
+        }
+        borrowersNfts[borrower].pop();
+        delete rentedItems[_itemId];
+
+        emit NFTRemoved(owner, borrower, _itemId);
     }
 
     fallback() external payable {}

@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
-import { logEventData, filterEventsData, roundDecimal } from '../utils'
+import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems, roundDecimal } from '../utils'
 import { ethers } from 'ethers'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
@@ -16,10 +16,8 @@ const Dashboard = () => {
     const signer = useSelector(state => state.signer)
     const contract = useSelector((state) => state.contract)
 
-    const [listedNFTs, setListedNFTs] = useState([])
-    const [rentedNFTs, setRentedNFTs] = useState([])
-    const [returnedNFTs, setRenturnedNFTs] = useState([])
-    const [rentedOwnedNFTs, setRentedOwnedNFTs] = useState([])
+    const [ownedNFTsData, setOwnedNFTsData] = useState([])
+    const [rentedNFTsData, setRentedNFTsData] = useState([])
     const [nftsInfoOwned, setNftsInfoOwned] = useState([])
     const [nftsInfoRented, setNftsInfoRented] = useState([])
     const [time, setTime] = useState(Date.now());
@@ -42,50 +40,64 @@ const Dashboard = () => {
                 price: parseFloat(ethers.utils.formatEther(ListedNftData.price)),
                 rented: ListedNftData.rented,
                 benefits: ListedNftData.benefits,
-                agreementAddress: RentedNftData.agreementAddress
+                agreementAddress: RentedNftData.agreementAddress,
+                startTime: RentedNftData.startTime,
+                rentTime: RentedNftData.rentTime
             }
 
             delete returnObj.benefitsClearText
             resultInfo.push(returnObj)
         }
 
-        let finalResult
-        if (rentedOwnedNFTs.length > 0) {
-            finalResult = handleOwnedNftRented(resultInfo, rentedOwnedNFTs)
-        } else {
-            finalResult = resultInfo
-        }
-
-        setterFunctionInfo(finalResult)
+        setterFunctionInfo(resultInfo)
     }
 
-    const handleNftTables = async (event1, event2, filter1, filter2, setterFunction) => {
-        const result1 = await logEventData(event1, filter1, provider)
-        const result2 = await logEventData(event2, filter2, provider)
-        const finalResult = filterEventsData(result1, result2)
-        setterFunction(finalResult)
+    const handleOwnedNftTable = async () => {
+        const listedNFts = await logEventData("NFTListed", [defaultAccount], provider)
+        const unlistedNFTs = await logEventData("NFTUnlisted", [defaultAccount], provider)
+        const rentedNFTs = await logEventData("NFTRented", [defaultAccount], provider)
+        const returnedNFTs = await logEventData("NFTReturned", [defaultAccount], provider)
+        const removedNFTs = await logEventData("NFTRemoved", [defaultAccount], provider)
+
+        let stillListedNFTs = filterListedUnlistedEventsData(listedNFts, unlistedNFTs)
+        stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, removedNFTs)
+
+        const notRentedNFTs = filterRentedReturnedEventsData(rentedNFTs, returnedNFTs)
+        const availableNFTs = filterAvailableItems(stillListedNFTs, notRentedNFTs)
+        setOwnedNFTsData(availableNFTs)
     }
 
-    function handleOwnedNftRented(infoOwned, rentedOwned) {
-        if (infoOwned.length > 0 && rentedOwned.length > 0) {
-            const newNftsInfoOwned = [...infoOwned]
-            for (let ii = 0; ii < rentedOwned.length; ii++) {
-                for (let jj = 0; jj < newNftsInfoOwned.length; jj++) {
-                    if (rentedOwned[ii].itemId === newNftsInfoOwned[jj].itemId) {
-                        newNftsInfoOwned[jj] = {
-                            ...newNftsInfoOwned[jj],
-                            startTime: rentedOwned[ii].startTime,
-                            rentTime: rentedOwned[ii].rentTime,
-                            agreementAddress: rentedOwned[ii].agreementAddress
-                        }
-                        break
-                    }
-                }
-            }
+    const handleRentedNftTable = async () => {
+        const rentedNFTs = await logEventData("NFTRented", [null, defaultAccount], provider)
+        const returnedNFTs = await logEventData("NFTReturned", [null, defaultAccount], provider)
+        const removedNFTs = await logEventData("NFTRemoved", [null, defaultAccount], provider)
 
-            return newNftsInfoOwned
-        }
+        const removedAndReturnedNFTs = [...returnedNFTs, ...removedNFTs]
+        const notRentedNFTs = filterRentedReturnedEventsData(rentedNFTs, removedAndReturnedNFTs)
+        const stillRentedNFTs = filterAvailableItems(rentedNFTs, notRentedNFTs)
+        setRentedNFTsData(stillRentedNFTs)
     }
+
+    // function handleOwnedNftRented(infoOwned, rentedOwned) {
+    //     if (infoOwned.length > 0 && rentedOwned.length > 0) {
+    //         const newNftsInfoOwned = [...infoOwned]
+    //         for (let ii = 0; ii < rentedOwned.length; ii++) {
+    //             for (let jj = 0; jj < newNftsInfoOwned.length; jj++) {
+    //                 if (rentedOwned[ii].itemId === newNftsInfoOwned[jj].itemId) {
+    //                     newNftsInfoOwned[jj] = {
+    //                         ...newNftsInfoOwned[jj],
+    //                         startTime: rentedOwned[ii].startTime,
+    //                         rentTime: rentedOwned[ii].rentTime,
+    //                         agreementAddress: rentedOwned[ii].agreementAddress
+    //                     }
+    //                     break
+    //                 }
+    //             }
+    //         }
+
+    //         return newNftsInfoOwned
+    //     }
+    // }
 
     const handleTimer = (startTime, rentTime, returnStr = true) => {
         const currentTimer = startTime + rentTime - time / 1000
@@ -142,9 +154,8 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (defaultAccount) {
-            logEventData("NFTRented", [defaultAccount], provider, setRentedOwnedNFTs)
-            handleNftTables("NFTListed", "NFTUnlisted", [defaultAccount], [defaultAccount], setListedNFTs)
-            handleNftTables("NFTRented", "NFTReturned", [null, defaultAccount], [defaultAccount], setRentedNFTs)
+            handleOwnedNftTable()
+            handleRentedNftTable()
         }
 
         const interval = setInterval(() => setTime(Date.now()), 1000);
@@ -154,33 +165,16 @@ const Dashboard = () => {
     }, [])
 
     useEffect(() => {
-        if (listedNFTs.length > 0) {
-            getNftsInfo(listedNFTs, setNftsInfoOwned)
+        if (ownedNFTsData.length > 0) {
+            getNftsInfo(ownedNFTsData, setNftsInfoOwned)
         }
-    }, [listedNFTs])
+    }, [ownedNFTsData])
 
     useEffect(() => {
-        if (rentedNFTs.length > 0) {
-            getNftsInfo(rentedNFTs, setNftsInfoRented)
+        if (rentedNFTsData.length > 0) {
+            getNftsInfo(rentedNFTsData, setNftsInfoRented)
         }
-    }, [rentedNFTs])
-
-    useEffect(() => {
-        if (nftsInfoRented.length > 0) {
-            console.log(nftsInfoRented)
-        }
-    }, [nftsInfoRented])
-
-    useEffect(() => {
-        console.log(nftsInfoOwned)
-        // console.log(nftsInfoOwned)
-    }, [nftsInfoOwned])
-
-    useEffect(() => {
-        if (nftsInfoOwned.length > 0 && rentedOwnedNFTs.length > 0) {
-            // console.log(nftsInfoOwned)
-        }
-    }, [nftsInfoOwned, rentedOwnedNFTs]);
+    }, [rentedNFTsData])
 
     return (
         <>

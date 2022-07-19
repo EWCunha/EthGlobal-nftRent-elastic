@@ -2,6 +2,8 @@ const initialState = {
     nftListed: null,
     nftUnlisted: null,
     nftRented: null,
+    nftReturned: null,
+    nftRemoved: null,
     defaultAccount: null,
     defaultAccountBalance: null,
     provider: null,
@@ -23,6 +25,14 @@ function rootReducer(state = initialState, action) {
         case "SET_NFT_RENTED":
             return {
                 ...state, nftRented: action.payload
+            }
+        case "SET_NFT_RETURNED":
+            return {
+                ...state, nftReturned: action.payload
+            }
+        case "SET_NFT_REMOVED":
+            return {
+                ...state, nftRemoved: action.payload
             }
         case "SET_PROVIDER":
             return {

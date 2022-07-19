@@ -136,6 +136,49 @@
             "anonymous": false,
             "inputs": [
                 {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "borrower",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "string",
+                    "name": "CID",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "CIDClearText",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                }
+            ],
+            "name": "AgreementReceipt",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
                     "indexed": true,
                     "internalType": "address",
                     "name": "agreement",
@@ -300,11 +343,6 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "proposalId",
-                            "type": "uint256"
-                        },
-                        {
-                            "internalType": "uint256",
                             "name": "price",
                             "type": "uint256"
                         },
@@ -413,6 +451,19 @@
         {
             "inputs": [],
             "name": "withdrawCollateral",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "_CID",
+                    "type": "string"
+                }
+            ],
+            "name": "writeCID",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"

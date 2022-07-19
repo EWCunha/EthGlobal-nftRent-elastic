@@ -9,7 +9,6 @@ interface IAgreement {
         uint256 rentTime;
         uint256 tokenId;
         address nftAddress;
-        uint256 proposalId;
         uint256 price;
         uint256 startTime;
         uint256 itemId;

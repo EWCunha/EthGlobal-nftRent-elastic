@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Box,
   Button,
-  Typography,
-  Grid,
   TablePagination,
   TableContainer,
   TableHead,
@@ -11,17 +8,12 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Card,
-  TextField,
-  Tab,
-  Modal,
-  InputAdornment
+  Card
 } from '@mui/material'
 import { ethers } from 'ethers'
 
-import { useSelector, useDispatch } from 'react-redux'
-import ElasticContractBuilder from '../contracts/Elastic.json'
-import { logEventData, roundDecimal, filterEventsData } from '../utils'
+import { useSelector } from 'react-redux'
+import { roundDecimal, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems } from '../utils'
 import RentalModal from './RentalModal';
 
 const style = {
@@ -40,6 +32,8 @@ const Search = () => {
   const nftListed = useSelector((state) => state.nftListed)
   const nftUnlisted = useSelector((state) => state.nftUnlisted)
   const nftRented = useSelector((state) => state.nftRented)
+  const nftReturned = useSelector((state) => state.nftReturned)
+  const nftRemoved = useSelector((state) => state.nftReturned)
   const contract = useSelector((state) => state.contract)
   const provider = useSelector(state => state.provider)
 
@@ -54,22 +48,14 @@ const Search = () => {
 
   const [NFTsAvailable, setNFTsAvailable] = useState([])
 
-  useEffect(() => {
-    if (nftListed) {
-      if (nftUnlisted) {
-        const result1 = filterEventsData(nftListed, nftUnlisted)
-        if (nftRented) {
-          setNFTsAvailable(filterEventsData(result1, nftRented))
-        }
-      } else {
-        if (nftRented) {
-          setNFTsAvailable(filterEventsData(nftListed, nftRented))
-        }
-      }
+  const handleSearchTable = async () => {
+    let stillListedNFTs = filterListedUnlistedEventsData(nftListed, nftUnlisted)
+    stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, nftRemoved)
 
-    }
-
-  }, [nftListed, nftRented, nftUnlisted])
+    const notRentedNFTs = filterRentedReturnedEventsData(nftRented, nftReturned)
+    const availableNFTs = filterAvailableItems(stillListedNFTs, notRentedNFTs)
+    setNFTsAvailable(availableNFTs)
+  }
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - NFTsAvailable.length) : 0;
@@ -100,7 +86,6 @@ const Search = () => {
 
   const handleRentalDays = (evt, value) => {
     evt.preventDefault()
-    console.log(typeof value)
     setRentDays(parseFloat(value))
   }
 
@@ -111,8 +96,11 @@ const Search = () => {
     contract.rent(itemSelect, rentTime, { value: weiCollateral })
   }
 
+  useEffect(() => {
+    handleSearchTable()
+  }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved])
+
   const RenderedData = () => {
-    // console.log("data",data)
     return (
       <Card sx={{ height: '45vw' }} variant="outlined">
         <TableContainer>
