@@ -10,7 +10,8 @@ const initialState = {
     signer: null,
     contract: null,
     ercInterface: null,
-    refresher: 0
+    refresher: 0,
+    word:"",
 }
 
 function rootReducer(state = initialState, action) {
@@ -62,6 +63,10 @@ function rootReducer(state = initialState, action) {
         case "SET_UPDATE_REFRESHER":
             return {
                 ...state, refresher: action.payload
+            }
+        case "SET_SEARCH_WORD":
+            return{
+                ...state, word: action.payload
             }
         default:
             return state

@@ -11,12 +11,13 @@ import {
   Card,
   TextField,
   InputAdornment,
-  IconButton
+  IconButton,
+  Box
 } from '@mui/material'
 import { ethers } from 'ethers'
 import SearchIcon from '@mui/icons-material/Search'
 
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 import { roundDecimal, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems } from '../utils'
 import RentalModal from './RentalModal';
 
@@ -32,7 +33,7 @@ const style = {
   p: 4,
 };
 const Search = () => {
-
+  const dispatch = useDispatch()
   const nftListed = useSelector((state) => state.nftListed)
   const nftUnlisted = useSelector((state) => state.nftUnlisted)
   const nftRented = useSelector((state) => state.nftRented)
@@ -41,23 +42,22 @@ const Search = () => {
   const contract = useSelector((state) => state.contract)
   const defaultAccount = useSelector((state) => state.defaultAccount)
   const refresher = useSelector((state) => state.refresher)
-  const provider = useSelector(state => state.provider)
+ 
+  const searchword = useSelector(state=>state.word)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [searchwords, setSearchWords] = useState("")
 
   const [rentdays, setRentDays] = useState(null)
   const [openModal, setOpenModal] = useState(false)
   const [itemSelect, setItemSelect] = useState(null)
   const [collateralSelect, setCollateralSelect] = useState(null)
-
+  const [word, setWord] = useState("")
   const [NFTsAvailable, setNFTsAvailable] = useState([])
 
   const handleSearchTable = async () => {
     let stillListedNFTs = filterListedUnlistedEventsData(nftListed, nftUnlisted)
     stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, nftRemoved)
-
     const balanceNFTs = filterRentedReturnedEventsData(nftRented, nftReturned)
     const availableNFTs = filterAvailableItems(stillListedNFTs, balanceNFTs)
     setNFTsAvailable(availableNFTs)
@@ -108,14 +108,40 @@ const Search = () => {
     }
   }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved, refresher])
 
+
+
+
+  const filterData = (dataObj)=>{
+    if(dataObj.length !== 0 && searchword){
+      console.log("searchword",searchword)
+      console.log(dataObj.forEach(item=>console.log(item.benefitsClearText)))
+      const filteredData= dataObj.filter(d => {return d.benefitsClearText.toUpperCase().includes(searchword.toUpperCase())})
+      console.log("originalData", dataObj)
+      console.log("filteredData",filteredData)
+      return filteredData
+    }
+    else{
+      return dataObj
+    }
+  }
+
+  const submitWord=()=>{
+    dispatch({type:'SET_SEARCH_WORD',payload:document.getElementById("search-field-with-icon").value})
+  }
+
+  const clearSearch=()=>{
+    dispatch({type:'SET_SEARCH_WORD',payload:""})
+  }
+
   const RenderedData = () => {
     return (
       <Card sx={{ height: '45vw' }} variant="outlined">
         <TextField
-          label="Search field"
+          label="Search NFTs By Benefits"
           variant="outlined"
           id="search-field-with-icon"
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2}}
+          placeholder={searchword}
           InputProps={{
             startAdornment: (
               <InputAdornment position="end">
@@ -126,6 +152,11 @@ const Search = () => {
             )
           }}
         />
+        <Box>
+        <Button variant="contained" onClick={submitWord}>SEARCH</Button>
+        <Button variant="contained" color="warning" onClick={clearSearch}>CLEAR SEARCH</Button>
+        </Box>
+     
         <TableContainer>
           <Table sx={{ minWidth: 650, marginTop: 2 }} aria-label="simple table">
             <TableHead sx={{ backgroundColor: "lightyellow" }}>
@@ -139,7 +170,7 @@ const Search = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {NFTsAvailable.length > 0 ? (NFTsAvailable.slice().reverse().map((item) => {
+              {NFTsAvailable.length > 0 ? (filterData(NFTsAvailable).slice().reverse().map((item) => {
                 return (
                   <TableRow key={item.itemId}>
                     <TableCell align="center">{item.itemId}</TableCell>
@@ -172,6 +203,7 @@ const Search = () => {
               )
                 : null
               }
+              
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -184,7 +216,7 @@ const Search = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        {
+        {/* {
           NFTsAvailable.length > 0 ?
             <TablePagination
               rowsPerPageOptions={[5]}
@@ -195,7 +227,7 @@ const Search = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             /> : null
-        }
+        } */}
       </Card>
     )
   }
