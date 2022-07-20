@@ -8,9 +8,13 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Card
+  Card,
+  TextField,
+  InputAdornment,
+  IconButton
 } from '@mui/material'
 import { ethers } from 'ethers'
+import SearchIcon from '@mui/icons-material/Search'
 
 import { useSelector } from 'react-redux'
 import { roundDecimal, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems } from '../utils'
@@ -107,6 +111,21 @@ const Search = () => {
   const RenderedData = () => {
     return (
       <Card sx={{ height: '45vw' }} variant="outlined">
+        <TextField
+          label="Search field"
+          variant="outlined"
+          id="search-field-with-icon"
+          sx={{ marginTop: 2 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="end">
+                <IconButton>
+                  <SearchIcon/>
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
         <TableContainer>
           <Table sx={{ minWidth: 650, marginTop: 2 }} aria-label="simple table">
             <TableHead sx={{ backgroundColor: "lightyellow" }}>
