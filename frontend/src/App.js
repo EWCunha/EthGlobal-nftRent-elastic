@@ -30,7 +30,6 @@ function App() {
   const ADDRESS = ElasticContractBuilder.address
 
   const dispatch = useDispatch()
-
   const provider = useSelector(state => state.provider)
   const contract = useSelector(state => state.contract)
   const refresher = useSelector(state => state.refresher)
@@ -42,6 +41,8 @@ function App() {
   useEffect(() => {
     updateEthers()
   }, [])
+
+ 
 
   useEffect(() => {
     const loggingData = async () => {
