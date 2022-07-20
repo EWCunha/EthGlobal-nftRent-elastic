@@ -135,7 +135,7 @@ const Search = () => {
 
   const RenderedData = () => {
     return (
-      <Card sx={{ height: '45vw' }} variant="outlined">
+      <Card sx={{ minHeight: '45vw' }} variant="outlined">
         <TextField
           label="Search NFTs By Benefits"
           variant="outlined"

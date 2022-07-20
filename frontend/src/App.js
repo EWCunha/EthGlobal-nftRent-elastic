@@ -5,6 +5,7 @@ import Rent from "./components/Rent";
 import List from "./components/List";
 import Search from "./components/Search";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
 import { createTheme, ThemeProvider } from "@mui/material"
 import { ethers } from 'ethers'
@@ -92,7 +93,7 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Header />
+        <Header/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="Rent" element={<Rent />} />
@@ -100,6 +101,7 @@ function App() {
           <Route path="List" element={<List />} />
           <Route path="Dashboard" element={<Dashboard />} />
         </Routes>
+        <Footer/>
       </ThemeProvider>
     </>
 
