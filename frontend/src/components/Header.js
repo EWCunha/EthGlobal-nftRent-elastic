@@ -26,7 +26,7 @@ const Header = () => {
     <>
       <AppBar position="static" sx={{ marginBottom:2, }}>
         <CssBaseline />
-        <Toolbar>
+        <Toolbar sx={{bgcolor: "red"}}>
           <IconButton component={Link}
           to="/"
           >
