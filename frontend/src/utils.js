@@ -1,8 +1,16 @@
 import { ethers } from "ethers"
 import ElasticContractBuilder from './contracts/Elastic.json'
+import AgreementContractBuilder from './contracts/Agreement.json'
 
-const logEventData = async (eventName, filters = [], provider, setterFunction = undefined) => {
-    const ABI = ElasticContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
+const logEventData = async (eventName, filters = [], provider, setterFunction = undefined, abiStr = "elastic") => {
+    let ABI
+    if (abiStr === "elastic") {
+        ABI = ElasticContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
+    } else if (abiStr === "agreement") {
+        ABI = AgreementContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
+    } else {
+        throw new Error(`Wrong contract: ${abiStr}`)
+    }
 
     let ABIStr = `event ${ABI.name}(`
     for (let ii = 0; ii < ABI.inputs.length; ii++) {
@@ -144,7 +152,27 @@ function roundDecimal(num, decimals) {
     return Number(Math.round(num + "e" + decimals) + "e-" + decimals);
 }
 
+const cleanAgreementData = (agreementDataObj) => {
+    const cleanedAgreementData = {}
+    for (const item in agreementDataObj) {
+        if (isNaN(item)) {
+            if (item === "itemId" || item === "startTime" || item === "rentTime" || item === "tokenId") {
+                cleanedAgreementData[item] = parseFloat(agreementDataObj[item])
+            } else if (ethers.BigNumber.isBigNumber(agreementDataObj[item])) {
+                cleanedAgreementData[item] = parseFloat(ethers.utils.formatEther(agreementDataObj[item]))
+                if (item === "price") {
+                    cleanedAgreementData[item] = roundDecimal(cleanedAgreementData[item] * 24 * 60 * 60, 5)
+                }
+            } else {
+                cleanedAgreementData[item] = agreementDataObj[item]
+            }
+        }
+    }
+
+    return cleanedAgreementData
+}
+
 export {
     logEventData, copyToClipboard, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
-    filterAvailableItems, filterRentedItems, roundDecimal
+    filterAvailableItems, filterRentedItems, roundDecimal, cleanAgreementData
 }

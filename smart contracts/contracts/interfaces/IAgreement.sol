@@ -39,9 +39,9 @@ interface IAgreement {
         view
         returns (NewAgreementData memory);
 
-    function returnNFT() external payable;
+    function returnNFT(string calldata _CID) external payable;
 
-    function withdrawCollateral() external;
+    function withdrawCollateral(string calldata _CID) external;
 
     function getElasticAddress() external returns (address);
 }

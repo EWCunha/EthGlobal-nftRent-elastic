@@ -3,8 +3,9 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { useSelector } from 'react-redux'
-import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems, roundDecimal } from '../utils'
+import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems, roundDecimal, cleanAgreementData } from '../utils'
 import { ethers } from 'ethers'
+import { uploadToIPFS } from './IPFS'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
 
@@ -113,20 +114,32 @@ const Dashboard = () => {
         evt.preventDefault()
 
         const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const tx = await agreementContract.withdrawCollateral()
+        const AgreementData = await agreementContract.readAgreementData()
+        const cleanedAgreementData = cleanAgreementData(AgreementData)
+        cleanedAgreementData["status"] = "Borrower did NOT return the NFT. Owner withdrawed collateral."
+        // const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
+        // console.log(CID)
+        const balance = parseFloat(ethers.utils.formatEther(await provider.getBalance(agreementAddress)))
+        console.log(balance, cleanedAgreementData.collateral)
+        const tx = await agreementContract.withdrawCollateral("CID", { gasLimit: 100000 })
         await tx.wait(1)
     }
 
-    const returnNFT = async (evt, agreementAddress, nftAddress) => {
+    const returnNFT = async (evt, agreementAddress, nftAddress, payment) => {
         evt.preventDefault()
 
+        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+        const AgreementData = await agreementContract.readAgreementData()
+        const cleanedAgreementData = cleanAgreementData(AgreementData)
+        cleanedAgreementData["status"] = "Borrower did return the NFT."
+        const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
+        console.log(CID)
         const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
 
         const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
         await txApprove.wait(1)
 
-        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const txReturnNFT = await agreementContract.returnNFT()
+        const txReturnNFT = await agreementContract.returnNFT(CID, { value: ethers.utils.parseEther(payment) })
         await txReturnNFT.wait(1)
     }
 

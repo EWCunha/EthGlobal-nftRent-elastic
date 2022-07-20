@@ -8,7 +8,8 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
 
     const totalPayment = (startTime, price) => {
         const runnedTime = time / 1000 - startTime
-        return runnedTime * price
+        // console.log(runnedTime * price, time, startTime, isNaN(runnedTime * price))
+        return isNaN(runnedTime * price) ? 0 : runnedTime * price
     }
 
     return (
@@ -67,7 +68,7 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                                     <TableCell align="center">
                                         <Button variant="contained"
                                             color="success"
-                                            onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress)}
+                                            onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress, totalPayment(nft.startTime, nft.price))}
                                         >
                                             RETURN NFT
                                         </Button>

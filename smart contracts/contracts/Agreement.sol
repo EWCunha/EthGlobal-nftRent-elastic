@@ -20,36 +20,42 @@ contract Agreement is IAgreement {
     error AgreementAccessDenied(address caller);
 
     event NFTReturnedAgreement(
-        address indexed agreement,
-        address owner,
-        address borrower,
-        address indexed nftAddress,
-        uint256 indexed itemId
+        address indexed owner,
+        address indexed borrower,
+        uint256 indexed itemId,
+        address nftAddress,
+        address agreement
     );
     event CollateralWithdrawed(
-        address indexed agreement,
         address indexed owner,
+        address indexed borrower,
+        uint256 indexed itemId,
+        address agreement,
         uint256 collateral
     );
     event NewAgreementProposal(
+        address indexed owner,
+        address indexed borrower,
         address indexed agreement,
         uint256 collateral,
         uint256 rentDays,
         uint256 price
     );
     event AcceptedNewAgreement(
+        address indexed owner,
+        address indexed borrower,
         address indexed agreement,
-        address indexed approver,
+        address approver,
         uint256 collateral,
         uint256 rentDays,
         uint256 price
     );
     event AgreementReceipt(
-        address agreement,
         address indexed owner,
         address indexed borrower,
         string indexed CID,
         string CIDClearText,
+        address agreement,
         string status
     );
 
@@ -185,7 +191,12 @@ contract Agreement is IAgreement {
     /**
     @notice returnNFT the borrower should use this function to return the rented NFT, pay the rent price, and receive the collateral back
     */
-    function returnNFT() external payable override onlyBorrower {
+    function returnNFT(string calldata _CID)
+        external
+        payable
+        override
+        onlyBorrower
+    {
         uint256 totalPaymentAmount = (block.timestamp - agreement.startTime) *
             agreement.price;
 
@@ -205,7 +216,7 @@ contract Agreement is IAgreement {
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
 
-        IElastic(elasticAddress).returnNFT(agreement.itemId);
+        IElastic(elasticAddress).returnNFT(agreement.itemId, _CID);
 
         emit NFTReturnedAgreement(
             address(this),
@@ -214,13 +225,19 @@ contract Agreement is IAgreement {
             agreement.nftAddress,
             agreement.itemId
         );
+
+        _writeCID(_CID);
         _burnAgreement("NFT Returned");
     }
 
     /**
     @notice withdrawCollateral allows NFT owner to get the collateral, if the borrower does not return the NFT back at the agreed time
     */
-    function withdrawCollateral() external override onlyOwner {
+    function withdrawCollateral(string calldata _CID)
+        external
+        override
+        onlyOwner
+    {
         if (agreement.startTime + agreement.rentTime < block.timestamp) {
             revert AgreementNotExpired(
                 agreement.startTime + agreement.rentTime
@@ -230,21 +247,23 @@ contract Agreement is IAgreement {
         payable(msg.sender).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
 
-        IElastic(elasticAddress).removeNFT(agreement.itemId);
+        IElastic(elasticAddress).removeNFT(agreement.itemId, _CID);
 
         emit CollateralWithdrawed(
             address(this),
             agreement.owner,
             agreement.collateral
         );
+
+        _writeCID(_CID);
         _burnAgreement("Collateral withdrawed");
     }
 
     /**
-    @notice writeCID write the CID for IPFS
+    @notice _writeCID write the CID for IPFS
     @param _CID the new IPFS CID
     */
-    function writeCID(string memory _CID) external onlyInvolved {
+    function _writeCID(string calldata _CID) internal {
         CID = _CID;
     }
 
@@ -253,11 +272,11 @@ contract Agreement is IAgreement {
     */
     function _burnAgreement(string memory _status) internal {
         emit AgreementReceipt(
-            address(this),
             agreement.owner,
             agreement.borrower,
             CID,
             CID,
+            address(this),
             _status
         );
         selfdestruct(payable(elasticAddress));
