@@ -219,7 +219,7 @@ const Dashboard = () => {
 
     return (
         <>
-            <Grid container style={{ display: "flex", gap: "1rem" }}>
+            <Grid container style={{ display: "flex", minHeight: "100vh" }}>
                 <DashboardOwnedCard
                     nftsInfoOwned={nftsInfoOwned}
                     handleTimer={handleTimer}

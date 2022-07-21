@@ -11,13 +11,14 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
     }
 
     return (
-        <Card>
-            <Typography variant="h4">Rented</Typography>
+        <Card sx={{ paddingLeft: 2, paddingRight: 2, width: "100%" }}>
+            <Typography variant="h4">Rented NFTs</Typography>
+
             {nftsInfoRented.length > 0 ? (
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                         <TableHead>
-                            <TableRow>
+                            <TableRow sx={{ bgcolor: "lightgray" }}>
                                 <TableCell align="center">Item ID</TableCell>
                                 <TableCell align="center">Address</TableCell>
                                 <TableCell align="center">Token ID</TableCell>
