@@ -135,7 +135,8 @@ const Search = () => {
 
   const RenderedData = () => {
     return (
-      <Card sx={{ minHeight: '45vw' }} variant="outlined">
+      <Box sx={{ minHeight: "100vh", paddingBottom: 2 }}>
+      <Box sx={{ minHeight: '45vw', paddingLeft: 2, paddingRight: 2 }} variant="outlined">
         <TextField
           label="Search NFTs By Benefits"
           variant="outlined"
@@ -159,10 +160,10 @@ const Search = () => {
      
         <TableContainer>
           <Table sx={{ minWidth: 650, marginTop: 2 }} aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "lightyellow" }}>
+            <TableHead sx={{ backgroundColor: "lightgray" }}>
               <TableRow>
-                <TableCell align="center">ItemID</TableCell>
-                <TableCell align="center">ItemURI</TableCell>
+                <TableCell align="center">Item ID</TableCell>
+                <TableCell align="center">Item URI</TableCell>
                 <TableCell align="center">Rental Benefits Description</TableCell>
                 <TableCell align="center">Collateral (ETH)</TableCell>
                 <TableCell align="center">Price (ETH)</TableCell>
@@ -228,7 +229,8 @@ const Search = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
             /> : null
         } */}
-      </Card>
+      </Box>
+      </Box>
     )
   }
 

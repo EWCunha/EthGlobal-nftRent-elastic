@@ -4,12 +4,12 @@ import { copyToClipboard, roundDecimal } from '../utils'
 
 export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, withdrawCollateral }) => {
     return (
-        <Card>
-            <h2>Owned</h2>
+        <Card sx={{ paddingLeft: 2, paddingRight: 2, width: "100%" }}>
+            <h2>Listed NFTs</h2>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                     <TableHead>
-                        <TableRow>
+                        <TableRow sx={{ bgcolor: "lightgray" }}>
                             <TableCell align="center">Item ID</TableCell>
                             <TableCell align="center">Address</TableCell>
                             <TableCell align="center">Token ID</TableCell>
