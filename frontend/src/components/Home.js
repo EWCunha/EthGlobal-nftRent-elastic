@@ -12,6 +12,7 @@ import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 const Home = () => {
   return (
     <>
+    <Box sx={{ margin: 0, padding: 0, minHeight: "100%", position: "relative" }}>
   <Card sx={{marginTop:2}} variant="outlined">
 <center>
 <Box>
@@ -132,6 +133,7 @@ Search NFTs by their benefits afforded by a rental and enter into new rental agr
 </Card>
 
       </Card> 
+      </Box>
     </>
   )
 }

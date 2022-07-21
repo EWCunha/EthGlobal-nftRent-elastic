@@ -132,9 +132,9 @@ const List = () => {
 
   return (
 
-
+    
     defaultAccount ? (
-      <Box>
+      <Box sx={{ margin: 0, paddingBottom: "60px", minHeight: "100vh", position: "relative" }}>
         <Snackbar
             open={openListingSnackbar}
             autoHideDuration={6000}
@@ -246,7 +246,7 @@ const List = () => {
       </Box>
 
 
-    ) : <div>
+    ) : <Box sx={{ margin: 0, paddingBottom: "60px", position: "relative", minHeight: "100vh" }}>
       <center>
         <Typography sx={{ fontSize: 20 }}>
           Please connect your wallet to list an NFT.
@@ -256,7 +256,7 @@ const List = () => {
 
       </center>
 
-    </div>
+    </Box>
   )
 }
 
