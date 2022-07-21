@@ -16,7 +16,7 @@ contract Agreement is IAgreement {
         uint256 availableFunds,
         uint256 requiredFunds
     );
-    error AgreementNotExpired(uint256 endTime);
+    error AgreementNotExpired(uint256 endTime, uint256 timestamp);
     error AgreementAccessDenied(address caller);
 
     event NFTReturnedAgreement(
@@ -83,7 +83,10 @@ contract Agreement is IAgreement {
         agreement.itemId = _itemId;
     }
 
-    function getElasticAddress() public view returns (address) {
+    /**
+    @notice getElasticAddress returns the Elastic smart contract address
+    */
+    function getElasticAddress() external view override returns (address) {
         return elasticAddress;
     }
 
@@ -136,6 +139,8 @@ contract Agreement is IAgreement {
             : false;
 
         emit NewAgreementProposal(
+            agreement.owner,
+            agreement.borrower,
             address(this),
             _collateral,
             _rentTime,
@@ -167,6 +172,8 @@ contract Agreement is IAgreement {
         }
 
         emit AcceptedNewAgreement(
+            agreement.owner,
+            agreement.borrower,
             address(this),
             msg.sender,
             agreement.collateral,
@@ -190,6 +197,7 @@ contract Agreement is IAgreement {
 
     /**
     @notice returnNFT the borrower should use this function to return the rented NFT, pay the rent price, and receive the collateral back
+    @param _CID CID of the receipts stored on IPFS
     */
     function returnNFT(string calldata _CID)
         external
@@ -219,11 +227,11 @@ contract Agreement is IAgreement {
         IElastic(elasticAddress).returnNFT(agreement.itemId, _CID);
 
         emit NFTReturnedAgreement(
-            address(this),
             agreement.owner,
             agreement.borrower,
+            agreement.itemId,
             agreement.nftAddress,
-            agreement.itemId
+            address(this)
         );
 
         _writeCID(_CID);
@@ -232,26 +240,28 @@ contract Agreement is IAgreement {
 
     /**
     @notice withdrawCollateral allows NFT owner to get the collateral, if the borrower does not return the NFT back at the agreed time
+    @param _CID CID of the receipts stored on IPFS 
     */
     function withdrawCollateral(string calldata _CID)
         external
         override
         onlyOwner
     {
-        if (agreement.startTime + agreement.rentTime < block.timestamp) {
-            revert AgreementNotExpired(
-                agreement.startTime + agreement.rentTime
-            );
+        uint256 endTime = agreement.startTime + agreement.rentTime;
+        if (block.timestamp < endTime) {
+            revert AgreementNotExpired(endTime, block.timestamp);
         }
 
-        payable(msg.sender).transfer(agreement.collateral);
+        payable(agreement.owner).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
 
         IElastic(elasticAddress).removeNFT(agreement.itemId, _CID);
 
         emit CollateralWithdrawed(
-            address(this),
             agreement.owner,
+            agreement.borrower,
+            agreement.itemId,
+            address(this),
             agreement.collateral
         );
 
@@ -269,6 +279,7 @@ contract Agreement is IAgreement {
 
     /**
     @notice _burnAgreement internal function to burn this smart contract after its end
+    @param _status status of the closing agreement
     */
     function _burnAgreement(string memory _status) internal {
         emit AgreementReceipt(

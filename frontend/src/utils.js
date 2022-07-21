@@ -1,16 +1,9 @@
 import { ethers } from "ethers"
 import ElasticContractBuilder from './contracts/Elastic.json'
-import AgreementContractBuilder from './contracts/Agreement.json'
 
-const logEventData = async (eventName, filters = [], provider, setterFunction = undefined, abiStr = "elastic") => {
-    let ABI
-    if (abiStr === "elastic") {
-        ABI = ElasticContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
-    } else if (abiStr === "agreement") {
-        ABI = AgreementContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
-    } else {
-        throw new Error(`Wrong contract: ${abiStr}`)
-    }
+const logEventData = async (eventName, filters = [], provider, setterFunction = undefined) => {
+
+    const ABI = ElasticContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
 
     let ABIStr = `event ${ABI.name}(`
     for (let ii = 0; ii < ABI.inputs.length; ii++) {
@@ -38,6 +31,9 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
     const decodedEventsInputs = logs.map(log => {
         return iface.parseLog(log).eventFragment.inputs
     })
+    const blockNumbers = logs.map(log => {
+        return log.blockNumber
+    })
 
     let decodedEvents = []
     for (let ii = 0; ii < decodedEventsInputs.length; ii++) {
@@ -55,6 +51,7 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
         for (let jj = 0; jj < result.length; jj++) {
             realRestul = { ...realRestul, ...result[jj] }
         }
+        realRestul["timestamp"] = (await provider.getBlock(blockNumbers[ii])).timestamp
         decodedEvents.push(realRestul)
     }
 
@@ -64,6 +61,18 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
 
     return decodedEvents
 }
+
+const getReceitps = (eventArr) => {
+
+    const cidArr = []
+    for (let ii = 0; ii < eventArr.length; ii++) {
+        const cidObj = { cid: eventArr[ii].CID, timestamp: eventArr[ii].timestamp }
+        cidArr.push(cidObj)
+    }
+
+    return cidArr
+}
+
 
 const copyToClipboard = async (evt, value) => {
     evt.preventDefault()
@@ -174,5 +183,5 @@ const cleanAgreementData = (agreementDataObj) => {
 
 export {
     logEventData, copyToClipboard, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
-    filterAvailableItems, filterRentedItems, roundDecimal, cleanAgreementData
+    filterAvailableItems, filterRentedItems, roundDecimal, cleanAgreementData, getReceitps
 }

@@ -91,11 +91,13 @@ const Search = () => {
     setRentDays(parseFloat(value))
   }
 
-  const completeRental = (evt) => {
+  const completeRental = async (evt) => {
     evt.preventDefault()
     const rentTime = roundDecimal(parseFloat(rentdays) * 24 * 60 * 60, 0)
     const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
-    contract.rent(itemSelect, rentTime, { value: weiCollateral })
+
+    const tx = await contract.rent(itemSelect, rentTime, { value: weiCollateral })
+    await tx.wait(1)
   }
 
   useEffect(() => {

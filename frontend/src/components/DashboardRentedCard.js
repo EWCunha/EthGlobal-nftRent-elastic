@@ -1,20 +1,18 @@
 import React from 'react'
-import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
 export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnNFT }) => {
 
-    // const [totalPayment, setTotalPayment] = useState(undefined)
-
     const totalPayment = (startTime, price) => {
         const runnedTime = time / 1000 - startTime
         // console.log(runnedTime * price, time, startTime, isNaN(runnedTime * price))
-        return isNaN(runnedTime * price) ? 0 : runnedTime * price
+        return isNaN(runnedTime * price) ? 0 : (runnedTime * price <= 1e-7 ? 0 : runnedTime * price)
     }
 
     return (
         <Card>
-            <h2>Rented</h2>
+            <Typography variant="h4">Rented</Typography>
             {nftsInfoRented.length > 0 ? (
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -68,7 +66,7 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                                     <TableCell align="center">
                                         <Button variant="contained"
                                             color="success"
-                                            onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress, totalPayment(nft.startTime, nft.price))}
+                                            onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress, roundDecimal(totalPayment(nft.startTime, nft.price), 5))}
                                         >
                                             RETURN NFT
                                         </Button>

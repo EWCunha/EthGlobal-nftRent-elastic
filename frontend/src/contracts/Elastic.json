@@ -1,5 +1,5 @@
 {
-    "address": "0xc629c6DC810953653Bb311B95de2A1FCde3649E5",
+    "address": "0x9fCaB3EA09E713CE7fB435fD87dbeBe211101e6c",
     "abi": [
         {
             "inputs": [
@@ -188,6 +188,12 @@
                 },
                 {
                     "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
                     "internalType": "string",
                     "name": "CID",
                     "type": "string"
@@ -268,9 +274,9 @@
                 },
                 {
                     "indexed": false,
-                    "internalType": "uint256",
-                    "name": "timestamp",
-                    "type": "uint256"
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
                 },
                 {
                     "indexed": false,

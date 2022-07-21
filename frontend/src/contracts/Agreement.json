@@ -90,6 +90,11 @@
                     "internalType": "uint256",
                     "name": "endTime",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "timestamp",
+                    "type": "uint256"
                 }
             ],
             "name": "AgreementNotExpired",
@@ -101,11 +106,23 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "agreement",
+                    "name": "owner",
                     "type": "address"
                 },
                 {
                     "indexed": true,
+                    "internalType": "address",
+                    "name": "borrower",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
                     "internalType": "address",
                     "name": "approver",
                     "type": "address"
@@ -136,12 +153,6 @@
             "anonymous": false,
             "inputs": [
                 {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "agreement",
-                    "type": "address"
-                },
-                {
                     "indexed": true,
                     "internalType": "address",
                     "name": "owner",
@@ -167,6 +178,12 @@
                 },
                 {
                     "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
                     "internalType": "string",
                     "name": "status",
                     "type": "string"
@@ -181,13 +198,25 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "agreement",
+                    "name": "owner",
                     "type": "address"
                 },
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "owner",
+                    "name": "borrower",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "itemId",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
                     "type": "address"
                 },
                 {
@@ -206,25 +235,13 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "agreement",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "address",
                     "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "borrower",
                     "type": "address"
                 },
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "nftAddress",
+                    "name": "borrower",
                     "type": "address"
                 },
                 {
@@ -232,6 +249,18 @@
                     "internalType": "uint256",
                     "name": "itemId",
                     "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "nftAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
                 }
             ],
             "name": "NFTReturnedAgreement",
@@ -240,6 +269,18 @@
         {
             "anonymous": false,
             "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "borrower",
+                    "type": "address"
+                },
                 {
                     "indexed": true,
                     "internalType": "address",
@@ -322,8 +363,28 @@
                             "type": "address"
                         },
                         {
+                            "internalType": "address",
+                            "name": "nftAddress",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "tokenId",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "itemId",
+                            "type": "uint256"
+                        },
+                        {
                             "internalType": "uint256",
                             "name": "collateral",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "price",
                             "type": "uint256"
                         },
                         {
@@ -333,27 +394,7 @@
                         },
                         {
                             "internalType": "uint256",
-                            "name": "tokenId",
-                            "type": "uint256"
-                        },
-                        {
-                            "internalType": "address",
-                            "name": "nftAddress",
-                            "type": "address"
-                        },
-                        {
-                            "internalType": "uint256",
-                            "name": "price",
-                            "type": "uint256"
-                        },
-                        {
-                            "internalType": "uint256",
                             "name": "startTime",
-                            "type": "uint256"
-                        },
-                        {
-                            "internalType": "uint256",
-                            "name": "itemId",
                             "type": "uint256"
                         }
                     ],
