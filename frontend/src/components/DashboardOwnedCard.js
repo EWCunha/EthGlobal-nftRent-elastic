@@ -1,11 +1,11 @@
 import React from 'react'
-import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { Typography, Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
 export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, withdrawCollateral }) => {
     return (
         <Card sx={{ paddingLeft: 2, paddingRight: 2, width: "100%" }}>
-            <h2>Listed NFTs</h2>
+            <Typography variant="h4">Listed NFTs</Typography>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
                     <TableHead>

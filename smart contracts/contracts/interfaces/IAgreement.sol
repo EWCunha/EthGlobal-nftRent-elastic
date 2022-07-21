@@ -5,13 +5,13 @@ interface IAgreement {
     struct AgreementData {
         address owner;
         address borrower;
-        uint256 collateral;
-        uint256 rentTime;
-        uint256 tokenId;
         address nftAddress;
-        uint256 price;
-        uint256 startTime;
+        uint256 tokenId;
         uint256 itemId;
+        uint256 collateral;
+        uint256 price;
+        uint256 rentTime;
+        uint256 startTime;
     }
 
     struct NewAgreementData {
@@ -39,9 +39,9 @@ interface IAgreement {
         view
         returns (NewAgreementData memory);
 
-    function returnNFT() external payable;
+    function returnNFT(string calldata _CID) external payable;
 
-    function withdrawCollateral() external;
+    function withdrawCollateral(string calldata _CID) external;
 
-    function getElasticAddress() external returns (address);
+    function getElasticAddress() external view returns (address);
 }

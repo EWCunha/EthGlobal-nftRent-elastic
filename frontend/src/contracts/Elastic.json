@@ -1,5 +1,5 @@
 {
-    "address": "0x859614476bf75239ca44AC7464DD044aBe07d2b9",
+    "address": "0x9fCaB3EA09E713CE7fB435fD87dbeBe211101e6c",
     "abi": [
         {
             "inputs": [
@@ -46,6 +46,27 @@
                 }
             ],
             "name": "LowAmount",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "caller",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "nftAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
+            ],
+            "name": "NFTAlreadyListed",
             "type": "error"
         },
         {
@@ -164,6 +185,18 @@
                     "internalType": "uint256",
                     "name": "itemId",
                     "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "CID",
+                    "type": "string"
                 }
             ],
             "name": "NFTRemoved",
@@ -241,9 +274,15 @@
                 },
                 {
                     "indexed": false,
-                    "internalType": "uint256",
-                    "name": "timestamp",
-                    "type": "uint256"
+                    "internalType": "address",
+                    "name": "agreement",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "CID",
+                    "type": "string"
                 }
             ],
             "name": "NFTReturned",
@@ -562,6 +601,11 @@
                     "internalType": "uint256",
                     "name": "_itemId",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_CID",
+                    "type": "string"
                 }
             ],
             "name": "removeNFT",
@@ -633,6 +677,11 @@
                     "internalType": "uint256",
                     "name": "_itemId",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_CID",
+                    "type": "string"
                 }
             ],
             "name": "returnNFT",

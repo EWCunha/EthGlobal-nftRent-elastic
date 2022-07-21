@@ -2,6 +2,7 @@ import { ethers } from "ethers"
 import ElasticContractBuilder from './contracts/Elastic.json'
 
 const logEventData = async (eventName, filters = [], provider, setterFunction = undefined) => {
+
     const ABI = ElasticContractBuilder.abi.filter(frag => frag.name && frag.name === eventName)[0]
 
     let ABIStr = `event ${ABI.name}(`
@@ -30,6 +31,9 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
     const decodedEventsInputs = logs.map(log => {
         return iface.parseLog(log).eventFragment.inputs
     })
+    const blockNumbers = logs.map(log => {
+        return log.blockNumber
+    })
 
     let decodedEvents = []
     for (let ii = 0; ii < decodedEventsInputs.length; ii++) {
@@ -47,6 +51,7 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
         for (let jj = 0; jj < result.length; jj++) {
             realRestul = { ...realRestul, ...result[jj] }
         }
+        realRestul["timestamp"] = (await provider.getBlock(blockNumbers[ii])).timestamp
         decodedEvents.push(realRestul)
     }
 
@@ -56,6 +61,18 @@ const logEventData = async (eventName, filters = [], provider, setterFunction = 
 
     return decodedEvents
 }
+
+const getReceitps = (eventArr) => {
+
+    const cidArr = []
+    for (let ii = 0; ii < eventArr.length; ii++) {
+        const cidObj = { cid: eventArr[ii].CID, timestamp: eventArr[ii].timestamp }
+        cidArr.push(cidObj)
+    }
+
+    return cidArr
+}
+
 
 const copyToClipboard = async (evt, value) => {
     evt.preventDefault()
@@ -144,7 +161,27 @@ function roundDecimal(num, decimals) {
     return Number(Math.round(num + "e" + decimals) + "e-" + decimals);
 }
 
+const cleanAgreementData = (agreementDataObj) => {
+    const cleanedAgreementData = {}
+    for (const item in agreementDataObj) {
+        if (isNaN(item)) {
+            if (item === "itemId" || item === "startTime" || item === "rentTime" || item === "tokenId") {
+                cleanedAgreementData[item] = parseFloat(agreementDataObj[item])
+            } else if (ethers.BigNumber.isBigNumber(agreementDataObj[item])) {
+                cleanedAgreementData[item] = parseFloat(ethers.utils.formatEther(agreementDataObj[item]))
+                if (item === "price") {
+                    cleanedAgreementData[item] = roundDecimal(cleanedAgreementData[item] * 24 * 60 * 60, 5)
+                }
+            } else {
+                cleanedAgreementData[item] = agreementDataObj[item]
+            }
+        }
+    }
+
+    return cleanedAgreementData
+}
+
 export {
     logEventData, copyToClipboard, filterListedUnlistedEventsData, filterRentedReturnedEventsData,
-    filterAvailableItems, filterRentedItems, roundDecimal
+    filterAvailableItems, filterRentedItems, roundDecimal, cleanAgreementData, getReceitps
 }

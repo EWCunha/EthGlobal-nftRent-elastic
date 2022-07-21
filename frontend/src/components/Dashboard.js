@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
+import { DashboardReceipts } from './DashboardReceipts'
 import { useSelector } from 'react-redux'
-import { logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems, roundDecimal } from '../utils'
+import {
+    logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems,
+    roundDecimal, cleanAgreementData, getReceitps
+} from '../utils'
 import { ethers } from 'ethers'
+import { uploadToIPFS } from './IPFS'
 import agreementJSON from "../contracts/Agreement.json"
 import IERC721JSON from "../contracts/IERC721.json"
 
@@ -17,10 +22,17 @@ const Dashboard = () => {
     const contract = useSelector((state) => state.contract)
     const refresher = useSelector((state) => state.refresher)
 
+    const [returnOwnedNFTs, setReturnOwnedNFTs] = useState([])
+    const [removedOwnedNFTs, setRemovedOwnedNFTs] = useState([])
+    const [returnBorrowedNFTs, setReturnBorrowedNFTs] = useState([])
+    const [removedBorrowedNFTs, setRemovedBorrowedNFTs] = useState([])
+
     const [ownedNFTsData, setOwnedNFTsData] = useState([])
     const [rentedNFTsData, setRentedNFTsData] = useState([])
     const [nftsInfoOwned, setNftsInfoOwned] = useState([])
     const [nftsInfoRented, setNftsInfoRented] = useState([])
+    const [asOwnerReceipts, setAsOwnerReceipts] = useState([])
+    const [asBorrowerReceipts, setAsBorrowerReceipts] = useState([])
     const [time, setTime] = useState(Date.now());
 
     const getNftsInfo = async (stateVariable, setterFunctionInfo) => {
@@ -56,7 +68,11 @@ const Dashboard = () => {
     const handleOwnedNftTable = async () => {
         const listedNFts = await logEventData("NFTListed", [defaultAccount], provider)
         const unlistedNFTs = await logEventData("NFTUnlisted", [defaultAccount], provider)
+        const returnedNFTs = await logEventData("NFTReturned", [defaultAccount], provider)
         const removedNFTs = await logEventData("NFTRemoved", [defaultAccount], provider)
+
+        setReturnOwnedNFTs(returnedNFTs)
+        setRemovedOwnedNFTs(removedNFTs)
 
         let stillListedNFTs = filterListedUnlistedEventsData(listedNFts, unlistedNFTs)
         stillListedNFTs = filterListedUnlistedEventsData(stillListedNFTs, removedNFTs)
@@ -68,6 +84,9 @@ const Dashboard = () => {
         const rentedNFTs = await logEventData("NFTRented", [null, defaultAccount], provider)
         const returnedNFTs = await logEventData("NFTReturned", [null, defaultAccount], provider)
         const removedNFTs = await logEventData("NFTRemoved", [null, defaultAccount], provider)
+
+        setReturnBorrowedNFTs(returnedNFTs)
+        setRemovedBorrowedNFTs(removedNFTs)
 
         const removedAndReturnedNFTs = [...returnedNFTs, ...removedNFTs]
         const balanceNFTs = filterRentedReturnedEventsData(rentedNFTs, removedAndReturnedNFTs)
@@ -113,21 +132,47 @@ const Dashboard = () => {
         evt.preventDefault()
 
         const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const tx = await agreementContract.withdrawCollateral()
+        const AgreementData = await agreementContract.readAgreementData()
+        const cleanedAgreementData = cleanAgreementData(AgreementData)
+        cleanedAgreementData["status"] = "Borrower did NOT return the NFT. Owner withdrawed collateral."
+        cleanedAgreementData["Paid amount"] = 0
+        cleanedAgreementData["NFT price"] = cleanedAgreementData.price
+        delete cleanedAgreementData.price
+
+        const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
+
+        const tx = await agreementContract.withdrawCollateral(CID)
         await tx.wait(1)
     }
 
-    const returnNFT = async (evt, agreementAddress, nftAddress) => {
+    const returnNFT = async (evt, agreementAddress, nftAddress, payment) => {
         evt.preventDefault()
+
+        const valueInWEI = ethers.utils.parseEther(payment.toString())
+
+        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+        const AgreementData = await agreementContract.readAgreementData()
+        const cleanedAgreementData = cleanAgreementData(AgreementData)
+        cleanedAgreementData["status"] = "Borrower did return the NFT."
+        cleanedAgreementData["Paid amount"] = payment
+        cleanedAgreementData["NFT price"] = cleanedAgreementData.price
+        delete cleanedAgreementData.price
+
+        const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
 
         const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
 
         const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
         await txApprove.wait(1)
 
-        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const txReturnNFT = await agreementContract.returnNFT()
+        const txReturnNFT = await agreementContract.returnNFT(CID, { value: valueInWEI })
         await txReturnNFT.wait(1)
+    }
+
+    const getReceiptArr = (returnedArr, removedArr, setterFunction) => {
+        const receipts = getReceitps([...returnedArr, ...removedArr])
+        setterFunction(receipts)
+        console.log(receipts)
     }
 
     useEffect(() => {
@@ -160,6 +205,18 @@ const Dashboard = () => {
         }
     }, [rentedNFTsData])
 
+    useEffect(() => {
+        if (returnOwnedNFTs.length > 0 || removedOwnedNFTs.length > 0) {
+            getReceiptArr(returnOwnedNFTs, removedOwnedNFTs, setAsOwnerReceipts)
+        }
+    }, [returnOwnedNFTs, removedOwnedNFTs])
+
+    useEffect(() => {
+        if (returnBorrowedNFTs.length > 0 || removedBorrowedNFTs.length > 0) {
+            getReceiptArr(returnBorrowedNFTs, removedBorrowedNFTs, setAsBorrowerReceipts)
+        }
+    }, [returnBorrowedNFTs, removedBorrowedNFTs])
+
     return (
         <>
             <Grid container style={{ display: "flex", minHeight: "100vh" }}>
@@ -174,6 +231,10 @@ const Dashboard = () => {
                     handleTimer={handleTimer}
                     time={time}
                     returnNFT={returnNFT}
+                />
+                <DashboardReceipts
+                    asOwnerReceipts={asOwnerReceipts}
+                    asBorrowerReceipts={asBorrowerReceipts}
                 />
             </Grid>
         </>
