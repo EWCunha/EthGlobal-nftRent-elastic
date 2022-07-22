@@ -17,7 +17,7 @@ import {
 import { ethers } from 'ethers'
 import SearchIcon from '@mui/icons-material/Search'
 
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { roundDecimal, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems } from '../utils'
 import RentalModal from './RentalModal';
 
@@ -42,8 +42,8 @@ const Search = () => {
   const contract = useSelector((state) => state.contract)
   const defaultAccount = useSelector((state) => state.defaultAccount)
   const refresher = useSelector((state) => state.refresher)
- 
-  const searchword = useSelector(state=>state.word)
+
+  const searchword = useSelector(state => state.word)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -54,6 +54,7 @@ const Search = () => {
   const [collateralSelect, setCollateralSelect] = useState(null)
   const [word, setWord] = useState("")
   const [NFTsAvailable, setNFTsAvailable] = useState([])
+  const [process, setProcess] = useState(false)
 
   const handleSearchTable = async () => {
     let stillListedNFTs = filterListedUnlistedEventsData(nftListed, nftUnlisted)
@@ -100,8 +101,12 @@ const Search = () => {
     const rentTime = roundDecimal(parseFloat(rentdays) * 24 * 60 * 60, 0)
     const weiCollateral = ethers.utils.parseEther(collateralSelect.toString())
 
-    const tx = await contract.rent(itemSelect, rentTime, { value: weiCollateral })
-    await tx.wait(1)
+    try {
+      setProcess(true)
+      const tx = await contract.rent(itemSelect, rentTime, { value: weiCollateral })
+      await tx.wait(1)
+    } catch { }
+    setProcess(false)
   }
 
   useEffect(() => {
@@ -110,116 +115,113 @@ const Search = () => {
     }
   }, [nftListed, nftUnlisted, nftRented, nftReturned, nftRemoved, refresher])
 
-
-
-
-  const filterData = (dataObj)=>{
-    if(dataObj.length !== 0 && searchword){
-      console.log("searchword",searchword)
-      console.log(dataObj.forEach(item=>console.log(item.benefitsClearText)))
-      const filteredData= dataObj.filter(d => {return d.benefitsClearText.toUpperCase().includes(searchword.toUpperCase())})
+  const filterData = (dataObj) => {
+    if (dataObj.length !== 0 && searchword) {
+      console.log("searchword", searchword)
+      console.log(dataObj.forEach(item => console.log(item.benefitsClearText)))
+      const filteredData = dataObj.filter(d => { return d.benefitsClearText.toUpperCase().includes(searchword.toUpperCase()) })
       console.log("originalData", dataObj)
-      console.log("filteredData",filteredData)
+      console.log("filteredData", filteredData)
       return filteredData
     }
-    else{
+    else {
       return dataObj
     }
   }
 
-  const submitWord=()=>{
-    dispatch({type:'SET_SEARCH_WORD',payload:document.getElementById("search-field-with-icon").value})
+  const submitWord = () => {
+    dispatch({ type: 'SET_SEARCH_WORD', payload: document.getElementById("search-field-with-icon").value })
   }
 
-  const clearSearch=()=>{
-    dispatch({type:'SET_SEARCH_WORD',payload:""})
+  const clearSearch = () => {
+    dispatch({ type: 'SET_SEARCH_WORD', payload: "" })
   }
 
   const RenderedData = () => {
     return (
       <Box sx={{ minHeight: "100vh", paddingBottom: 2 }}>
-      <Box sx={{ minHeight: '45vw', paddingLeft: 2, paddingRight: 2 }} variant="outlined">
-        <TextField
-          label="Search NFTs By Benefits"
-          variant="outlined"
-          id="search-field-with-icon"
-          sx={{ marginTop: 2}}
-          placeholder={searchword}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="end">
-                <IconButton>
-                  <SearchIcon/>
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-        />
-        <Box>
-        <Button variant="contained" onClick={submitWord}>SEARCH</Button>
-        <Button variant="contained" color="warning" onClick={clearSearch}>CLEAR SEARCH</Button>
-        </Box>
-     
-        <TableContainer>
-          <Table sx={{ minWidth: 650, marginTop: 2 }} aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "lightgray" }}>
-              <TableRow>
-                <TableCell align="center">Item ID</TableCell>
-                <TableCell align="center">Item URI</TableCell>
-                <TableCell align="center">Rental Benefits Description</TableCell>
-                <TableCell align="center">Collateral (ETH)</TableCell>
-                <TableCell align="center">Price (ETH)</TableCell>
-                <TableCell align="center"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {NFTsAvailable.length > 0 ? (filterData(NFTsAvailable).slice().reverse().map((item) => {
-                return (
-                  <TableRow key={item.itemId}>
-                    <TableCell align="center">{item.itemId}</TableCell>
-                    <TableCell align="center">{item.tokenURI ? item.tokenURI : "--"}</TableCell>
-                    <TableCell align="center">{item.benefitsClearText}</TableCell>
-                    <TableCell align="center" >{item.collateral}</TableCell>
-                    <TableCell align="center">{roundDecimal(item.price * 24 * 60 * 60, 5)}</TableCell>
-                    <TableCell>
-                      {defaultAccount ? (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}
-                          disabled={item.owner.toLowerCase() === defaultAccount ? true : false}
-                        >
-                          RENT
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          color="warning"
-                        >
-                          CONNECT WALLET
-                        </Button>
-                      )}
-
-                    </TableCell>
-                  </TableRow>)
-              })
+        <Box sx={{ minHeight: '45vw', paddingLeft: 2, paddingRight: 2 }} variant="outlined">
+          <TextField
+            label="Search NFTs By Benefits"
+            variant="outlined"
+            id="search-field-with-icon"
+            sx={{ marginTop: 2 }}
+            placeholder={searchword}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="end">
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
               )
-                : null
-              }
-              
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
+            }}
+          />
+          <Box>
+            <Button variant="contained" onClick={submitWord}>SEARCH</Button>
+            <Button variant="contained" color="warning" onClick={clearSearch}>CLEAR SEARCH</Button>
+          </Box>
+
+          <TableContainer>
+            <Table sx={{ minWidth: 650, marginTop: 2 }} aria-label="simple table">
+              <TableHead sx={{ backgroundColor: "lightgray" }}>
+                <TableRow>
+                  <TableCell align="center">Item ID</TableCell>
+                  <TableCell align="center">Item URI</TableCell>
+                  <TableCell align="center">Rental Benefits Description</TableCell>
+                  <TableCell align="center">Collateral (ETH)</TableCell>
+                  <TableCell align="center">Price (ETH)</TableCell>
+                  <TableCell align="center"></TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* {
+              </TableHead>
+              <TableBody>
+                {NFTsAvailable.length > 0 ? (filterData(NFTsAvailable).slice().reverse().map((item) => {
+                  return (
+                    <TableRow key={item.itemId}>
+                      <TableCell align="center">{item.itemId}</TableCell>
+                      <TableCell align="center">{item.tokenURI ? (<img src={item.tokenURI} height="150" width="150" />) : "--"}</TableCell>
+                      <TableCell align="center">{item.benefitsClearText}</TableCell>
+                      <TableCell align="center" >{item.collateral}</TableCell>
+                      <TableCell align="center">{roundDecimal(item.price * 24 * 60 * 60, 5)}</TableCell>
+                      <TableCell>
+                        {defaultAccount ? (
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={(e) => handleModalOpen(e, item.itemId, item.collateral)}
+                            disabled={item.owner.toLowerCase() === defaultAccount ? true : false}
+                          >
+                            RENT
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            color="warning"
+                          >
+                            CONNECT WALLET
+                          </Button>
+                        )}
+
+                      </TableCell>
+                    </TableRow>)
+                })
+                )
+                  : null
+                }
+
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: 53 * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* {
           NFTsAvailable.length > 0 ?
             <TablePagination
               rowsPerPageOptions={[5]}
@@ -231,7 +233,7 @@ const Search = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
             /> : null
         } */}
-      </Box>
+        </Box>
       </Box>
     )
   }
@@ -242,7 +244,9 @@ const Search = () => {
         open={openModal}
         handleClose={handleClose}
         handleRentalDays={handleRentalDays}
-        completeRental={completeRental} />
+        completeRental={completeRental}
+        process={process}
+      />
       <RenderedData />
     </>
   )

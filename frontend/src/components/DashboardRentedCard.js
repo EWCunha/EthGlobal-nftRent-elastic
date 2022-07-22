@@ -7,7 +7,7 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
     const totalPayment = (startTime, price) => {
         const runnedTime = time / 1000 - startTime
         // console.log(runnedTime * price, time, startTime, isNaN(runnedTime * price))
-        return isNaN(runnedTime * price) ? 0 : (runnedTime * price <= 1e-7 ? 0 : runnedTime * price)
+        return isNaN(runnedTime * price) ? 0 : (runnedTime * price <= 1e-6 ? 0 : runnedTime * price)
     }
 
     return (
@@ -27,7 +27,7 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                                 <TableCell align="center">Benefit(s)</TableCell>
                                 <TableCell align="center">Agreement</TableCell>
                                 <TableCell align="center">Elapsed time</TableCell>
-                                <TableCell align="center">Total payment</TableCell>
+                                <TableCell align="center">Total payment (ETH)</TableCell>
                                 <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableHead>

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Box, 
-  Button, 
-  Typography, 
-  Grid, 
-  TextField, 
-  InputAdornment, 
-  Card, 
-  CardHeader, 
+import {
+  Box,
+  Button,
+  Typography,
+  Grid,
+  TextField,
+  InputAdornment,
+  Card,
+  CardHeader,
   Snackbar,
   IconButton,
   Alert,
@@ -39,7 +40,7 @@ const List = () => {
   const [openListingSnackbar, setOpenListingSnackbar] = useState(false)
 
   const elasticContractAddress = ElasticContractJSON.address
-  
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -59,13 +60,13 @@ const List = () => {
     if (approved) {
       setProcessing(false)
     }
-  },[approved])
+  }, [approved])
 
   useEffect(() => {
-    if(openListingSnackbar) {
+    if (openListingSnackbar) {
       setProcessing(false)
     }
-  },[openListingSnackbar])
+  }, [openListingSnackbar])
 
   const dispatch = useDispatch()
 
@@ -88,12 +89,12 @@ const List = () => {
     evt.preventDefault()
     setProcessing(true)
     const weiCollateral = ethers.utils.parseEther(collateralDeposit.toString())
-    
+
     // Storing price per second in WEI
     const weiPrice = ethers.utils.parseEther(rentPerDay.toString()).div(24 * 60 * 60)
 
-    try{
-      const tx =  await contract.listNFT(
+    try {
+      const tx = await contract.listNFT(
         nFTAddress,
         tokenId,
         weiPrice,
@@ -102,12 +103,12 @@ const List = () => {
       )
       setOpenListingSnackbar(true)
     }
-    catch{
+    catch {
       alert('unable to create rental listing')
     }
   }
 
-  const handleListingSnackbarClose = ()=>{
+  const handleListingSnackbarClose = () => {
     setOpenListingSnackbar(false)
   }
 
@@ -115,137 +116,132 @@ const List = () => {
   const action = (
     <>
       <Alert severity="success">
-      <Button size="small" onClick={()=>navigate('/Dashboard')}>
-        DASHBOARD
-      </Button>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleListingSnackbarClose}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
+        <Button size="small" onClick={() => navigate('/Dashboard')}>
+          DASHBOARD
+        </Button>
+        <IconButton
+          size="small"
+          aria-label="close"
+          color="inherit"
+          onClick={handleListingSnackbarClose}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
       </Alert>
     </>
   );
 
   return (
-
-    
     defaultAccount ? (
       <Box sx={{ margin: 0, paddingBottom: "60px", minHeight: "100vh", position: "relative" }}>
         <Snackbar
-            open={openListingSnackbar}
-            autoHideDuration={6000}
-            onClose={handleListingSnackbarClose}
-            message="NFT Listed, check Dashboard to view -->"
-            action={action}
+          open={openListingSnackbar}
+          autoHideDuration={6000}
+          onClose={handleListingSnackbarClose}
+          message="NFT Listed, check Dashboard to view -->"
+          action={action}
         />
         <center>
           <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "white", width: "40%", marginTop: 3, boxShadow: 3 }}>
             <CardHeader title="LIST AN NFT" />
 
-            
-              <Grid
-                container
-                columns={{ xs: 12, sm: 12, md: 12 }}
-                item
-                spacing={2}
-                direction="column"
-                justifyContent="center"
-                alignItems="stretch"
-                paddingRight={4}
-                paddingLeft={4}
-                paddingBottom={3}
-                paddingTop={2}
-              >
-                <Grid item>
-                  <TextField label="Details benefits"
-                    variant="outlined"
-                    onChange={(e) => setBenefits(e.target.value)}
-                    fullWidth="true"
-                  >
-                  </TextField>
-                </Grid>
-
-                <Grid item >
-                  <TextField label="Rent per day"
-                    variant="outlined"
-                    onChange={(e) => setRentPerDay(e.target.value)}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">ETH</InputAdornment>
-                    }}
-                    fullWidth="true"
-                  >
-                  </TextField>
-                </Grid>
-
-                <Grid item>
-                  <TextField label="Collateral deposit"
-                    variant="outlined"
-                    onChange={(e) => setCollateralDeposit(e.target.value)}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">ETH</InputAdornment>
-                    }}
-                    fullWidth="true"
-                  >
-                  </TextField>
-                </Grid>
-
-                <Grid item>
-                  <TextField label="NFT address"
-                    variant="outlined"
-                    onChange={(e) => setNFTAddress(e.target.value)}
-                    fullWidth="true"
-                  >
-                  </TextField>
-                </Grid>
-
-                <Grid item>
-                  <TextField label="Token id"
-                    variant="outlined"
-                    onChange={(e) => setTokenId(e.target.value)}
-                    fullWidth="true"
-                  >
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} sm={12} md={12}>
-                  <Box>
-                    {contractERC ? (approved && !processing ? (
-                      <Button variant="contained"
-                        color="success"
-                        onClick={listNFT}
-                      >
-                        LIST NFT
-                      </Button>
-                    ) :
-                    (!approved && processing) || (approved && processing) ? (<CircularProgress/>) : 
-                    (
-                      <Button variant="contained"
-                        color="warning"
-                        onClick={approveOperator}
-                      >
-                        APPROVE
-                      </Button>
-                    )) : (
-                      <Button variant="contained"
-                        color="error"
-                      >
-                        INPUT NFT ADDRESS
-                      </Button>
-                    )}
-
-                  </Box>
-                </Grid>
+            <Grid
+              container
+              columns={{ xs: 12, sm: 12, md: 12 }}
+              item
+              spacing={2}
+              direction="column"
+              justifyContent="center"
+              alignItems="stretch"
+              paddingRight={4}
+              paddingLeft={4}
+              paddingBottom={3}
+              paddingTop={2}
+            >
+              <Grid item>
+                <TextField label="Details benefits"
+                  variant="outlined"
+                  onChange={(e) => setBenefits(e.target.value)}
+                  fullWidth="true"
+                >
+                </TextField>
               </Grid>
-        
+
+              <Grid item >
+                <TextField label="Rent per day"
+                  variant="outlined"
+                  onChange={(e) => setRentPerDay(e.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+                  }}
+                  fullWidth="true"
+                >
+                </TextField>
+              </Grid>
+
+              <Grid item>
+                <TextField label="Collateral deposit"
+                  variant="outlined"
+                  onChange={(e) => setCollateralDeposit(e.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+                  }}
+                  fullWidth="true"
+                >
+                </TextField>
+              </Grid>
+
+              <Grid item>
+                <TextField label="NFT address"
+                  variant="outlined"
+                  onChange={(e) => setNFTAddress(e.target.value)}
+                  fullWidth="true"
+                >
+                </TextField>
+              </Grid>
+
+              <Grid item>
+                <TextField label="Token id"
+                  variant="outlined"
+                  onChange={(e) => setTokenId(e.target.value)}
+                  fullWidth="true"
+                >
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={12}>
+                <Box>
+                  {contractERC ? (approved && !processing ? (
+                    <Button variant="contained"
+                      color="success"
+                      onClick={listNFT}
+                    >
+                      LIST NFT
+                    </Button>
+                  ) :
+                    (!approved && processing) || (approved && processing) ? (<CircularProgress />) :
+                      (
+                        <Button variant="contained"
+                          color="warning"
+                          onClick={approveOperator}
+                        >
+                          APPROVE
+                        </Button>
+                      )) : (
+                    <Button variant="contained"
+                      color="error"
+                    >
+                      INPUT NFT ADDRESS
+                    </Button>
+                  )}
+
+                </Box>
+              </Grid>
+            </Grid>
+
           </Card>
         </center>
       </Box>
-
-
     ) : <Box sx={{ margin: 0, paddingBottom: "60px", position: "relative", minHeight: "100vh" }}>
       <center>
         <Typography sx={{ fontSize: 20 }}>
@@ -253,9 +249,7 @@ const List = () => {
         </Typography>
         <img width='25%' height='25%' src={ElasticLogo} />
 
-
       </center>
-
     </Box>
   )
 }

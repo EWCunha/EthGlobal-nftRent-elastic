@@ -66,13 +66,12 @@ const getReceitps = (eventArr) => {
 
     const cidArr = []
     for (let ii = 0; ii < eventArr.length; ii++) {
-        const cidObj = { cid: eventArr[ii].CID, timestamp: eventArr[ii].timestamp }
+        const cidObj = { cid: eventArr[ii].CID, timestamp: eventArr[ii].timestamp, agreement: eventArr[ii].agreement }
         cidArr.push(cidObj)
     }
 
     return cidArr
 }
-
 
 const copyToClipboard = async (evt, value) => {
     evt.preventDefault()
@@ -95,9 +94,6 @@ const filterListedUnlistedEventsData = (listedEventArr, unlistedEventArr, fieldN
     if (listedEventArr && listedEventArr.length > 0) {
         resultEventData = listedEventArr.filter(elem => !itemIdsArr.includes(elem[fieldName]))
     }
-    // } else if (listedEventArr && listedEventArr.length > 0) {
-    //     resultEventData = listedEventArr
-    // }
 
     return resultEventData
 }

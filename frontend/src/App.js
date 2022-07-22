@@ -7,6 +7,7 @@ import Search from "./components/Search";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
+import ReceiptPDF from "./components/ReceiptPDF";
 import { createTheme, ThemeProvider } from "@mui/material"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
@@ -43,7 +44,7 @@ function App() {
     updateEthers()
   }, [])
 
- 
+
 
   useEffect(() => {
     const loggingData = async () => {
@@ -93,15 +94,16 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Header/>
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="Rent" element={<Rent />} />
           <Route path="Search" element={<Search />} />
           <Route path="List" element={<List />} />
           <Route path="Dashboard" element={<Dashboard />} />
+          <Route path="Receipt" element={<ReceiptPDF />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </ThemeProvider>
     </>
 
