@@ -3,7 +3,8 @@ import {
   TextField,
   Button,
   Modal,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material'
 
 const style = {
@@ -18,7 +19,7 @@ const style = {
   p: 4,
 };
 
-const RentalModal = ({ open, handleClose, handleRentalDays, completeRental }) => {
+const RentalModal = ({ open, handleClose, handleRentalDays, completeRental, process }) => {
   return (
     <>
       <Modal
@@ -30,17 +31,20 @@ const RentalModal = ({ open, handleClose, handleRentalDays, completeRental }) =>
         <Box sx={style}>
           <div>How many days to rent?</div>
           <TextField onChange={(e) => handleRentalDays(e, e.target.value)}></TextField>
-          <Button
-            variant="contained"
-            onClick={e => completeRental(e)}
-          >COMPLETE RENTAL</Button>
+          {process ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="contained"
+              onClick={e => completeRental(e)}
+            >
+              COMPLETE RENTAL
+            </Button>
+          )}
         </Box>
-
-
       </Modal>
     </>
   )
-
 }
 
 export default RentalModal

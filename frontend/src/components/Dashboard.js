@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { DashboardOwnedCard } from './DashboardOwnedCard'
 import { DashboardRentedCard } from './DashboardRentedCard'
 import { DashboardReceipts } from './DashboardReceipts'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {
     logEventData, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterRentedItems,
     roundDecimal, cleanAgreementData, getReceitps
@@ -15,6 +15,8 @@ import IERC721JSON from "../contracts/IERC721.json"
 
 
 const Dashboard = () => {
+
+    const dispatch = useDispatch()
 
     const defaultAccount = useSelector((state) => state.defaultAccount)
     const provider = useSelector(state => state.provider)
@@ -135,8 +137,10 @@ const Dashboard = () => {
         const AgreementData = await agreementContract.readAgreementData()
         const cleanedAgreementData = cleanAgreementData(AgreementData)
         cleanedAgreementData["status"] = "Borrower did NOT return the NFT. Owner withdrawed collateral."
-        cleanedAgreementData["Paid amount"] = 0
-        cleanedAgreementData["NFT price"] = cleanedAgreementData.price
+        cleanedAgreementData["PaidAmount"] = 0
+        cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
+        cleanedAgreementData["timestamp"] = new Date().getTime()
+        cleanedAgreementData["agreement"] = agreementAddress
         delete cleanedAgreementData.price
 
         const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
@@ -154,8 +158,10 @@ const Dashboard = () => {
         const AgreementData = await agreementContract.readAgreementData()
         const cleanedAgreementData = cleanAgreementData(AgreementData)
         cleanedAgreementData["status"] = "Borrower did return the NFT."
-        cleanedAgreementData["Paid amount"] = payment
-        cleanedAgreementData["NFT price"] = cleanedAgreementData.price
+        cleanedAgreementData["PaidAmount"] = payment
+        cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
+        cleanedAgreementData["timestamp"] = new Date().getTime()
+        cleanedAgreementData["agreement"] = agreementAddress
         delete cleanedAgreementData.price
 
         const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
@@ -172,7 +178,6 @@ const Dashboard = () => {
     const getReceiptArr = (returnedArr, removedArr, setterFunction) => {
         const receipts = getReceitps([...returnedArr, ...removedArr])
         setterFunction(receipts)
-        console.log(receipts)
     }
 
     useEffect(() => {
