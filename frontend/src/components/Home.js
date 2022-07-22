@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, Card, CardHeader, CardContent, ListItemText, List, ListItem, ListItemIcon } from "@mui/material"
+import {Box, Typography, Card, CardHeader, CardContent, ListItemText, List, ListItem, ListItemIcon } from "@mui/material"
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import HandshakeIcon from '@mui/icons-material/Handshake';
@@ -31,31 +31,30 @@ const Home = () => {
             </Box>
           </center>
 
-          <Box sx={{ p: 0.5, marginTop: 1, display: "block" }}>
+          <Box sx={{ p: 0.5, marginTop: 1, display: "flex",justifyContent:'center',alignItems:'center' }}>
             <Card variant="elevation">
               <center>
                 <CardHeader title="THE PROTOCOL" />
               </center>
-              <CardContent>
+
+              <CardContent >
                 <List>
                   <ListItem>
                     <ListItemIcon>
                       <EmojiEventsIcon sx={{ color: "red", fontSize: '200%' }} />
                     </ListItemIcon>
                     <ListItemText>
-                      List any ERC721 NFT, set rent you'd like per day and the collateral needed to be deposited to enter into a rental period. Highlight the benefits afforded someone from renting your NFT.
+                      List any ERC721 NFT by highlighting the benefits of renting it, set rent you'd like per day and the collateral needed to be deposited for a rental period. 
                     </ListItemText>
                   </ListItem>
-
                   <ListItem>
                     <ListItemIcon>
                       <KeyboardReturnIcon sx={{ color: "red", fontSize: '200%' }} />
                     </ListItemIcon>
                     <ListItemText>
-                      When a rental period ends the rentee pays back the amount owed and communication about extensions to the rental period or days to pay back can be negotiated by way of XMTP through our dashboard.
+                      When a rental period ends the rentee pays back the amount owed with all stages of the agreement being tracked by the Elastic user interface.
                     </ListItemText>
                   </ListItem>
-
                   <ListItem>
                     <ListItemIcon>
                       <HandshakeIcon sx={{ color: "red", fontSize: '200%' }} />
@@ -64,18 +63,18 @@ const Home = () => {
                       If the rentee fails to pay the agreed upon amount or they do not return the NFT, the lister has the option of withdrawing the collateral amount.
                     </ListItemText>
                   </ListItem>
-
                   <ListItem>
                     <ListItemIcon>
                       <MilitaryTechIcon sx={{ color: "red", fontSize: '200%' }} />
                     </ListItemIcon>
                     <ListItemText>
-                      Upon each successful return of an NFT rental the rentee will recieve a POAP as a form of social credit for their rent trustworthyness.
+                      Upon each successful return of an NFT rental the rentee and renter will recieve an IPFS receipt of their agreement for legal records/accounting.
                     </ListItemText>
                   </ListItem>
                 </List>
               </CardContent>
             </Card>
+            
           </Box>
           <Card variant="outlined">
             <center>
@@ -116,7 +115,7 @@ const Home = () => {
                   <CardHeader title="Elastic Search" />
                   <CardContent>
                     <Typography>
-                      Search NFTs by their benefits afforded by a rental and enter into new rental agreements from this tab.
+                      Search NFTs by their benefits provided by a rental and enter into new rental agreements.
                     </Typography>
                     <SearchIcon sx={{ fontSize: '900%', marginTop: 4 }} color="primary" />
                   </CardContent>

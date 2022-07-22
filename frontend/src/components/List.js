@@ -50,6 +50,11 @@ const List = () => {
     }
   }, [nFTAddress])
 
+  const openSnackBar = ()=>{
+    setOpenListingSnackbar(true)
+  }
+
+
   useEffect(() => {
     if (defaultAccount && contractERC) {
       checkIfApproved()
@@ -101,7 +106,10 @@ const List = () => {
         weiCollateral,
         benefits
       )
+      
       setOpenListingSnackbar(true)
+      
+      
     }
     catch {
       alert('unable to create rental listing')
@@ -136,9 +144,9 @@ const List = () => {
       <Box sx={{ margin: 0, paddingBottom: "60px", minHeight: "100vh", position: "relative" }}>
         <Snackbar
           open={openListingSnackbar}
-          autoHideDuration={6000}
+          autoHideDuration={8000}
           onClose={handleListingSnackbarClose}
-          message="NFT Listed, check Dashboard to view -->"
+          message="NFT Listing Processing, check Dashboard to view momentarily..."
           action={action}
         />
         <center>
