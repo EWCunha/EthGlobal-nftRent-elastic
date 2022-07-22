@@ -137,6 +137,7 @@ const Search = () => {
     dispatch({ type: 'SET_SEARCH_WORD', payload: "" })
   }
 
+
   const RenderedData = () => {
     return (
       <Box sx={{ minHeight: "100vh", paddingBottom: 2 }}>
@@ -177,6 +178,7 @@ const Search = () => {
               <TableBody>
                 {NFTsAvailable.length > 0 ? (filterData(NFTsAvailable).slice().reverse().map((item) => {
                   return (
+              
                     <TableRow key={item.itemId}>
                       <TableCell align="center">{item.itemId}</TableCell>
                       <TableCell align="center">{item.tokenURI ? (<img src={item.tokenURI} height="150" width="150" />) : "--"}</TableCell>
