@@ -1,10 +1,12 @@
-Elastic: An NFT Renting Protocol
-Team
-@kitfud
-@EWCunha
-@GZRdev
-@svarog-g
-@joshualyguessennd
+# Elastic: An NFT Renting Protocol
+
+## Team
+- @kitfud
+- @EWCunha
+- @GZRdev
+- @svarog-g
+- @joshualyguessennd
+
 #Summary: Elastic is an NFT Renting Marketplace where listers can highlight the benefits gained form renting their NFT. The Dashboard tracks the progress of each rental and ensures a timely return.
 
 #The Renting Protocol: The app uses a collaterailized deposit (the amount is decided upon by the rental lister) as insurance at the outset of each agreement. A rental lister also decide upon the amount of rent they would like to charge per day.
