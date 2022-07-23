@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  TextField,
-  InputAdornment,
-  Card,
-  CardHeader,
-  Snackbar,
-  IconButton,
-  Alert,
-  CircularProgress
-} from '@mui/material'
+import { Box, Button, Typography, Grid, TextField, InputAdornment, Card, CardHeader, Snackbar, IconButton, Alert, CircularProgress } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
-
 import { useDispatch, useSelector } from 'react-redux'
 import ercInterfaceABI from '../contracts/IERC721.json'
 import { ethers } from 'ethers'
@@ -49,10 +35,6 @@ const List = () => {
       dispatch({ type: "SET_ERC_INTERFACE", payload: contractERC })
     }
   }, [nFTAddress])
-
-  const openSnackBar = ()=>{
-    setOpenListingSnackbar(true)
-  }
 
 
   useEffect(() => {
@@ -106,10 +88,10 @@ const List = () => {
         weiCollateral,
         benefits
       )
-      
+
       setOpenListingSnackbar(true)
-      
-      
+
+
     }
     catch {
       alert('unable to create rental listing')

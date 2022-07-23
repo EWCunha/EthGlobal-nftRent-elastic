@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  TextField,
-  Button,
-  Modal,
-  Box,
-  CircularProgress
-} from '@mui/material'
+import { TextField, Button, Modal, Box, CircularProgress } from '@mui/material'
 
 const style = {
   position: 'absolute',
@@ -32,12 +26,12 @@ const RentalModal = ({ open, handleClose, handleRentalDays, completeRental, proc
           <div>How many days to rent?</div>
           <TextField onChange={(e) => handleRentalDays(e, e.target.value)}></TextField>
           {process ? (
-            <Box sx={{marginTop:1}}>
-            <CircularProgress />
+            <Box sx={{ marginTop: 1 }}>
+              <CircularProgress />
             </Box>
           ) : (
             <Button
-              sx={{marginTop:1}}
+              sx={{ marginTop: 1 }}
               variant="contained"
               onClick={e => completeRental(e)}
             >

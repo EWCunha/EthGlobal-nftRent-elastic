@@ -1,5 +1,5 @@
 import React from 'react'
-import {Box, Typography, Card, CardHeader, CardContent, ListItemText, List, ListItem, ListItemIcon } from "@mui/material"
+import { Box, Typography, Card, CardHeader, CardContent, ListItemText, List, ListItem, ListItemIcon } from "@mui/material"
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import HandshakeIcon from '@mui/icons-material/Handshake';
@@ -31,7 +31,7 @@ const Home = () => {
             </Box>
           </center>
 
-          <Box sx={{ p: 0.5, marginTop: 1, display: "flex",justifyContent:'center',alignItems:'center' }}>
+          <Box sx={{ p: 0.5, marginTop: 1, display: "flex", justifyContent: 'center', alignItems: 'center' }}>
             <Card variant="elevation">
               <center>
                 <CardHeader title="THE PROTOCOL" />
@@ -44,7 +44,7 @@ const Home = () => {
                       <EmojiEventsIcon sx={{ color: "red", fontSize: '200%' }} />
                     </ListItemIcon>
                     <ListItemText>
-                      List any ERC721 NFT by highlighting the benefits of renting it, set rent you'd like per day and the collateral needed to be deposited for a rental period. 
+                      List any ERC721 NFT by highlighting the benefits of renting it, set rent you'd like per day and the collateral needed to be deposited for a rental period.
                     </ListItemText>
                   </ListItem>
                   <ListItem>
@@ -74,7 +74,7 @@ const Home = () => {
                 </List>
               </CardContent>
             </Card>
-            
+
           </Box>
           <Card variant="outlined">
             <center>

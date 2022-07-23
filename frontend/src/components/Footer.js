@@ -13,7 +13,6 @@ const Footer = () => {
 
         <Toolbar sx={{ justifyContent: 'center' }}>
 
-
           <Typography color="white">
             HackFS ETHGlobal Hackathon 2022
           </Typography>

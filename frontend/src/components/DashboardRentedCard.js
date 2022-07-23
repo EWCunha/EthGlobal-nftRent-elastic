@@ -1,7 +1,7 @@
 import React from 'react'
 import {
     Card, Tooltip, Chip, Button, Table, TableBody, TableCell, Box,
-    TableContainer, TableHead, TableRow, Paper, Typography, CircularProgressProps, CircularProgress
+    TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress
 } from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 

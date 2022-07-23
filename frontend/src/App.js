@@ -1,19 +1,18 @@
 
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
-import Rent from "./components/Rent";
 import List from "./components/List";
 import Search from "./components/Search";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
-import ReceiptPDF from "./components/ReceiptPDF";
 import { createTheme, ThemeProvider } from "@mui/material"
 import { ethers } from 'ethers'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect } from 'react'
 import ElasticContractBuilder from './contracts/Elastic.json'
 import { logEventData } from "./utils.js"
+// import ReceiptPDF from "./components/ReceiptPDF";
 
 let theme = createTheme({
   palette: {
@@ -43,8 +42,6 @@ function App() {
   useEffect(() => {
     updateEthers()
   }, [])
-
-
 
   useEffect(() => {
     const loggingData = async () => {
@@ -97,16 +94,14 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="Rent" element={<Rent />} />
           <Route path="Search" element={<Search />} />
           <Route path="List" element={<List />} />
           <Route path="Dashboard" element={<Dashboard />} />
-          <Route path="Receipt" element={<ReceiptPDF />} />
+          {/* <Route path="Receipt" element={<ReceiptPDF />} /> */}
         </Routes>
         <Footer />
       </ThemeProvider>
     </>
-
   );
 }
 
