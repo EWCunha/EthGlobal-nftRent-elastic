@@ -1,8 +1,35 @@
 import React from 'react'
-import { Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material'
+import {
+    Card, Tooltip, Chip, Button, Table, TableBody, TableCell, Box,
+    TableContainer, TableHead, TableRow, Paper, Typography, CircularProgressProps, CircularProgress
+} from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
-export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnNFT }) => {
+export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnNFT, progress }) => {
+
+    function CircularProgressWithLabel(props) {
+        return (
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                <CircularProgress {...props} />
+                <Box
+                    sx={{
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                        position: 'absolute',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Typography variant="caption" component="div" color="text.primary">
+                        {`${props.value}`}
+                    </Typography>
+                </Box>
+            </Box>
+        );
+    }
 
     const totalPayment = (startTime, price) => {
         const runnedTime = time / 1000 - startTime
@@ -69,7 +96,9 @@ export const DashboardRentedCard = ({ nftsInfoRented, handleTimer, time, returnN
                                             color="success"
                                             onClick={e => returnNFT(e, nft.agreementAddress, nft.nftAddress, roundDecimal(totalPayment(nft.startTime, nft.price), 5))}
                                         >
-                                            RETURN NFT
+                                            {progress > 0 ? (
+                                                <CircularProgressWithLabel color="secondary" value={`${progress}/2`} />
+                                            ) : "RETURN NFT"}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

@@ -36,6 +36,7 @@ const Dashboard = () => {
     const [asOwnerReceipts, setAsOwnerReceipts] = useState([])
     const [asBorrowerReceipts, setAsBorrowerReceipts] = useState([])
     const [time, setTime] = useState(Date.now());
+    const [progress, setProgress] = useState(0)
 
     const getNftsInfo = async (stateVariable, setterFunctionInfo) => {
         setterFunctionInfo([])
@@ -126,53 +127,73 @@ const Dashboard = () => {
     const unlistNFT = async (evt, itemId) => {
         evt.preventDefault()
 
-        const tx = await contract.unlistNFT(itemId)
-        await tx.wait(1)
+        try {
+            setProgress(1)
+            const tx = await contract.unlistNFT(itemId)
+            await tx.wait(1)
+            setProgress(0)
+        } catch {
+            setProgress(0)
+        }
     }
 
     const withdrawCollateral = async (evt, agreementAddress) => {
         evt.preventDefault()
 
-        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const AgreementData = await agreementContract.readAgreementData()
-        const cleanedAgreementData = cleanAgreementData(AgreementData)
-        cleanedAgreementData["status"] = "Borrower did NOT return the NFT. Owner withdrawed collateral."
-        cleanedAgreementData["PaidAmount"] = 0
-        cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
-        cleanedAgreementData["timestamp"] = new Date().getTime()
-        cleanedAgreementData["agreement"] = agreementAddress
-        delete cleanedAgreementData.price
+        try {
+            setProgress(1)
+            const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+            const AgreementData = await agreementContract.readAgreementData()
+            const cleanedAgreementData = cleanAgreementData(AgreementData)
+            cleanedAgreementData["status"] = "Borrower did NOT return the NFT. Owner withdrawed collateral."
+            cleanedAgreementData["PaidAmount"] = 0
+            cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
+            cleanedAgreementData["timestamp"] = new Date().getTime()
+            cleanedAgreementData["agreement"] = agreementAddress
+            delete cleanedAgreementData.price
 
-        const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
+            const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
 
-        const tx = await agreementContract.withdrawCollateral(CID)
-        await tx.wait(1)
+            const tx = await agreementContract.withdrawCollateral(CID)
+            await tx.wait(1)
+            setProgress(0)
+        } catch {
+            setProgress(0)
+        }
+
     }
 
     const returnNFT = async (evt, agreementAddress, nftAddress, payment) => {
         evt.preventDefault()
 
-        const valueInWEI = ethers.utils.parseEther(payment.toString())
+        try {
+            setProgress(1)
+            const valueInWEI = ethers.utils.parseEther(payment.toString())
 
-        const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
-        const AgreementData = await agreementContract.readAgreementData()
-        const cleanedAgreementData = cleanAgreementData(AgreementData)
-        cleanedAgreementData["status"] = "Borrower did return the NFT."
-        cleanedAgreementData["PaidAmount"] = payment
-        cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
-        cleanedAgreementData["timestamp"] = new Date().getTime()
-        cleanedAgreementData["agreement"] = agreementAddress
-        delete cleanedAgreementData.price
+            const agreementContract = new ethers.Contract(agreementAddress, agreementJSON.abi, signer)
+            const AgreementData = await agreementContract.readAgreementData()
+            const cleanedAgreementData = cleanAgreementData(AgreementData)
+            cleanedAgreementData["status"] = "Borrower did return the NFT."
+            cleanedAgreementData["PaidAmount"] = payment
+            cleanedAgreementData["NFTPrice"] = cleanedAgreementData.price
+            cleanedAgreementData["timestamp"] = new Date().getTime()
+            cleanedAgreementData["agreement"] = agreementAddress
+            delete cleanedAgreementData.price
 
-        const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
+            const CID = await uploadToIPFS(cleanedAgreementData, agreementAddress)
 
-        const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
+            const IERC721Contract = new ethers.Contract(nftAddress, IERC721JSON.abi, signer)
 
-        const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
-        await txApprove.wait(1)
+            const txApprove = await IERC721Contract.setApprovalForAll(agreementAddress, true)
+            await txApprove.wait(1)
 
-        const txReturnNFT = await agreementContract.returnNFT(CID, { value: valueInWEI })
-        await txReturnNFT.wait(1)
+            setProgress(2)
+            const txReturnNFT = await agreementContract.returnNFT(CID, { value: valueInWEI })
+            await txReturnNFT.wait(1)
+            setProgress(0)
+        } catch {
+            setProgress(0)
+        }
     }
 
     const getReceiptArr = (returnedArr, removedArr, setterFunction) => {
@@ -230,12 +251,14 @@ const Dashboard = () => {
                     handleTimer={handleTimer}
                     unlistNFT={unlistNFT}
                     withdrawCollateral={withdrawCollateral}
+                    progress={progress}
                 />
                 <DashboardRentedCard
                     nftsInfoRented={nftsInfoRented}
                     handleTimer={handleTimer}
                     time={time}
                     returnNFT={returnNFT}
+                    progress={progress}
                 />
                 <DashboardReceipts
                     asOwnerReceipts={asOwnerReceipts}

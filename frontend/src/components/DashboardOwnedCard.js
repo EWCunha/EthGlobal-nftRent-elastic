@@ -1,8 +1,11 @@
 import React from 'react'
-import { Typography, Card, Tooltip, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import {
+    Typography, Card, Tooltip, Chip, Button, Table, TableBody,
+    TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress
+} from '@mui/material'
 import { copyToClipboard, roundDecimal } from '../utils'
 
-export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, withdrawCollateral }) => {
+export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, withdrawCollateral, progress }) => {
     return (
         <Card sx={{ paddingLeft: 2, paddingRight: 2, width: "100%" }}>
             <Typography variant="h4">Listed NFTs</Typography>
@@ -77,14 +80,18 @@ export const DashboardOwnedCard = ({ nftsInfoOwned, handleTimer, unlistNFT, with
                                             disabled={handleTimer(nft.startTime, nft.rentTime) === "00:00:00" ? false : true}
                                             onClick={e => withdrawCollateral(e, nft.agreementAddress)}
                                         >
-                                            WITHDRAW COLLATERAL
+                                            {progress > 0 ? (
+                                                <CircularProgress color="secondary" />
+                                            ) : "WITHDRAW COLLATERAL"}
                                         </Button>
                                     ) : (
                                         <Button variant="contained"
                                             color="success"
                                             onClick={e => unlistNFT(e, nft.itemId)}
                                         >
-                                            UNLIST NFT
+                                            {progress > 0 ? (
+                                                <CircularProgress color="secondary" />
+                                            ) : "UNLIST NFT"}
                                         </Button>
                                     )}
                                 </TableCell>
