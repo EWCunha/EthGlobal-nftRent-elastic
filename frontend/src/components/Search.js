@@ -1,37 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Button,
-  TablePagination,
-  TableContainer,
-  TableHead,
-  Table,
-  TableRow,
-  TableCell,
-  TableBody,
-  Card,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Box
-} from '@mui/material'
+import { Button, TableContainer, TableHead, Table, TableRow, TableCell, TableBody, TextField, InputAdornment, IconButton, Box } from '@mui/material'
 import { ethers } from 'ethers'
 import SearchIcon from '@mui/icons-material/Search'
-
 import { useSelector, useDispatch } from 'react-redux'
 import { roundDecimal, filterListedUnlistedEventsData, filterRentedReturnedEventsData, filterAvailableItems } from '../utils'
 import RentalModal from './RentalModal';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 const Search = () => {
   const dispatch = useDispatch()
   const nftListed = useSelector((state) => state.nftListed)
@@ -52,7 +26,6 @@ const Search = () => {
   const [openModal, setOpenModal] = useState(false)
   const [itemSelect, setItemSelect] = useState(null)
   const [collateralSelect, setCollateralSelect] = useState(null)
-  const [word, setWord] = useState("")
   const [NFTsAvailable, setNFTsAvailable] = useState([])
   const [process, setProcess] = useState(false)
 
@@ -66,17 +39,6 @@ const Search = () => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - NFTsAvailable.length) : 0;
-
-  const handleChangePage = (evt, newPage) => {
-    evt.preventDefault()
-    setPage(newPage);
-  }
-
-  const handleChangeRowsPerPage = (evt) => {
-    evt.preventDefault()
-    setRowsPerPage(parseInt(evt.target.value, 10))
-    setPage(0)
-  }
 
   const handleModalOpen = (evt, select, collateral) => {
     evt.preventDefault()
@@ -117,11 +79,7 @@ const Search = () => {
 
   const filterData = (dataObj) => {
     if (dataObj.length !== 0 && searchword) {
-      console.log("searchword", searchword)
-      console.log(dataObj.forEach(item => console.log(item.benefitsClearText)))
       const filteredData = dataObj.filter(d => { return d.benefitsClearText.toUpperCase().includes(searchword.toUpperCase()) })
-      console.log("originalData", dataObj)
-      console.log("filteredData", filteredData)
       return filteredData
     }
     else {
@@ -136,7 +94,6 @@ const Search = () => {
   const clearSearch = () => {
     dispatch({ type: 'SET_SEARCH_WORD', payload: "" })
   }
-
 
   const RenderedData = () => {
     return (
@@ -178,7 +135,7 @@ const Search = () => {
               <TableBody>
                 {NFTsAvailable.length > 0 ? (filterData(NFTsAvailable).slice().reverse().map((item) => {
                   return (
-              
+
                     <TableRow key={item.itemId}>
                       <TableCell align="center">{item.itemId}</TableCell>
                       <TableCell align="center">{item.tokenURI ? (<img src={item.tokenURI} height="150" width="150" />) : "--"}</TableCell>

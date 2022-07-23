@@ -1,19 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Web3Connect from './Web3Connect'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
-import {
-  AppBar,
-  Toolbar,
-  CssBaseline,
-  Typography,
-  IconButton,
-  Box,
-  Button,
-} from '@mui/material'
-import { flexbox } from '@mui/system'
-import { green } from '@mui/material/colors'
+import { AppBar, Toolbar, CssBaseline, Typography, IconButton, Box, Button } from '@mui/material'
 
 const Header = () => {
 
