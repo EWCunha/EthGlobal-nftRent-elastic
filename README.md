@@ -50,8 +50,8 @@ You can also check the live dApp deployed on Netlify, [here]().
 - [Remix](https://remix.ethereum.org/)
 
 ## Team
-- @kitfud
-- @EWCunha
-- @GZRdev
-- @svarog-g
-- @joshualyguessennd
+- [@kitfud](https://github.com/kitfud)
+- [@EWCunha](https://github.com/EWCunha)
+- [@GZRdev](https://github.com/GZRdev)
+- [@svarog-g](https://github.com/svarog-g)
+- [@joshualyguessennd](https://github.com/joshualyguessennd)
