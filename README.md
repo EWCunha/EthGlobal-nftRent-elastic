@@ -17,7 +17,7 @@ At the end of the timeperiod for a rental, if the renter does not pay the rental
 Upon the successful completion of a rental both the rentee and lister get a receipt from IPFS which can be used for accounting purposes.
 
 ## Running the dApp locally
-To run the dApp locally, a Web3 Storage API token is needed. Follow [these instructions](https://web3.storage/docs/how-tos/generate-api-token/) to create your own API token. After downloading this repository, create a `.env` file in `frontend` folder. Copy and paste your created API token in the file with the variable name as `REACT_APP_WEB3_STORAGE_API_TOKEN`.
+To run the dApp locally, a Web3 Storage API token is needed. Follow [these instructions](https://web3.storage/docs/how-tos/generate-api-token/) to create your own API token. After downloading this repository, create a `.env` file in the `frontend` folder. Copy and paste your created API token in the file with the variable name as `REACT_APP_WEB3_STORAGE_API_TOKEN`.
 
 In the `frontend` folder, run:
 ```
