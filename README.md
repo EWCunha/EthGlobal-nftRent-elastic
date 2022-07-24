@@ -27,7 +27,7 @@ npm start
 Have fun!
 
 ## Live dApp!
-You can also check the live dApp deployed on Netlify, [here]().
+You can also check the live dApp deployed on Netlify, [here](https://elastic-nft-renting-protocol.netlify.app/). Also, check out our [walkthrough video](https://www.youtube.com/watch?v=UdHbHI3y7_o)!
 
 ## Used languages, frameworks, and tools
 <div style="background-color: gray;">
