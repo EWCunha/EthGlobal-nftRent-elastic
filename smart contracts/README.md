@@ -1,7 +1,7 @@
 # Elastic's Smart Contracts
 
 
-The Elastic service is based on two main contracts, Elastic.sol and Agreement.sol that allow to list NFTs, rent NFTs and track the interactions between the listed NFTs, the owners, and the borrowers. These two smart contracts comprise the backend of Elastic dApp, which means that there is no centralized process or data storage in this project. The figure below illustrates the functionality of the smart contracts, then, following the figure, a brief explanation of what each contract does is given.
+The Elastic service is based on two main contracts, Elastic.sol and Agreement.sol that allow to list NFTs, rent NFTs and track the interactions between the listed NFTs, the owners, and the borrowers. These two smart contracts comprise the backend of Elastic dApp, which means that there is no centralized process or data storage in this project. They were deployed on Rinkeby testnet, so that there would have support from Opensea to visualize NFTs. The figure below illustrates the functionality of the smart contracts, then, following the figure, a brief explanation of what each contract does is given.
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/69436215/180620073-30a373e4-5c98-4417-9098-cb08819358ad.png" width=70% height=70%>
