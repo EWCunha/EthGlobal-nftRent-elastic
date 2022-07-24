@@ -3,9 +3,9 @@ import { Web3Storage } from 'web3.storage'
 // import html2canvas from 'html2canvas'
 // import ReactDOMServer from "react-dom/server"
 // import ReceiptPDF from "./ReceiptPDF"
-import envVar from "../.secret.json"
+const { REACT_APP_WEB3_STORAGE_API_TOKEN } = process.env
 
-const api_token = envVar.WEB3_STORAGE_API_TOKEN
+const api_token = REACT_APP_WEB3_STORAGE_API_TOKEN
 
 const uploadToIPFS = async (file, agreementAddress) => {
 
