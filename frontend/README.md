@@ -18,7 +18,7 @@ Here, the user can search for NFTs to rent. The search tab allows the user to se
 
 This page only shows up when the user connects his/her wallet. On this page, every listed and rented (borrowed or lended) NFTs are shown. The user can unlist the NFTs as well as return the borrowed ones whenever needed and withdraw the collateral amount after the renting period if the NFT has not been returned yet.
 
-Here is also shown the receipts for every rental that the user is involved: as the owner or as the borrower of the NFT. The receipts are automatically generated after the rental end and they are stored on IPFS for accounting purposes.
+Here are also shown the receipts for every rental that the user is involved: as the owner or as the borrower of the NFT. The receipts are automatically generated after the rental end and they are stored on IPFS for accounting purposes.
 
 ## Check the live dApp!
 
