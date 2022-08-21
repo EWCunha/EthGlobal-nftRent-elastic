@@ -24,6 +24,9 @@ In the `frontend` folder, run:
 npm install
 npm start
 ```
+
+Be sure to set the blockchain network to Rinkeby in Metamask!
+
 Have fun!
 
 ## Live dApp!
