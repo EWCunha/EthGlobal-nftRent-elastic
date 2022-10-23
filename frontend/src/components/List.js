@@ -58,13 +58,17 @@ const List = () => {
   const dispatch = useDispatch()
 
   async function checkIfApproved() {
-    const isApproved = await contractERC.isApprovedForAll(defaultAccount, elasticContractAddress)
-    setApproved(isApproved)
+    if (contractERC.address === nFTAddress) {
+      const isApproved = await contractERC.isApprovedForAll(defaultAccount, elasticContractAddress)
+
+      setApproved(isApproved)
+    }
   }
 
   const approveOperator = async () => {
-    if (!approved) {
+    if (!approved && contractERC.address === nFTAddress) {
       setProcessing(true)
+      console.log(contractERC.address === nFTAddress)
       const tx = await contractERC.setApprovalForAll(elasticContractAddress, true)
       await tx.wait(1)
       setApproved(true)
@@ -90,8 +94,6 @@ const List = () => {
       )
 
       setOpenListingSnackbar(true)
-
-
     }
     catch {
       alert('unable to create rental listing')

@@ -7,57 +7,9 @@ import "./interfaces/IElastic.sol";
 
 contract Agreement is IAgreement {
     address public elasticAddress;
-
     AgreementData agreement;
     NewAgreementData newAgreement;
     string CID;
-
-    error AgreementNotEnoughFunds(
-        uint256 availableFunds,
-        uint256 requiredFunds
-    );
-    error AgreementNotExpired(uint256 endTime, uint256 timestamp);
-    error AgreementAccessDenied(address caller);
-
-    event NFTReturnedAgreement(
-        address indexed owner,
-        address indexed borrower,
-        uint256 indexed itemId,
-        address nftAddress,
-        address agreement
-    );
-    event CollateralWithdrawed(
-        address indexed owner,
-        address indexed borrower,
-        uint256 indexed itemId,
-        address agreement,
-        uint256 collateral
-    );
-    event NewAgreementProposal(
-        address indexed owner,
-        address indexed borrower,
-        address indexed agreement,
-        uint256 collateral,
-        uint256 rentDays,
-        uint256 price
-    );
-    event AcceptedNewAgreement(
-        address indexed owner,
-        address indexed borrower,
-        address indexed agreement,
-        address approver,
-        uint256 collateral,
-        uint256 rentDays,
-        uint256 price
-    );
-    event AgreementReceipt(
-        address indexed owner,
-        address indexed borrower,
-        string indexed CID,
-        string CIDClearText,
-        address agreement,
-        string status
-    );
 
     constructor(
         address _elasticAddress,
@@ -199,7 +151,7 @@ contract Agreement is IAgreement {
     @notice returnNFT the borrower should use this function to return the rented NFT, pay the rent price, and receive the collateral back
     @param _CID CID of the receipts stored on IPFS
     */
-    function returnNFT(string calldata _CID)
+    function returnNft(string calldata _CID)
         external
         payable
         override
@@ -215,6 +167,8 @@ contract Agreement is IAgreement {
             );
         }
 
+        IElastic(elasticAddress).returnNft(agreement.itemId, _CID);
+
         IERC721(agreement.nftAddress).transferFrom(
             msg.sender,
             elasticAddress,
@@ -223,8 +177,6 @@ contract Agreement is IAgreement {
 
         payable(agreement.owner).transfer(totalPaymentAmount);
         payable(agreement.borrower).transfer(address(this).balance);
-
-        IElastic(elasticAddress).returnNFT(agreement.itemId, _CID);
 
         emit NFTReturnedAgreement(
             agreement.owner,
@@ -252,10 +204,10 @@ contract Agreement is IAgreement {
             revert AgreementNotExpired(endTime, block.timestamp);
         }
 
+        IElastic(elasticAddress).removeNft(agreement.itemId, _CID);
+
         payable(agreement.owner).transfer(agreement.collateral);
         payable(elasticAddress).transfer(address(this).balance);
-
-        IElastic(elasticAddress).removeNFT(agreement.itemId, _CID);
 
         emit CollateralWithdrawed(
             agreement.owner,
@@ -317,8 +269,6 @@ contract Agreement is IAgreement {
         }
         _;
     }
-
-    fallback() external payable {}
 
     receive() external payable {}
 }

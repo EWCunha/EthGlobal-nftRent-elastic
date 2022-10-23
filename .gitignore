@@ -30,3 +30,6 @@ frontend/src/.secret.json
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+# Local Netlify folder
+.netlify
